@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAPbot · Tommie Baseball Stats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design concept: ──────────────────────────────────────────────────────
+       Dark diamond. Deep navy field, purple-to-violet gradient accents,
+       monospaced stat numbers for that scoreboard feel.
+       Memorable move: the player search card is a "spotlight" — everything
+       else dims when a player is found, their card glows.
+    ─────────────────────────────────────────────────────────────────────────── */
+
+    :root {
+      --bg:           #080c14;
+      --surface:      #0f1623;
+      --surface-2:    #161f30;
+      --surface-3:    #1d2840;
+      --border:       #1e2d47;
+      --border-light: #2a3d5c;
+
+      --ust-purple:   #4f2d7f;
+      --ust-violet:   #7c3aed;
+      --ust-glow:     rgba(124, 58, 237, 0.18);
+
+      --gold:         #f59e0b;
+      --gold-dim:     rgba(245, 158, 11, 0.12);
+
+      --text:         #e8edf5;
+      --text-muted:   #7a8fa8;
+      --text-faint:   #3d5068;
+
+      --green:        #10b981;
+      --red:          #ef4444;
+
+      --radius:       10px;
+      --radius-sm:    6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────────────── */
+    .container { max-width: 1280px; margin: 0 auto; }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .wordmark {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .wordmark-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ust-violet);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #4f2d7f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      text-align: right;
+    }
+
+    .meta a {
+      color: var(--ust-violet);
+      text-decoration: none;
+    }
+
+    .meta a:hover { text-decoration: underline; }
+
+    /* ── Search Spotlight ────────────────────────────────────────────────────── */
+    .search-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .search-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    #playerSearch {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      width: 120px;
+      padding: 0.6rem 0.75rem 0.6rem 2.5rem;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    #playerSearch::placeholder { color: var(--text-faint); font-size: 1rem; }
+
+    #playerSearch:focus {
+      border-color: var(--ust-violet);
+      box-shadow: 0 0 0 3px var(--ust-glow);
+    }
+
+    .search-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Spotlight Card ──────────────────────────────────────────────────────── */
+    #spotlightCard {
+      display: none;
+      background: var(--surface);
+      border: 1.5px solid var(--ust-violet);
+      border-radius: var(--radius);
+      box-shadow: 0 0 40px var(--ust-glow), 0 8px 32px rgba(0,0,0,0.4);
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .spotlight-header {
+      background: linear-gradient(135deg, var(--ust-purple) 0%, #1d1040 100%);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .jersey-badge {
+      background: var(--ust-violet);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 700;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    }
+
+    .spotlight-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .spotlight-sub {
+      font-size: 0.8rem;
+      color: #a78bfa;
+      margin-top: 0.2rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Stat Grids ──────────────────────────────────────────────────────────── */
+    .stat-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding: 0.85rem 1.5rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .stat-cell {
+      background: var(--surface);
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      transition: background 0.15s;
+    }
+
+    .stat-cell:hover { background: var(--surface-2); }
+
+    .stat-key {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-val.accent { color: #a78bfa; }
+    .stat-val.gold   { color: var(--gold); }
+    .stat-val.green  { color: var(--green); }
+
+    /* ── Tabs ────────────────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover { border-color: var(--ust-violet); color: var(--text); }
+
+    .tab-btn.active {
+      background: var(--ust-violet);
+      border-color: var(--ust-violet);
+      color: #fff;
+    }
+
+    /* ── Full Table ──────────────────────────────────────────────────────────── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .table-card-header {
+      background: var(--surface-2);
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead th {
+      background: rgba(0,0,0,0.25);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    thead th:first-child,
+    thead th:nth-child(2) { text-align: left; cursor: default; }
+
+    thead th:hover:not(:first-child):not(:nth-child(2)) {
+      color: var(--text);
+      background: rgba(124, 58, 237, 0.1);
+    }
+
+    thead th.sorted { color: #a78bfa; }
+
+    tbody td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--text);
+      white-space: nowrap;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    tbody td:first-child,
+    tbody td:nth-child(2) {
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+    }
+
+    tbody td:first-child {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      width: 48px;
+    }
+
+    tbody td:nth-child(2) { font-weight: 600; }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+    /* Highlight row when jersey matches search */
+    tbody tr.row-highlight td {
+      background: var(--ust-glow) !important;
+    }
+
+    tbody tr.row-highlight td:first-child { color: #a78bfa; }
+
+    /* ── Status / Empty States ───────────────────────────────────────────────── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.5rem 0;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .status-dot.stale  { background: var(--gold); }
+    .status-dot.error  { background: var(--red); }
+
+    .empty {
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .not-found {
+      display: none;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.82rem;
+      color: #f87171;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      .stat-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="wordmark">
+      <span class="wordmark-eyebrow">TAPbot · 2026 Season</span>
+      <h1>Tommie Baseball Stats</h1>
+    </div>
+    <div class="meta" id="metaBar">Loading…</div>
+  </header>
+
+  <!-- Player Search -->
+  <section class="search-section">
+    <label class="search-label" for="playerSearch">Search by Jersey Number</label>
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <span class="search-icon">#</span>
+        <input
+          id="playerSearch"
+          type="number"
+          min="0"
+          max="99"
+          placeholder="00"
+          autocomplete="off"
+          aria-label="Player jersey number"
+        />
+      </div>
+      <span class="search-hint">Type a jersey number to spotlight that player's full stat line.</span>
+    </div>
+  </section>
+
+  <!-- Not Found Banner -->
+  <div class="not-found" id="notFound">
+    No player found with that jersey number.
+  </div>
+
+  <!-- Spotlight Card (shown when player found) -->
+  <div id="spotlightCard">
+    <div class="spotlight-header">
+      <div class="jersey-badge" id="spotJersey">—</div>
+      <div>
+        <div class="spotlight-name" id="spotName">—</div>
+        <div class="spotlight-sub" id="spotSub">—</div>
+      </div>
+    </div>
+
+    <!-- Hitting Stats -->
+    <div id="spotHittingSection">
+      <div class="stat-section-title">⚾ Hitting</div>
+      <div class="stat-grid" id="spotHittingGrid"></div>
+    </div>
+
+    <!-- Pitching Stats -->
+    <div id="spotPitchingSection">
+      <div class="stat-section-title">⚡ Pitching</div>
+      <div class="stat-grid" id="spotPitchingGrid"></div>
+    </div>
+  </div>
+
+  <!-- Full Roster Tables -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('hitting', this)">Hitting</button>
+    <button class="tab-btn" onclick="switchTab('pitching', this)">Pitching</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title" id="tableTitle">Hitting Stats — Full Roster</span>
+      <div class="status-bar">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">—</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="statsTable">
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody">
+          <tr><td colspan="20" class="empty">Loading stats…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let DATA         = null;
+  let activeTab    = 'hitting';
+  let sortCol      = null;
+  let sortDir      = 1;   // 1 = asc, -1 = desc
+  let searchNum    = '';
+
+  // Stat columns to display in the full table (in order)
+  const HITTING_DISPLAY = [
+    { key: 'GP',   label: 'GP'   },
+    { key: 'GS',   label: 'GS'   },
+    { key: 'AB',   label: 'AB'   },
+    { key: 'R',    label: 'R'    },
+    { key: 'H',    label: 'H'    },
+    { key: '2B',   label: '2B'   },
+    { key: '3B',   label: '3B'   },
+    { key: 'HR',   label: 'HR'   },
+    { key: 'RBI',  label: 'RBI'  },
+    { key: 'TB',   label: 'TB'   },
+    { key: 'BB',   label: 'BB'   },
+    { key: 'SO',   label: 'SO'   },
+    { key: 'SB',   label: 'SB'   },
+    { key: 'OB%',  label: 'OBP'  },
+    { key: 'SLG%', label: 'SLG'  },
+    { key: 'AVG',  label: 'AVG'  },
+  ];
+
+  // Accent certain key stats in the spotlight card
+  const ACCENT_STATS  = new Set(['AVG', 'OB%', 'SLG%']);
+  const GOLD_STATS    = new Set(['HR', 'RBI', '2B']);
+  const GREEN_STATS   = new Set(['SB', 'BB']);
+
+  // ── Fetch ──────────────────────────────────────────────────────────────────
+  async function loadData() {
+    try {
+      const res = await fetch('baseball_stats.json?t=' + Date.now());
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      DATA = await res.json();
+      onDataLoaded();
+    } catch (err) {
+      document.getElementById('tableBody').innerHTML =
+        `<tr><td colspan="20" class="empty" style="color:#f87171">
+          Failed to load baseball_stats.json — run the scraper first.<br>
+          <small style="color:var(--text-muted)">${err.message}</small>
+        </td></tr>`;
+      document.getElementById('metaBar').textContent = 'Error loading data';
+    }
+  }
+
+  function onDataLoaded() {
+    // Meta bar
+    const ts = DATA.generated_at
+      ? new Date(DATA.generated_at).toLocaleString()
+      : '—';
+    document.getElementById('metaBar').innerHTML =
+      `Updated: ${ts}<br><a href="baseball_stats.json" target="_blank">data.json ↗</a>`;
+
+    // Status dot
+    const dot  = document.getElementById('statusDot');
+    const stxt = document.getElementById('statusText');
+    if (DATA.status === 'ok') {
+      dot.className = 'status-dot';
+      stxt.textContent = 'Live';
+    } else if (DATA.status === 'stale') {
+      dot.className = 'status-dot stale';
+      stxt.textContent = 'Stale — last good scrape';
+    } else {
+      dot.className = 'status-dot error';
+      stxt.textContent = 'Error';
+    }
+
+    renderTable();
+  }
+
+  // ── Tab Switch ─────────────────────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    activeTab = tab;
+    sortCol   = null;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tableTitle').textContent =
+      tab === 'hitting' ? 'Hitting Stats — Full Roster' : 'Pitching Stats — Full Roster';
+    renderTable();
+    if (searchNum) highlightRow(searchNum);
+  }
+
+  // ── Render Full Table ──────────────────────────────────────────────────────
+  function renderTable() {
+    if (!DATA) return;
+
+    const rows = DATA[activeTab] || [];
+
+    if (activeTab === 'hitting') {
+      renderHittingTable(rows);
+    } else {
+      renderPitchingTable(rows);
+    }
+  }
+
+  function renderHittingTable(rows) {
+    const head = document.getElementById('tableHead');
+    const body = document.getElementById('tableBody');
+
+    // Header
+    head.innerHTML = `<tr>
+      <th>#</th>
+      <th>Player</th>
+      ${HITTING_DISPLAY.map(c => `<th onclick="sortBy('${c.key}')" class="${sortCol===c.key?'sorted':''}">${c.label}${sortCol===c.key?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
+    </tr>`;
+
+    if (!rows.length) {
+      body.innerHTML = `<tr><td colspan="${HITTING_DISPLAY.length+2}" class="empty">No hitting data available.</td></tr>`;
+      return;
+    }
+
+    let sorted = [...rows];
+    if (sortCol) {
+      sorted.sort((a, b) => {
+        const av = parseFloat(a[sortCol]) || 0;
+        const bv = parseFloat(b[sortCol]) || 0;
+        return (av - bv) * sortDir;
+      });
+    }
+
+    body.innerHTML = sorted.map(r => {
+      const isHL = r.number === searchNum && searchNum !== '';
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
+        <td>${r.number || '—'}</td>
+        <td>${esc(r.player)}</td>
+        ${HITTING_DISPLAY.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
+      </tr>`;
+    }).join('');
+  }
+
+  function renderPitchingTable(rows) {
+    const head = document.getElementById('tableHead');
+    const body = document.getElementById('tableBody');
+
+    if (!rows.length) {
+      head.innerHTML = '<tr><th>#</th><th>Player</th></tr>';
+      body.innerHTML = `<tr><td colspan="2" class="empty">No pitching data available.</td></tr>`;
+      return;
+    }
+
+    // Derive columns from first row
+    const skip = new Set(['number', 'player']);
+    const cols = Object.keys(rows[0]).filter(k => !skip.has(k));
+
+    head.innerHTML = `<tr>
+      <th>#</th>
+      <th>Player</th>
+      ${cols.map(c => `<th onclick="sortBy('${c}')" class="${sortCol===c?'sorted':''}">${c}${sortCol===c?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
+    </tr>`;
+
+    let sorted = [...rows];
+    if (sortCol) {
+      sorted.sort((a, b) => {
+        const av = parseFloat(a[sortCol]) || 0;
+        const bv = parseFloat(b[sortCol]) || 0;
+        return (av - bv) * sortDir;
+      });
+    }
+
+    body.innerHTML = sorted.map(r => {
+      const isHL = r.number === searchNum && searchNum !== '';
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
+        <td>${r.number || '—'}</td>
+        <td>${esc(r.player)}</td>
+        ${cols.map(c => `<td>${r[c] || '—'}</td>`).join('')}
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Sort ───────────────────────────────────────────────────────────────────
+  function sortBy(col) {
+    if (sortCol === col) {
+      sortDir *= -1;
+    } else {
+      sortCol = col;
+      sortDir = -1; // default: highest first
+    }
+    renderTable();
+    if (searchNum) highlightRow(searchNum);
+  }
+
+  // ── Player Search / Spotlight ──────────────────────────────────────────────
+  document.getElementById('playerSearch').addEventListener('input', function () {
+    searchNum = this.value.trim();
+    const notFound = document.getElementById('notFound');
+    const card     = document.getElementById('spotlightCard');
+
+    if (!searchNum || !DATA) {
+      card.style.display    = 'none';
+      notFound.style.display = 'none';
+      renderTable();
+      return;
+    }
+
+    const hitting  = DATA.hitting_by_number?.[searchNum];
+    const pitching = DATA.pitching_by_number?.[searchNum];
+
+    if (!hitting && !pitching) {
+      card.style.display     = 'none';
+      notFound.style.display = 'block';
+      renderTable();
+      return;
+    }
+
+    notFound.style.display = 'none';
+    card.style.display     = 'block';
+
+    // Populate header
+    const playerName = (hitting || pitching).player || '—';
+    document.getElementById('spotJersey').textContent = `#${searchNum}`;
+    document.getElementById('spotName').textContent   = playerName;
+    document.getElementById('spotSub').textContent    =
+      `University of St. Thomas · ${DATA.season || '2026'} Baseball`;
+
+    // Hitting grid
+    const hSection = document.getElementById('spotHittingSection');
+    const hGrid    = document.getElementById('spotHittingGrid');
+    if (hitting) {
+      hSection.style.display = '';
+      hGrid.innerHTML = HITTING_DISPLAY.map(c => {
+        const val = hitting[c.key] || '—';
+        let cls = '';
+        if (ACCENT_STATS.has(c.key)) cls = 'accent';
+        else if (GOLD_STATS.has(c.key)) cls = 'gold';
+        else if (GREEN_STATS.has(c.key)) cls = 'green';
+        return `<div class="stat-cell">
+          <span class="stat-key">${c.label}</span>
+          <span class="stat-val ${cls}">${val}</span>
+        </div>`;
+      }).join('');
+    } else {
+      hSection.style.display = 'none';
+    }
+
+    // Pitching grid
+    const pSection = document.getElementById('spotPitchingSection');
+    const pGrid    = document.getElementById('spotPitchingGrid');
+    if (pitching) {
+      pSection.style.display = '';
+      const skip = new Set(['number', 'player']);
+      const cols = Object.keys(pitching).filter(k => !skip.has(k));
+      pGrid.innerHTML = cols.map(c => {
+        const val = pitching[c] || '—';
+        return `<div class="stat-cell">
+          <span class="stat-key">${c}</span>
+          <span class="stat-val">${val}</span>
+        </div>`;
+      }).join('');
+    } else {
+      pSection.style.display = 'none';
+    }
+
+    // Highlight matching row in table
+    highlightRow(searchNum);
+  });
+
+  function highlightRow(num) {
+    document.querySelectorAll('#tableBody tr').forEach(tr => {
+      tr.classList.toggle('row-highlight', tr.dataset.num === num);
+    });
+  }
+
+  // ── Utility ────────────────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // ── Boot ───────────────────────────────────────────────────────────────────
+  loadData();
+</script>
+
+</body>
+</html>
