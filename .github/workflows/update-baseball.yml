@@ -57,12 +57,25 @@ jobs:
             git push
           fi
 
-      # 7. Deploy docs/ to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      permissions:
+      contents: write
+      pages: write          # ← add this
+      id-token: write       # ← add this
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ... (all existing steps stay the same) ...
+
+      # 7. Upload docs/ as a Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          publish_branch: gh-pages
-          commit_message: "Deploy baseball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
-          keep_files: true
+          path: docs
+
+      # 8. Deploy to GitHub Pages via Actions source
+      - id: deployment
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
