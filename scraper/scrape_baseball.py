@@ -155,6 +155,9 @@ def scrape() -> dict:
 
         if not dropdown_opened:
             print("  ⚠️  Could not open dropdown — trying direct li click")
+            # ── ADD THIS ──
+            page.screenshot(path="debug_before_click.png")
+            print("  📸  Screenshot saved → debug_before_click.png")
 
         # Step 2: Click the Pitching option by its exact element ID
         pitching_option_selectors = [
@@ -178,6 +181,9 @@ def scrape() -> dict:
 
         if not pitching_clicked:
             print("  ❌  Could not click Pitching option — pitching stats will be empty")
+            # ── ADD THIS ──
+            page.screenshot(path="debug_dropdown.png")
+            print("  📸  Screenshot saved → debug_dropdown.png")
         else:
             # Step 3: Wait for the table to re-render with pitching data
             try:
