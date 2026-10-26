@@ -8,11 +8,22 @@ on:
   schedule:
     - cron: "0 14 * * *"
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   scrape-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       # 1. Check out the repo
@@ -44,7 +55,7 @@ jobs:
             --out docs/baseball_stats.json \
             --year 2026
 
-      # 6. Commit updated data.json back to the repo (only if changed)
+      # 6. Commit updated baseball_stats.json back to main (only if changed)
       - name: Commit updated stats
         run: |
           git config user.name  "TAPbot"
@@ -54,28 +65,20 @@ jobs:
             echo "No changes to commit — stats are up to date."
           else
             git commit -m "Update baseball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
-            git push
+            for attempt in 1 2 3 4 5; do
+              git pull --rebase -X theirs origin main && git push && break
+              echo "Push failed (attempt $attempt), retrying..."
+              sleep $((attempt * 5))
+            done
           fi
 
-      permissions:
-      contents: write
-      pages: write          # ← add this
-      id-token: write       # ← add this
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      # ... (all existing steps stay the same) ...
-
-      # 7. Upload docs/ as a Pages artifact
+      # 7. Upload docs/ folder as a GitHub Pages artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
       # 8. Deploy to GitHub Pages via Actions source
-      - id: deployment
-        name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
