@@ -55,6 +55,17 @@ jobs:
             --out docs/baseball_stats.json \
             --year 2026
 
+      # 5b. Upload debug screenshots if they exist
+      - name: Upload debug screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshots
+          path: |
+            debug_before_click.png
+            debug_dropdown.png
+          if-no-files-found: ignore
+
       # 6. Commit updated baseball_stats.json back to main (only if changed)
       - name: Commit updated stats
         run: |
