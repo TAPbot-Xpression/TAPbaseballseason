@@ -20,8 +20,7 @@ Output shape (docs/baseball_stats.json):
   "generated_at":       "<ISO-8601 UTC>",
 
   // Batting stats: AVG, R, H, 2B, 3B, HR, RBI, OPS, SLG%
-  "hitting": 
-[
+  "hitting": [
     {
       "number": "12",
       "player": "John Doe",
@@ -38,8 +37,7 @@ Output shape (docs/baseball_stats.json):
   ],
 
   // Pitching stats: ERA, WHIP, W-L, IP, SO
-  "pitching": 
-[
+  "pitching": [
     {
       "number": "18",
       "player": "Jane Smith",
@@ -59,7 +57,7 @@ Usage:
     pip install playwright beautifulsoup4
     playwright install chromium
 
-    python scrape_baseball.py --sport baseball --year 2026 --out docs/baseball_stats.json
+    python scraper/scrape_baseball.py --out docs/baseball_stats.json --year 2026
 """
 
 import argparse
@@ -82,41 +80,25 @@ UA = (
 BASE_URL = "https://tommiesports.com/sports/{sport}/stats/{year}"
 
 # Exact requested Batting metrics (and their column header aliases)
-HITTING_COLS = 
-[
-    ("AVG",  
-["AVG", "BA"]),
-    ("R",    
-["R", "Runs"]),
-    ("H",    
-["H", "Hits"]),
-    ("2B",   
-["2B"]),
-    ("3B",   
-["3B"]),
-    ("HR",   
-["HR"]),
-    ("RBI",  
-["RBI"]),
-    ("OPS",  
-["OPS"]),
-    ("SLG%", 
-["SLG%", "SLG", "SLG_PCT"]),
+HITTING_COLS = [
+    ("AVG",  ["AVG", "BA"]),
+    ("R",    ["R", "Runs"]),
+    ("H",    ["H", "Hits"]),
+    ("2B",   ["2B"]),
+    ("3B",   ["3B"]),
+    ("HR",   ["HR"]),
+    ("RBI",  ["RBI"]),
+    ("OPS",  ["OPS"]),
+    ("SLG%", ["SLG%", "SLG", "SLG_PCT"]),
 ]
 
 # Exact requested Pitching metrics (and their column header aliases)
-PITCHING_COLS = 
-[
-    ("ERA",  
-["ERA"]),
-    ("WHIP", 
-["WHIP"]),
-    ("W-L",  
-["W-L", "WL", "W_L", "REC", "RECORD"]),
-    ("IP",   
-["IP", "Innings"]),
-    ("SO",   
-["SO", "K", "SO/K", "STRIKEOUTS"]),
+PITCHING_COLS = [
+    ("ERA",  ["ERA"]),
+    ("WHIP", ["WHIP"]),
+    ("W-L",  ["W-L", "WL", "W_L", "REC", "RECORD"]),
+    ("IP",   ["IP", "Innings"]),
+    ("SO",   ["SO", "K", "SO/K", "STRIKEOUTS"]),
 ]
 
 
@@ -132,32 +114,23 @@ def now_iso() -> str:
 
 def norm_header(h: str) -> str:
     """Normalise a header string for case/punctuation-insensitive matching."""
-    return re.sub(r"
-[^a-z0-9]", "", h.lower())
+    return re.sub(r"[^a-z0-9]", "", h.lower())
 
 
-def header_cells(table) -> list
-[str]:
+def header_cells(table) -> list[str]:
     row = table.select_one("thead tr") or table.find("tr")
-    return 
-[clean(c.get_text()) for c in row.find_all(
-["th", "td"])] if row else 
-[]
+    return [clean(c.get_text()) for c in row.find_all(["th", "td"])] if row else []
 
 
 def body_rows(table) -> list:
-    rows = table.select("tbody tr") or table.find_all("tr")
-[1:]
-    return 
-[r for r in rows if r.find_all(
-["td", "th"])]
+    rows = table.select("tbody tr") or table.find_all("tr")[1:]
+    return [r for r in rows if r.find_all(["td", "th"])]
 
 
 def cell_text(cells: list, idx: int | None) -> str:
     if idx is None or idx >= len(cells):
         return ""
-    return clean(cells
-[idx].get_text())
+    return clean(cells[idx].get_text())
 
 
 def find_col(hdr_map: dict, *aliases) -> int | None:
@@ -171,21 +144,17 @@ def find_col(hdr_map: dict, *aliases) -> int | None:
 
 def jersey_clean(raw: str) -> str:
     """Strip non-numeric characters; return empty string if none present."""
-    return re.sub(r"
-[^0-9]", "", raw)
+    return re.sub(r"[^0-9]", "", raw)
 
 
-def has_player_col(headers: list
-[str]) -> bool:
-    normed = 
-[norm_header(h) for h in headers]
+def has_player_col(headers: list[str]) -> bool:
+    normed = [norm_header(h) for h in headers]
     return any("player" in h or "name" in h for h in normed)
 
 
 # ── Parsers ───────────────────────────────────────────────────────────────────
 
-def parse_hitting_table(table) -> list
-[dict]:
+def parse_hitting_table(table) -> list[dict]:
     headers = header_cells(table)
     hdr_map = {norm_header(h): i for i, h in enumerate(headers)}
 
@@ -193,8 +162,7 @@ def parse_hitting_table(table) -> list
     player_idx = find_col(hdr_map, "Player", "Name")
 
     if player_idx is None:
-        return 
-[]
+        return []
 
     # Map target metrics
     col_indices = {
@@ -202,15 +170,13 @@ def parse_hitting_table(table) -> list
         for (out_key, aliases) in HITTING_COLS
     }
 
-    # Backup columns to calculate OPS if Sidearm doesn't provide it
+    # Backup columns to calculate OPS if Sidearm doesn't provide it directly
     obp_idx = find_col(hdr_map, "OB%", "OBP")
     slg_idx = find_col(hdr_map, "SLG%", "SLG")
 
-    rows = 
-[]
+    rows = []
     for tr in body_rows(table):
-        cells = tr.find_all(
-["td", "th"])
+        cells = tr.find_all(["td", "th"])
         raw_player = cell_text(cells, player_idx)
 
         if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", ""):
@@ -228,17 +194,14 @@ def parse_hitting_table(table) -> list
         for (out_key, _) in HITTING_COLS:
             idx = col_indices.get(out_key)
             val = cell_text(cells, idx) if idx is not None else None
-            row
-[out_key] = val if val not in (None, "", "-", "—") else "—"
+            row[out_key] = val if val not in (None, "", "-", "—") else "—"
 
         # Calculate OPS if missing but OBP & SLG% are present
-        if row
-["OPS"] == "—" and obp_idx is not None and slg_idx is not None:
+        if row["OPS"] == "—" and obp_idx is not None and slg_idx is not None:
             try:
                 obp = float(cell_text(cells, obp_idx))
                 slg = float(cell_text(cells, slg_idx))
-                row
-["OPS"] = f"{obp + slg:.3f}".lstrip("0")
+                row["OPS"] = f"{obp + slg:.3f}".lstrip("0")
             except Exception:
                 pass
 
@@ -247,8 +210,7 @@ def parse_hitting_table(table) -> list
     return rows
 
 
-def parse_pitching_table(table) -> list
-[dict]:
+def parse_pitching_table(table) -> list[dict]:
     headers = header_cells(table)
     hdr_map = {norm_header(h): i for i, h in enumerate(headers)}
 
@@ -256,8 +218,7 @@ def parse_pitching_table(table) -> list
     player_idx = find_col(hdr_map, "Player", "Name")
 
     if player_idx is None:
-        return 
-[]
+        return []
 
     # Map target metrics
     col_indices = {
@@ -269,11 +230,9 @@ def parse_pitching_table(table) -> list
     w_idx = find_col(hdr_map, "W", "Wins")
     l_idx = find_col(hdr_map, "L", "Losses")
 
-    rows = 
-[]
+    rows = []
     for tr in body_rows(table):
-        cells = tr.find_all(
-["td", "th"])
+        cells = tr.find_all(["td", "th"])
         raw_player = cell_text(cells, player_idx)
 
         if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", ""):
@@ -291,24 +250,20 @@ def parse_pitching_table(table) -> list
         for (out_key, _) in PITCHING_COLS:
             idx = col_indices.get(out_key)
             val = cell_text(cells, idx) if idx is not None else None
-            row
-[out_key] = val if val not in (None, "", "-", "—") else "—"
+            row[out_key] = val if val not in (None, "", "-", "—") else "—"
 
         # Construct W-L if not in a single combined column
-        if row
-["W-L"] == "—" and w_idx is not None and l_idx is not None:
+        if row["W-L"] == "—" and w_idx is not None and l_idx is not None:
             w_val = cell_text(cells, w_idx) or "0"
             l_val = cell_text(cells, l_idx) or "0"
-            row
-["W-L"] = f"{w_val}-{l_val}"
+            row["W-L"] = f"{w_val}-{l_val}"
 
         rows.append(row)
 
     return rows
 
 
-def extract_table(html: str, stat_type: str) -> list
-[dict]:
+def extract_table(html: str, stat_type: str) -> list[dict]:
     """Parse extracted HTML chunk for either hitting or pitching tables."""
     soup = BeautifulSoup(html, "html.parser")
     tables = soup.select(".sidearm-common-stats-container table") or soup.find_all("table")
@@ -323,20 +278,17 @@ def extract_table(html: str, stat_type: str) -> list
         elif stat_type == "pitching":
             return parse_pitching_table(table)
 
-    return 
-[]
+    return []
 
 
-def index_by_number(rows: list
-[dict]) -> dict:
+def index_by_number(rows: list[dict]) -> dict:
     """Build a dict keyed by jersey number for rapid lookups."""
     indexed = {}
     for r in rows:
         key = r.get("number", "—")
         if not key or key == "—":
             key = r.get("player", "unknown")
-        indexed
-[key] = r
+        indexed[key] = r
     return indexed
 
 
@@ -349,15 +301,11 @@ def switch_category(page, category_label: str) -> bool:
     category_regex = re.compile(f"^{category_label}$", re.I)
 
     # 1. Open the combobox/dropdown
-    combobox_selectors = 
-[
-        "button
-[role='combobox']",
+    combobox_selectors = [
+        "button[role='combobox']",
         ".sidearm-common-stats-category-select button",
-        "button
-[aria-haspopup='listbox']",
-        "select
-[name*='category' i]",
+        "button[aria-haspopup='listbox']",
+        "select[name*='category' i]",
     ]
 
     for sel in combobox_selectors:
@@ -373,10 +321,8 @@ def switch_category(page, category_label: str) -> bool:
                 break
 
     # 2. Click the specific category option
-    option_locators = 
-[
-        page.locator("li, 
-[role='option']").filter(has_text=category_regex).first,
+    option_locators = [
+        page.locator("li, [role='option']").filter(has_text=category_regex).first,
         page.get_by_role("option", name=category_regex),
         page.locator(f"button:has-text('{category_label}')").first,
     ]
@@ -397,12 +343,8 @@ def fetch_all_stats(url: str) -> dict:
     from playwright.sync_api import sync_playwright
 
     print(f"  → Loading: {url}")
-    hitting_data: list
-[dict] = 
-[]
-    pitching_data: list
-[dict] = 
-[]
+    hitting_data: list[dict] = []
+    pitching_data: list[dict] = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -466,17 +408,15 @@ def fetch_all_stats(url: str) -> dict:
 
 def main():
     ap = argparse.ArgumentParser(description="Scrape St. Thomas baseball/softball stats.")
-    ap.add_argument("--sport", default="baseball", choices=
-["baseball", "softball"],
+    ap.add_argument("--sport", default="baseball", choices=["baseball", "softball"],
                     help="Sport to scrape (default: baseball)")
     ap.add_argument("--year", default="2026",
                     help="Season year to scrape (default: 2026)")
-    ap.add_argument("--out", default=None,
-                    help="Output path for JSON (default: docs/{sport}_stats.json)")
+    ap.add_argument("--out", default="docs/baseball_stats.json",
+                    help="Output path for JSON (default: docs/baseball_stats.json)")
     args = ap.parse_args()
 
-    out_file = args.out or f"docs/{args.sport}_stats.json"
-    out_path = Path(out_file)
+    out_path = Path(args.out)
     url = BASE_URL.format(sport=args.sport, year=args.year)
     team_name = f"University of St. Thomas Tommies {args.sport.capitalize()}"
 
@@ -492,10 +432,8 @@ def main():
     try:
         parsed = fetch_all_stats(url)
 
-        hitting_count = len(parsed
-["hitting"])
-        pitching_count = len(parsed
-["pitching"])
+        hitting_count = len(parsed["hitting"])
+        pitching_count = len(parsed["pitching"])
 
         if hitting_count == 0 and pitching_count == 0:
             raise ValueError("No player rows parsed for hitting or pitching.")
@@ -507,14 +445,10 @@ def main():
             "source": url,
             "status": "ok",
             "generated_at": now_iso(),
-            "hitting": parsed
-["hitting"],
-            "pitching": parsed
-["pitching"],
-            "hitting_by_number": index_by_number(parsed
-["hitting"]),
-            "pitching_by_number": index_by_number(parsed
-["pitching"]),
+            "hitting": parsed["hitting"],
+            "pitching": parsed["pitching"],
+            "hitting_by_number": index_by_number(parsed["hitting"]),
+            "pitching_by_number": index_by_number(parsed["pitching"]),
         }
 
         print(f"  ✓ Hitting:  {hitting_count} players parsed ({len(HITTING_COLS)} columns).")
@@ -528,8 +462,7 @@ def main():
             payload = {
                 **old_data,
                 "status": "stale",
-                "error": str(exc)
-[:400],
+                "error": str(exc)[:400],
                 "generated_at": now_iso(),
             }
         else:
@@ -539,13 +472,10 @@ def main():
                 "season": args.year,
                 "source": url,
                 "status": "error",
-                "error": str(exc)
-[:400],
+                "error": str(exc)[:400],
                 "generated_at": now_iso(),
-                "hitting": 
-[],
-                "pitching": 
-[],
+                "hitting": [],
+                "pitching": [],
                 "hitting_by_number": {},
                 "pitching_by_number": {},
             }
