@@ -11,9 +11,8 @@
   <style>
     /* ── Design concept: ──────────────────────────────────────────────────────
        Dark diamond. Deep navy field, purple-to-violet gradient accents,
-       monospaced stat numbers for that scoreboard feel.
-       Memorable move: the player search card is a "spotlight" — everything
-       else dims when a player is found, their card glows.
+       monospaced stat numbers for scoreboard styling.
+       Spotlight card highlights single-player lookups.
     ─────────────────────────────────────────────────────────────────────────── */
 
     :root {
@@ -170,6 +169,17 @@
       color: var(--text-muted);
     }
 
+    .not-found {
+      display: none;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.82rem;
+      color: #f87171;
+      margin-bottom: 1.5rem;
+    }
+
     /* ── Spotlight Card ──────────────────────────────────────────────────────── */
     #spotlightCard {
       display: none;
@@ -225,7 +235,6 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* ── Stat Grids ──────────────────────────────────────────────────────────── */
     .stat-section-title {
       font-size: 0.7rem;
       font-weight: 700;
@@ -381,7 +390,6 @@
     tbody td:nth-child(2) { font-weight: 600; }
 
     tbody tr:last-child td { border-bottom: none; }
-
     tbody tr:hover td { background: rgba(255,255,255,0.025); }
 
     /* Highlight row when jersey matches search */
@@ -417,17 +425,6 @@
       text-align: center;
       color: var(--text-muted);
       font-size: 0.9rem;
-    }
-
-    .not-found {
-      display: none;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.25);
-      border-radius: var(--radius-sm);
-      padding: 0.65rem 1rem;
-      font-size: 0.82rem;
-      color: #f87171;
-      margin-bottom: 1.5rem;
     }
 
     /* ── Responsive ──────────────────────────────────────────────────────────── */
@@ -466,7 +463,7 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Type a jersey number to spotlight that player's full stat line.</span>
+      <span class="search-hint">Type a jersey number to spotlight that player's stat line.</span>
     </div>
   </section>
 
@@ -526,36 +523,37 @@
 
 <script>
   // ── State ──────────────────────────────────────────────────────────────────
-  let DATA         = null;
-  let activeTab    = 'hitting';
-  let sortCol      = null;
-  let sortDir      = 1;   // 1 = asc, -1 = desc
-  let searchNum    = '';
+  let DATA      = null;
+  let activeTab = 'hitting';
+  let sortCol   = null;
+  let sortDir   = 1;   // 1 = asc, -1 = desc
+  let searchNum = '';
 
-  // Stat columns to display in the full table (in order)
+  // ── Exact Target Columns Matching Scraper ──────────────────────────────────
   const HITTING_DISPLAY = [
-    { key: 'GP',   label: 'GP'   },
-    { key: 'GS',   label: 'GS'   },
-    { key: 'AB',   label: 'AB'   },
+    { key: 'AVG',  label: 'AVG'  },
     { key: 'R',    label: 'R'    },
     { key: 'H',    label: 'H'    },
     { key: '2B',   label: '2B'   },
     { key: '3B',   label: '3B'   },
     { key: 'HR',   label: 'HR'   },
     { key: 'RBI',  label: 'RBI'  },
-    { key: 'TB',   label: 'TB'   },
-    { key: 'BB',   label: 'BB'   },
-    { key: 'SO',   label: 'SO'   },
-    { key: 'SB',   label: 'SB'   },
-    { key: 'OB%',  label: 'OBP'  },
-    { key: 'SLG%', label: 'SLG'  },
-    { key: 'AVG',  label: 'AVG'  },
+    { key: 'OPS',  label: 'OPS'  },
+    { key: 'SLG%', label: 'SLG%' }
   ];
 
-  // Accent certain key stats in the spotlight card
-  const ACCENT_STATS  = new Set(['AVG', 'OB%', 'SLG%']);
-  const GOLD_STATS    = new Set(['HR', 'RBI', '2B']);
-  const GREEN_STATS   = new Set(['SB', 'BB']);
+  const PITCHING_DISPLAY = [
+    { key: 'ERA',  label: 'ERA'  },
+    { key: 'WHIP', label: 'WHIP' },
+    { key: 'W-L',  label: 'W-L'  },
+    { key: 'IP',   label: 'IP'   },
+    { key: 'SO',   label: 'SO'   }
+  ];
+
+  // Visual Accents
+  const ACCENT_STATS = new Set(['AVG', 'OPS', 'ERA', 'WHIP']);
+  const GOLD_STATS   = new Set(['HR', 'RBI', '2B', '3B', 'W-L']);
+  const GREEN_STATS  = new Set(['SO', 'R', 'H']);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   async function loadData() {
@@ -616,15 +614,8 @@
     if (!DATA) return;
 
     const rows = DATA[activeTab] || [];
+    const cols = activeTab === 'hitting' ? HITTING_DISPLAY : PITCHING_DISPLAY;
 
-    if (activeTab === 'hitting') {
-      renderHittingTable(rows);
-    } else {
-      renderPitchingTable(rows);
-    }
-  }
-
-  function renderHittingTable(rows) {
     const head = document.getElementById('tableHead');
     const body = document.getElementById('tableBody');
 
@@ -632,11 +623,11 @@
     head.innerHTML = `<tr>
       <th>#</th>
       <th>Player</th>
-      ${HITTING_DISPLAY.map(c => `<th onclick="sortBy('${c.key}')" class="${sortCol===c.key?'sorted':''}">${c.label}${sortCol===c.key?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
+      ${cols.map(c => `<th onclick="sortBy('${c.key}')" class="${sortCol===c.key?'sorted':''}">${c.label}${sortCol===c.key?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
     </tr>`;
 
     if (!rows.length) {
-      body.innerHTML = `<tr><td colspan="${HITTING_DISPLAY.length+2}" class="empty">No hitting data available.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data available.</td></tr>`;
       return;
     }
 
@@ -654,46 +645,7 @@
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
         <td>${r.number || '—'}</td>
         <td>${esc(r.player)}</td>
-        ${HITTING_DISPLAY.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
-      </tr>`;
-    }).join('');
-  }
-
-  function renderPitchingTable(rows) {
-    const head = document.getElementById('tableHead');
-    const body = document.getElementById('tableBody');
-
-    if (!rows.length) {
-      head.innerHTML = '<tr><th>#</th><th>Player</th></tr>';
-      body.innerHTML = `<tr><td colspan="2" class="empty">No pitching data available.</td></tr>`;
-      return;
-    }
-
-    // Derive columns from first row
-    const skip = new Set(['number', 'player']);
-    const cols = Object.keys(rows[0]).filter(k => !skip.has(k));
-
-    head.innerHTML = `<tr>
-      <th>#</th>
-      <th>Player</th>
-      ${cols.map(c => `<th onclick="sortBy('${c}')" class="${sortCol===c?'sorted':''}">${c}${sortCol===c?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
-    </tr>`;
-
-    let sorted = [...rows];
-    if (sortCol) {
-      sorted.sort((a, b) => {
-        const av = parseFloat(a[sortCol]) || 0;
-        const bv = parseFloat(b[sortCol]) || 0;
-        return (av - bv) * sortDir;
-      });
-    }
-
-    body.innerHTML = sorted.map(r => {
-      const isHL = r.number === searchNum && searchNum !== '';
-      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
-        <td>${r.number || '—'}</td>
-        <td>${esc(r.player)}</td>
-        ${cols.map(c => `<td>${r[c] || '—'}</td>`).join('')}
+        ${cols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
   }
@@ -703,8 +655,9 @@
     if (sortCol === col) {
       sortDir *= -1;
     } else {
+      // For ERA/WHIP, default to ascending (lower is better); otherwise descending
       sortCol = col;
-      sortDir = -1; // default: highest first
+      sortDir = (col === 'ERA' || col === 'WHIP') ? 1 : -1;
     }
     renderTable();
     if (searchNum) highlightRow(searchNum);
@@ -717,7 +670,7 @@
     const card     = document.getElementById('spotlightCard');
 
     if (!searchNum || !DATA) {
-      card.style.display    = 'none';
+      card.style.display     = 'none';
       notFound.style.display = 'none';
       renderTable();
       return;
@@ -743,7 +696,7 @@
     document.getElementById('spotSub').textContent    =
       `University of St. Thomas · ${DATA.season || '2026'} Baseball`;
 
-    // Hitting grid
+    // Hitting spotlight grid
     const hSection = document.getElementById('spotHittingSection');
     const hGrid    = document.getElementById('spotHittingGrid');
     if (hitting) {
@@ -763,18 +716,20 @@
       hSection.style.display = 'none';
     }
 
-    // Pitching grid
+    // Pitching spotlight grid
     const pSection = document.getElementById('spotPitchingSection');
     const pGrid    = document.getElementById('spotPitchingGrid');
     if (pitching) {
       pSection.style.display = '';
-      const skip = new Set(['number', 'player']);
-      const cols = Object.keys(pitching).filter(k => !skip.has(k));
-      pGrid.innerHTML = cols.map(c => {
-        const val = pitching[c] || '—';
+      pGrid.innerHTML = PITCHING_DISPLAY.map(c => {
+        const val = pitching[c.key] || '—';
+        let cls = '';
+        if (ACCENT_STATS.has(c.key)) cls = 'accent';
+        else if (GOLD_STATS.has(c.key)) cls = 'gold';
+        else if (GREEN_STATS.has(c.key)) cls = 'green';
         return `<div class="stat-cell">
-          <span class="stat-key">${c}</span>
-          <span class="stat-val">${val}</span>
+          <span class="stat-key">${c.label}</span>
+          <span class="stat-val ${cls}">${val}</span>
         </div>`;
       }).join('');
     } else {
