@@ -16,8 +16,8 @@ from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-DEFAULT_URL  = "https://tommiesports.com/sports/baseball/stats/2026"
-DEFAULT_OUT  = "docs/baseball_stats.json"
+DEFAULT_URL = "https://tommiesports.com/sports/baseball/stats/2026"
+DEFAULT_OUT = "docs/baseball_stats.json"
 DEFAULT_YEAR = "2026"
 
 
@@ -52,8 +52,7 @@ def resolve_nuxt_payload(raw_json_str):
 def find_key(obj, key):
     if isinstance(obj, dict):
         if key in obj:
-            return obj
-[key]
+            return obj[key]
         for v in obj.values():
             r = find_key(v, key)
             if r is not None:
@@ -68,12 +67,10 @@ def find_key(obj, key):
 
 def find_all_key(obj, key, results=None):
     if results is None:
-        results = 
-[]
+        results = []
     if isinstance(obj, dict):
         if key in obj:
-            results.append(obj
-[key])
+            results.append(obj[key])
         for v in obj.values():
             find_all_key(v, key, results)
     elif isinstance(obj, list):
@@ -98,7 +95,7 @@ def fetch_html_playwright(url):
         print(f"  Navigating to {url} ...")
         page.goto(url, wait_until="networkidle", timeout=60000)
 
-        # Save debug screenshot
+        # Save debug screenshot for GitHub Actions artifact upload
         page.screenshot(path="debug_before_click.png", full_page=True)
         print("  Screenshot saved: debug_before_click.png")
 
@@ -123,8 +120,7 @@ def extract_stats(html, year):
         for script in soup.find_all("script"):
             text = script.string or ""
             if "overallIndividualStats" in text or "__NUXT__" in text:
-                m = re.search(r"(\
-[.*\])", text, re.DOTALL)
+                m = re.search(r"(\[.*\])", text, re.DOTALL)
                 if m:
                     payload_str = m.group(1)
                     print("  Found inline __NUXT__ payload.")
@@ -143,8 +139,7 @@ def extract_stats(html, year):
 
     # Deduplicate entries across all stat nodes
     seen = set()
-    entries = 
-[]
+    entries = []
     for stat_list in all_stat_lists:
         if not isinstance(stat_list, list):
             continue
@@ -166,20 +161,18 @@ def extract_stats(html, year):
     def is_valid(v):
         return v not in (None, -1, "-1", "", "0", 0)
 
-    hitting_list    = 
-[]
-    pitching_list   = 
-[]
-    hitting_by_num  = {}
+    hitting_list = []
+    pitching_list = []
+    hitting_by_num = {}
     pitching_by_num = {}
-    players_map     = {}
+    players_map = {}
 
     for entry in entries:
         if entry.get("isAFooterStat") == 1:
             continue
 
         raw_num = str(entry.get("playerUniform", "")).strip()
-        name    = str(entry.get("playerName", "")).strip()
+        name = str(entry.get("playerName", "")).strip()
         if not raw_num or not name or name == "-1":
             continue
 
@@ -190,102 +183,119 @@ def extract_stats(html, year):
 
         # Batting
         avg = clean(entry.get("battingAverage"), ".000")
-        ab  = clean(entry.get("atBats"),         "0")
-        r   = clean(entry.get("runs"),            "0")
-        h   = clean(entry.get("hits"),            "0")
-        d2  = clean(entry.get("doubles"),         "0")
-        d3  = clean(entry.get("triples"),         "0")
-        hr  = clean(entry.get("homeRuns"),        "0")
-        rbi = clean(entry.get("runsBattedIn"),    "0")
-        ops = clean(entry.get("ops"),             ".000")
+        ab = clean(entry.get("atBats"), "0")
+        r = clean(entry.get("runs"), "0")
+        h = clean(entry.get("hits"), "0")
+        d2 = clean(entry.get("doubles"), "0")
+        d3 = clean(entry.get("triples"), "0")
+        hr = clean(entry.get("homeRuns"), "0")
+        rbi = clean(entry.get("runsBattedIn"), "0")
+        ops = clean(entry.get("ops"), ".000")
         slg = clean(entry.get("sluggingPercentage"), ".000")
 
         has_batting = (
-            is_valid(entry.get("atBats")) or
-            is_valid(entry.get("hits"))   or
-            is_valid(entry.get("runs"))
+            is_valid(entry.get("atBats"))
+            or is_valid(entry.get("hits"))
+            or is_valid(entry.get("runs"))
         )
 
         # Pitching
-        era  = clean(entry.get("earnedRunAverage"), "-")
-        whip = clean(entry.get("whip"),             "-")
-        wins = clean(entry.get("wins"),             "0")
-        loss = clean(entry.get("losses"),           "0")
-        ip   = clean(entry.get("inningsPitched"),   "0.0")
+        era = clean(entry.get("earnedRunAverage"), "-")
+        whip = clean(entry.get("whip"), "-")
+        wins = clean(entry.get("wins"), "0")
+        loss = clean(entry.get("losses"), "0")
+        ip = clean(entry.get("inningsPitched"), "0.0")
         so_raw = (
-            entry.get("strikeoutsPitching") or
-            entry.get("strikeoutsAllowed")  or
-            entry.get("pitchingStrikeouts") or
-            entry.get("strikeouts")
+            entry.get("strikeoutsPitching")
+            or entry.get("strikeoutsAllowed")
+            or entry.get("pitchingStrikeouts")
+            or entry.get("strikeouts")
         )
-        so  = clean(so_raw, "0")
-        wl  = f"{wins}-{loss}"
+        so = clean(so_raw, "0")
+        wl = f"{wins}-{loss}"
 
         has_pitching = (
-            is_valid(entry.get("earnedRunAverage")) or
-            is_valid(entry.get("inningsPitched"))   or
-            is_valid(entry.get("wins"))             or
-            is_valid(entry.get("losses"))           or
-            is_valid(entry.get("whip"))
+            is_valid(entry.get("earnedRunAverage"))
+            or is_valid(entry.get("inningsPitched"))
+            or is_valid(entry.get("wins"))
+            or is_valid(entry.get("losses"))
+            or is_valid(entry.get("whip"))
         )
 
         if has_batting:
             bat = {
-                "number": raw_num, "player": name,
-                "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3,
-                "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg,
-                "_sort": jersey_int
+                "number": raw_num,
+                "player": name,
+                "AVG": avg,
+                "R": r,
+                "H": h,
+                "2B": d2,
+                "3B": d3,
+                "HR": hr,
+                "RBI": rbi,
+                "OPS": ops,
+                "SLG%": slg,
+                "_sort": jersey_int,
             }
             hitting_list.append(bat)
-            hitting_by_num
-[raw_num] = {k: v for k, v in bat.items() if k != "_sort"}
+            hitting_by_num[raw_num] = {k: v for k, v in bat.items() if k != "_sort"}
 
         if has_pitching:
             pit = {
-                "number": raw_num, "player": name,
-                "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
-                "_sort": jersey_int
+                "number": raw_num,
+                "player": name,
+                "ERA": era,
+                "WHIP": whip,
+                "W-L": wl,
+                "IP": ip,
+                "SO": so,
+                "_sort": jersey_int,
             }
             pitching_list.append(pit)
-            pitching_by_num
-[raw_num] = {k: v for k, v in pit.items() if k != "_sort"}
+            pitching_by_num[raw_num] = {k: v for k, v in pit.items() if k != "_sort"}
 
         if has_batting or has_pitching:
-            p = players_map.get(jersey_int, {
-                "jersey_number": jersey_int,
-                "player_name": name
-            })
+            p = players_map.get(
+                jersey_int,
+                {"jersey_number": jersey_int, "player_name": name},
+            )
             if has_batting:
-                p
-["batting_stats"] = {
-                    "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3,
-                    "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg
+                p["batting_stats"] = {
+                    "AVG": avg,
+                    "R": r,
+                    "H": h,
+                    "2B": d2,
+                    "3B": d3,
+                    "HR": hr,
+                    "RBI": rbi,
+                    "OPS": ops,
+                    "SLG%": slg,
                 }
             if has_pitching:
-                p
-["pitching_stats"] = {
-                    "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so
+                p["pitching_stats"] = {
+                    "ERA": era,
+                    "WHIP": whip,
+                    "W-L": wl,
+                    "IP": ip,
+                    "SO": so,
                 }
-            players_map
-[jersey_int] = p
+            players_map[jersey_int] = p
 
     hitting_list.sort(key=lambda x: x.pop("_sort"))
     pitching_list.sort(key=lambda x: x.pop("_sort"))
-    players_sorted = 
-[players_map
-[k] for k in sorted(players_map)]
+    players_sorted = [players_map[k] for k in sorted(players_map)]
 
     return {
-        "team":               "University of St. Thomas Tommies Baseball",
-        "sport":              "baseball",
-        "season":             year,
-        "source":             DEFAULT_URL,
-        "status":             "ok",
-        "generated_at":       datetime.now(timezone.utc).isoformat(),
-        "players":            players_sorted,
-        "hitting":            hitting_list,
-        "pitching":           pitching_list,
-        "hitting_by_number":  hitting_by_num,
+        "team": "University of St. Thomas Tommies Baseball",
+        "sport": "baseball",
+        "season": year,
+        "source": DEFAULT_URL,
+        "status": "ok",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "players": players_sorted,
+        "hitting": hitting_list,
+        "pitching": pitching_list,
+        "hitting_by_number": hitting_by_num,
         "pitching_by_number": pitching_by_num,
     }
 
@@ -293,9 +303,9 @@ def extract_stats(html, year):
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Scrape Tommie Baseball Stats")
-    parser.add_argument("--out",  default=DEFAULT_OUT,  help="Output JSON path")
+    parser.add_argument("--out", default=DEFAULT_OUT, help="Output JSON path")
     parser.add_argument("--year", default=DEFAULT_YEAR, help="Season year")
-    parser.add_argument("--url",  default=DEFAULT_URL,  help="Stats page URL")
+    parser.add_argument("--url", default=DEFAULT_URL, help="Stats page URL")
     args = parser.parse_args()
 
     url = args.url.replace("2026", args.year) if args.year != "2026" else args.url
@@ -310,10 +320,8 @@ def main():
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
 
-    h = len(result
-["hitting"])
-    p = len(result
-["pitching"])
+    h = len(result["hitting"])
+    p = len(result["pitching"])
     print(f"Done — {h} batters, {p} pitchers → {args.out}")
 
 
