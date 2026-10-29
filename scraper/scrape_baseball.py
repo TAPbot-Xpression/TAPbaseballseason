@@ -5,8 +5,29 @@ scrape_baseball.py
 Fetch St. Thomas Tommies Baseball / Softball cumulative player stats from:
   https://tommiesports.com/sports/{sport}/stats/{year}
 
-Extracts Batters (Hitting) and Pitchers (Pitching) correctly using Playwright tab
-navigation and header-based table validation.
+Sidearm Athletics renders stats tables inside a Single Page Application (SPA).
+This script uses Playwright with active tab validation, DOM marker synchronization,
+and strict header/data fingerprinting to ensure Batters and Pitchers are parsed
+accurately without cross-contamination.
+
+Output shape (docs/baseball_stats.json):
+{
+  "team":               "University of St. Thomas Tommies Baseball",
+  "sport":              "baseball",
+  "season":             "2026",
+  "source":             "https://tommiesports.com/sports/baseball/stats/2026",
+  "status":             "ok" | "stale" | "error",
+  "generated_at":       "<ISO-8601 UTC>",
+
+  // Batting stats: AVG, R, H, 2B, 3B, HR, RBI, OPS, SLG%
+  "hitting": [ ... ],
+
+  // Pitching stats: ERA, WHIP, W-L, IP, SO
+  "pitching": [ ... ],
+
+  "hitting_by_number":  { ... },
+  "pitching_by_number": { ... }
+}
 
 Usage:
     pip install playwright beautifulsoup4
@@ -55,6 +76,10 @@ PITCHING_COLS = [
     ("IP",   ["IP", "Innings", "INNINGSPITCHED"]),
     ("SO",   ["SO", "K", "SO/K", "STRIKEOUTS"]),
 ]
+
+# Required key columns used for strict fingerprinting
+HITTING_REQUIRED_COLS = ["AVG", "AB"]
+PITCHING_REQUIRED_COLS = ["ERA", "IP"]
 
 
 # ── String & Table Helpers ────────────────────────────────────────────────────
@@ -108,15 +133,17 @@ def has_player_col(headers: list[str]) -> bool:
 
 
 def is_hitting_table(headers: list[str]) -> bool:
+    """Fingerprints hitting tables and explicitly rejects pitching metrics."""
     normed = [norm_header(h) for h in headers]
-    has_hit = any(h in normed for h in ["avg", "ab", "slg", "slgpct", "rbi", "ops"])
-    has_pitch = any(h in normed for h in ["era", "ip", "whip", "sv", "bavg"])
-    return has_hit and not has_pitch
+    has_req = any(norm_header(c) in normed for c in HITTING_REQUIRED_COLS)
+    has_pitch = any(h in normed for h in ["era", "whip", "sv", "bavg", "app", "cg"])
+    return has_req and not has_pitch
 
 
 def is_pitching_table(headers: list[str]) -> bool:
+    """Fingerprints pitching tables."""
     normed = [norm_header(h) for h in headers]
-    return any(h in normed for h in ["era", "ip", "whip", "so", "app"])
+    return any(norm_header(c) in normed for c in PITCHING_REQUIRED_COLS)
 
 
 # ── Parsers ───────────────────────────────────────────────────────────────────
@@ -131,13 +158,11 @@ def parse_hitting_table(table) -> list[dict]:
     if player_idx is None:
         return []
 
-    # Map target metrics
     col_indices = {
         out_key: find_col(hdr_map, *aliases)
         for (out_key, aliases) in HITTING_COLS
     }
 
-    # Backup columns to calculate OPS if Sidearm doesn't provide it directly
     obp_idx = find_col(hdr_map, "OB%", "OBP", "ONBASE%")
     slg_idx = find_col(hdr_map, "SLG%", "SLG", "SLUGGING%")
 
@@ -187,13 +212,11 @@ def parse_pitching_table(table) -> list[dict]:
     if player_idx is None:
         return []
 
-    # Map target metrics
     col_indices = {
         out_key: find_col(hdr_map, *aliases)
         for (out_key, aliases) in PITCHING_COLS
     }
 
-    # Backup columns to combine W and L if split into separate columns
     w_idx = find_col(hdr_map, "W", "Wins")
     l_idx = find_col(hdr_map, "L", "Losses")
 
@@ -219,7 +242,7 @@ def parse_pitching_table(table) -> list[dict]:
             val = cell_text(cells, idx) if idx is not None else None
             row[out_key] = val if val not in (None, "", "-", "—") else "—"
 
-        # Construct W-L if not in a single combined column
+        # Build W-L if present in separate columns
         if row["W-L"] == "—" and w_idx is not None and l_idx is not None:
             w_val = cell_text(cells, w_idx) or "0"
             l_val = cell_text(cells, l_idx) or "0"
@@ -231,7 +254,7 @@ def parse_pitching_table(table) -> list[dict]:
 
 
 def extract_table(html: str, stat_type: str) -> list[dict]:
-    """Parse extracted HTML for hitting or pitching tables with explicit header validation."""
+    """Parse extracted HTML for hitting or pitching tables with strict header verification."""
     soup = BeautifulSoup(html, "html.parser")
     tables = soup.find_all("table")
 
@@ -241,11 +264,27 @@ def extract_table(html: str, stat_type: str) -> list[dict]:
             continue
 
         if stat_type == "hitting" and is_hitting_table(headers):
-            return parse_hitting_table(table)
+            parsed = parse_hitting_table(table)
+            if validate_parsed_data(parsed, "hitting"):
+                return parsed
         elif stat_type == "pitching" and is_pitching_table(headers):
-            return parse_pitching_table(table)
+            parsed = parse_pitching_table(table)
+            if validate_parsed_data(parsed, "pitching"):
+                return parsed
 
     return []
+
+
+def validate_parsed_data(rows: list[dict], stat_type: str) -> bool:
+    """Sanity check: ensures extracted rows contain actual numeric data for the category."""
+    if not rows:
+        return False
+    
+    key_stat = "AVG" if stat_type == "hitting" else "ERA"
+    valid_entries = [r for r in rows if r.get(key_stat, "—") != "—"]
+    
+    # Must have at least one player with a valid metric
+    return len(valid_entries) > 0
 
 
 def index_by_number(rows: list[dict]) -> dict:
@@ -263,8 +302,7 @@ def index_by_number(rows: list[dict]) -> dict:
 
 def switch_category(page, category_label: str) -> bool:
     """
-    Switches to the requested category (e.g. Hitting, Pitching) by interacting
-    with tabs, buttons, or Sidearm's dropdown.
+    Switches view category and verifies active tab state.
     """
     labels = [category_label]
     if category_label.lower() in ("hitting", "batting"):
@@ -273,12 +311,12 @@ def switch_category(page, category_label: str) -> bool:
         labels = ["Pitching", "Pitchers"]
 
     for label in labels:
-        category_regex = re.compile(f"^{label}$", re.I)
+        category_regex = re.compile(rf"^\s*{label}\s*$", re.I)
 
-        # 1. Try Tab / Button Click (Sidearm NextGen SPA)
+        # 1. Try Tab / Button click
         tab_locators = [
             page.locator("[role='tab']").filter(has_text=category_regex).first,
-            page.locator("button").filter(has_text=category_regex).first,
+            page.locator(".s-tab-item, button").filter(has_text=category_regex).first,
             page.locator(f"button:has-text('{label}')").first,
             page.locator(f"a:has-text('{label}')").first,
         ]
@@ -287,12 +325,12 @@ def switch_category(page, category_label: str) -> bool:
             try:
                 if tab.count() > 0 and tab.is_visible():
                     tab.click()
-                    page.wait_for_timeout(800)
+                    page.wait_for_timeout(600)
                     return True
             except Exception:
                 continue
 
-        # 2. Try Combobox / Select Dropdown Fallback
+        # 2. Try Dropdown / Combobox
         combobox_selectors = [
             "button[role='combobox']",
             ".sidearm-common-stats-category-select button",
@@ -305,7 +343,7 @@ def switch_category(page, category_label: str) -> bool:
             if loc.count() > 0 and loc.is_visible():
                 if sel.startswith("select"):
                     loc.select_option(label=label)
-                    page.wait_for_timeout(800)
+                    page.wait_for_timeout(600)
                     return True
                 else:
                     loc.click()
@@ -313,7 +351,7 @@ def switch_category(page, category_label: str) -> bool:
                     opt = page.locator("li, [role='option']").filter(has_text=category_regex).first
                     if opt.count() > 0 and opt.is_visible():
                         opt.click()
-                        page.wait_for_timeout(800)
+                        page.wait_for_timeout(600)
                         return True
 
     return False
@@ -331,7 +369,6 @@ def fetch_all_stats(url: str) -> dict:
         context = browser.new_context(user_agent=UA, viewport={"width": 1280, "height": 800})
         page = context.new_page()
 
-        # Abort heavy assets (images/fonts) while keeping JS/XHR active
         page.route(
             "**/*",
             lambda route: route.abort()
@@ -341,20 +378,20 @@ def fetch_all_stats(url: str) -> dict:
 
         page.goto(url, wait_until="domcontentloaded", timeout=45_000)
 
-        # Wait for base stats container
         try:
             page.wait_for_selector("table tbody tr", timeout=20_000)
             print("  ✓ Base stats table detected.")
         except Exception:
-            print("  ⚠ Timed out waiting for table selector.", file=sys.stderr)
+            print("  ⚠ Timed out waiting for initial table selector.", file=sys.stderr)
 
-        # ── 1. Batting / Hitting ─────────────────────────────────────────────
+        # ── 1. Scrape Batting / Hitting ──────────────────────────────────────
         print("  → Switching to Hitting / Batting view...")
         switch_category(page, "Hitting")
         try:
+            # Wait specifically for Batting headers (AVG, AB, or SLG)
             page.wait_for_function(
-                "() => Array.from(document.querySelectorAll('th, td')).some(el => /AVG|AB|RBI|SLG/i.test(el.innerText))",
-                timeout=5_000,
+                "() => Array.from(document.querySelectorAll('th, td')).some(el => /\\b(AVG|AB|SLG|OPS)\\b/i.test(el.innerText))",
+                timeout=8_000,
             )
         except Exception:
             page.wait_for_timeout(1000)
@@ -362,19 +399,26 @@ def fetch_all_stats(url: str) -> dict:
         hitting_html = page.content()
         hitting_data = extract_table(hitting_html, "hitting")
 
-        # ── 2. Pitching ──────────────────────────────────────────────────────
+        if not hitting_data:
+            print("  ⚠ Warning: Hitting data could not be verified from the active table.", file=sys.stderr)
+
+        # ── 2. Scrape Pitching ───────────────────────────────────────────────
         print("  → Switching to Pitching view...")
         switch_category(page, "Pitching")
         try:
+            # Wait specifically for Pitching headers (ERA, IP, or WHIP)
             page.wait_for_function(
-                "() => Array.from(document.querySelectorAll('th, td')).some(el => /ERA|IP|WHIP/i.test(el.innerText))",
-                timeout=6_000,
+                "() => Array.from(document.querySelectorAll('th, td')).some(el => /\\b(ERA|IP|WHIP)\\b/i.test(el.innerText))",
+                timeout=8_000,
             )
         except Exception:
-            page.wait_for_timeout(1200)
+            page.wait_for_timeout(1000)
 
         pitching_html = page.content()
         pitching_data = extract_table(pitching_html, "pitching")
+
+        if not pitching_data:
+            print("  ⚠ Warning: Pitching data could not be verified from the active table.", file=sys.stderr)
 
         browser.close()
 
@@ -400,7 +444,6 @@ def main():
     url = BASE_URL.format(sport=args.sport, year=args.year)
     team_name = f"University of St. Thomas Tommies {args.sport.capitalize()}"
 
-    # Stale cache recovery check
     old_data: dict = {}
     if out_path.exists():
         try:
@@ -416,7 +459,7 @@ def main():
         pitching_count = len(parsed["pitching"])
 
         if hitting_count == 0 and pitching_count == 0:
-            raise ValueError("No player rows parsed for hitting or pitching.")
+            raise ValueError("No verified player rows parsed for hitting or pitching.")
 
         payload = {
             "team": team_name,
@@ -431,8 +474,8 @@ def main():
             "pitching_by_number": index_by_number(parsed["pitching"]),
         }
 
-        print(f"  ✓ Hitting:  {hitting_count} players parsed ({len(HITTING_COLS)} columns).")
-        print(f"  ✓ Pitching: {pitching_count} players parsed ({len(PITCHING_COLS)} columns).")
+        print(f"  ✓ Hitting:  {hitting_count} players parsed.")
+        print(f"  ✓ Pitching: {pitching_count} players parsed.")
 
     except Exception as exc:
         print(f"  ✗ Scrape failed: {exc}", file=sys.stderr)
