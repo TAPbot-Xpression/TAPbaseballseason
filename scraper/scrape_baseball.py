@@ -5,59 +5,14 @@ scrape_baseball.py
 Fetch St. Thomas Tommies Baseball / Softball cumulative player stats from:
   https://tommiesports.com/sports/{sport}/stats/{year}
 
-Sidearm Athletics renders stats tables inside a Single Page Application (SPA).
-Selecting Batting or Pitching dynamically updates the DOM table without changing
-the page URL. This script drives headless Chromium with Playwright to interact
-with the category dropdown, capturing both tables separately.
-
-Output shape (docs/baseball_stats.json):
-{
-  "team":               "University of St. Thomas Tommies Baseball",
-  "sport":              "baseball",
-  "season":             "2026",
-  "source":             "https://tommiesports.com/sports/baseball/stats/2026",
-  "status":             "ok" | "stale" | "error",
-  "generated_at":       "<ISO-8601 UTC>",
-
-  // Batting stats: AVG, R, H, 2B, 3B, HR, RBI, OPS, SLG%
-  "hitting": [
-    {
-      "number": "12",
-      "player": "John Doe",
-      "AVG": ".312",
-      "R": "15",
-      "H": "28",
-      "2B": "6",
-      "3B": "1",
-      "HR": "4",
-      "RBI": "22",
-      "OPS": ".915",
-      "SLG%": ".533"
-    }
-  ],
-
-  // Pitching stats: ERA, WHIP, W-L, IP, SO
-  "pitching": [
-    {
-      "number": "18",
-      "player": "Jane Smith",
-      "ERA": "2.45",
-      "WHIP": "1.12",
-      "W-L": "4-1",
-      "IP": "38.2",
-      "SO": "42"
-    }
-  ],
-
-  "hitting_by_number":  { "12": { ... } },
-  "pitching_by_number": { "18": { ... } }
-}
+Extracts Batters (Hitting) and Pitchers (Pitching) correctly using Playwright tab
+navigation and header-based table validation.
 
 Usage:
     pip install playwright beautifulsoup4
     playwright install chromium
 
-    python scraper/scrape_baseball.py --out docs/baseball_stats.json --year 2026
+    python scrape_baseball.py --out docs/baseball_stats.json --year 2026
 """
 
 import argparse
@@ -81,23 +36,23 @@ BASE_URL = "https://tommiesports.com/sports/{sport}/stats/{year}"
 
 # Exact requested Batting metrics (and their column header aliases)
 HITTING_COLS = [
-    ("AVG",  ["AVG", "BA"]),
-    ("R",    ["R", "Runs"]),
-    ("H",    ["H", "Hits"]),
-    ("2B",   ["2B"]),
-    ("3B",   ["3B"]),
-    ("HR",   ["HR"]),
-    ("RBI",  ["RBI"]),
+    ("AVG",  ["AVG", "BA", "BATTINGAVG"]),
+    ("R",    ["R", "Runs", "RUN"]),
+    ("H",    ["H", "Hits", "HIT"]),
+    ("2B",   ["2B", "DOUBLES"]),
+    ("3B",   ["3B", "TRIPLES"]),
+    ("HR",   ["HR", "HOMERUNS"]),
+    ("RBI",  ["RBI", "RBIS"]),
     ("OPS",  ["OPS"]),
-    ("SLG%", ["SLG%", "SLG", "SLG_PCT"]),
+    ("SLG%", ["SLG%", "SLG", "SLG_PCT", "SLUGGING%"]),
 ]
 
 # Exact requested Pitching metrics (and their column header aliases)
 PITCHING_COLS = [
-    ("ERA",  ["ERA"]),
+    ("ERA",  ["ERA", "EARNEDRUNAVG"]),
     ("WHIP", ["WHIP"]),
     ("W-L",  ["W-L", "WL", "W_L", "REC", "RECORD"]),
-    ("IP",   ["IP", "Innings"]),
+    ("IP",   ["IP", "Innings", "INNINGSPITCHED"]),
     ("SO",   ["SO", "K", "SO/K", "STRIKEOUTS"]),
 ]
 
@@ -152,6 +107,18 @@ def has_player_col(headers: list[str]) -> bool:
     return any("player" in h or "name" in h for h in normed)
 
 
+def is_hitting_table(headers: list[str]) -> bool:
+    normed = [norm_header(h) for h in headers]
+    has_hit = any(h in normed for h in ["avg", "ab", "slg", "slgpct", "rbi", "ops"])
+    has_pitch = any(h in normed for h in ["era", "ip", "whip", "sv", "bavg"])
+    return has_hit and not has_pitch
+
+
+def is_pitching_table(headers: list[str]) -> bool:
+    normed = [norm_header(h) for h in headers]
+    return any(h in normed for h in ["era", "ip", "whip", "so", "app"])
+
+
 # ── Parsers ───────────────────────────────────────────────────────────────────
 
 def parse_hitting_table(table) -> list[dict]:
@@ -171,15 +138,15 @@ def parse_hitting_table(table) -> list[dict]:
     }
 
     # Backup columns to calculate OPS if Sidearm doesn't provide it directly
-    obp_idx = find_col(hdr_map, "OB%", "OBP")
-    slg_idx = find_col(hdr_map, "SLG%", "SLG")
+    obp_idx = find_col(hdr_map, "OB%", "OBP", "ONBASE%")
+    slg_idx = find_col(hdr_map, "SLG%", "SLG", "SLUGGING%")
 
     rows = []
     for tr in body_rows(table):
         cells = tr.find_all(["td", "th"])
         raw_player = cell_text(cells, player_idx)
 
-        if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", ""):
+        if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", "total", ""):
             continue
 
         player_name = raw_player.replace("*", "").strip()
@@ -235,7 +202,7 @@ def parse_pitching_table(table) -> list[dict]:
         cells = tr.find_all(["td", "th"])
         raw_player = cell_text(cells, player_idx)
 
-        if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", ""):
+        if not raw_player or raw_player.lower() in ("player", "name", "totals", "team", "opponent", "opponents", "total", ""):
             continue
 
         player_name = raw_player.replace("*", "").strip()
@@ -264,18 +231,18 @@ def parse_pitching_table(table) -> list[dict]:
 
 
 def extract_table(html: str, stat_type: str) -> list[dict]:
-    """Parse extracted HTML chunk for either hitting or pitching tables."""
+    """Parse extracted HTML for hitting or pitching tables with explicit header validation."""
     soup = BeautifulSoup(html, "html.parser")
-    tables = soup.select(".sidearm-common-stats-container table") or soup.find_all("table")
+    tables = soup.find_all("table")
 
     for table in tables:
         headers = header_cells(table)
         if not headers or not has_player_col(headers):
             continue
 
-        if stat_type == "hitting":
+        if stat_type == "hitting" and is_hitting_table(headers):
             return parse_hitting_table(table)
-        elif stat_type == "pitching":
+        elif stat_type == "pitching" and is_pitching_table(headers):
             return parse_pitching_table(table)
 
     return []
@@ -292,49 +259,62 @@ def index_by_number(rows: list[dict]) -> dict:
     return indexed
 
 
-# ── Playwright Category Switcher & Scraper ───────────────────────────────────
+# ── Playwright Tab / Category Switcher ───────────────────────────────────────
 
 def switch_category(page, category_label: str) -> bool:
     """
-    Simulates user interaction with Sidearm's combobox dropdown to switch views.
+    Switches to the requested category (e.g. Hitting, Pitching) by interacting
+    with tabs, buttons, or Sidearm's dropdown.
     """
-    category_regex = re.compile(f"^{category_label}$", re.I)
+    labels = [category_label]
+    if category_label.lower() in ("hitting", "batting"):
+        labels = ["Hitting", "Batting"]
+    elif category_label.lower() in ("pitching", "pitchers"):
+        labels = ["Pitching", "Pitchers"]
 
-    # 1. Open the combobox/dropdown
-    combobox_selectors = [
-        "button[role='combobox']",
-        ".sidearm-common-stats-category-select button",
-        "button[aria-haspopup='listbox']",
-        "select[name*='category' i]",
-    ]
+    for label in labels:
+        category_regex = re.compile(f"^{label}$", re.I)
 
-    for sel in combobox_selectors:
-        loc = page.locator(sel).first
-        if loc.count() > 0 and loc.is_visible():
-            if sel.startswith("select"):
-                loc.select_option(label=category_label)
-                page.wait_for_timeout(800)
-                return True
-            else:
-                loc.click()
-                page.wait_for_timeout(300)
-                break
+        # 1. Try Tab / Button Click (Sidearm NextGen SPA)
+        tab_locators = [
+            page.locator("[role='tab']").filter(has_text=category_regex).first,
+            page.locator("button").filter(has_text=category_regex).first,
+            page.locator(f"button:has-text('{label}')").first,
+            page.locator(f"a:has-text('{label}')").first,
+        ]
 
-    # 2. Click the specific category option
-    option_locators = [
-        page.locator("li, [role='option']").filter(has_text=category_regex).first,
-        page.get_by_role("option", name=category_regex),
-        page.locator(f"button:has-text('{category_label}')").first,
-    ]
+        for tab in tab_locators:
+            try:
+                if tab.count() > 0 and tab.is_visible():
+                    tab.click()
+                    page.wait_for_timeout(800)
+                    return True
+            except Exception:
+                continue
 
-    for opt in option_locators:
-        try:
-            if opt.count() > 0 and opt.is_visible():
-                opt.click()
-                page.wait_for_timeout(1000)
-                return True
-        except Exception:
-            continue
+        # 2. Try Combobox / Select Dropdown Fallback
+        combobox_selectors = [
+            "button[role='combobox']",
+            ".sidearm-common-stats-category-select button",
+            "button[aria-haspopup='listbox']",
+            "select[name*='category' i]",
+        ]
+
+        for sel in combobox_selectors:
+            loc = page.locator(sel).first
+            if loc.count() > 0 and loc.is_visible():
+                if sel.startswith("select"):
+                    loc.select_option(label=label)
+                    page.wait_for_timeout(800)
+                    return True
+                else:
+                    loc.click()
+                    page.wait_for_timeout(300)
+                    opt = page.locator("li, [role='option']").filter(has_text=category_regex).first
+                    if opt.count() > 0 and opt.is_visible():
+                        opt.click()
+                        page.wait_for_timeout(800)
+                        return True
 
     return False
 
@@ -363,17 +343,17 @@ def fetch_all_stats(url: str) -> dict:
 
         # Wait for base stats container
         try:
-            page.wait_for_selector(".sidearm-common-stats-container table, table tbody tr", timeout=20_000)
+            page.wait_for_selector("table tbody tr", timeout=20_000)
             print("  ✓ Base stats table detected.")
         except Exception:
             print("  ⚠ Timed out waiting for table selector.", file=sys.stderr)
 
-        # ── 1. Batting ──────────────────────────────────────────────────────────
-        print("  → Switching to Batting view...")
-        switch_category(page, "Batting")
+        # ── 1. Batting / Hitting ─────────────────────────────────────────────
+        print("  → Switching to Hitting / Batting view...")
+        switch_category(page, "Hitting")
         try:
             page.wait_for_function(
-                "() => Array.from(document.querySelectorAll('th, td')).some(el => /AVG|AB|RBI/i.test(el.innerText))",
+                "() => Array.from(document.querySelectorAll('th, td')).some(el => /AVG|AB|RBI|SLG/i.test(el.innerText))",
                 timeout=5_000,
             )
         except Exception:
@@ -382,7 +362,7 @@ def fetch_all_stats(url: str) -> dict:
         hitting_html = page.content()
         hitting_data = extract_table(hitting_html, "hitting")
 
-        # ── 2. Pitching ─────────────────────────────────────────────────────────
+        # ── 2. Pitching ──────────────────────────────────────────────────────
         print("  → Switching to Pitching view...")
         switch_category(page, "Pitching")
         try:
