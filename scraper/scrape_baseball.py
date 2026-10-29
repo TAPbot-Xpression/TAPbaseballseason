@@ -34,24 +34,18 @@ def resolve_nuxt_payload(raw_json_str):
             if val < 0 or val >= len(pool):
                 return val
             if val in memo:
-                return memo
-[val]
-            memo
-[val] = None
-            result = resolve(pool
-[val])
-            memo
-[val] = result
+                return memo[val]
+            memo[val] = None
+            result = resolve(pool[val])
+            memo[val] = result
             return result
         if isinstance(val, list):
-            return 
-[resolve(x) for x in val]
+            return [resolve(x) for x in val]
         if isinstance(val, dict):
             return {k: resolve(v) for k, v in val.items()}
         return val
 
-    return resolve(pool
-[0] if pool else {})
+    return resolve(pool[0] if pool else {})
 
 
 # ── Recursive key finders ──────────────────────────────────────────────────────
