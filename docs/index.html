@@ -3,46 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tommie Baseball Stats · TAPbot</title>
+  <title>Summit League Baseball Season Stats · TAPbot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
 
   <style>
+    /* ── Team Color Themes (Dynamically applied via data-theme) ─────────────── */
     :root {
-      --bg:           #080c14;
-      --surface:      #0f1623;
-      --surface-2:    #161f30;
-      --surface-3:    #1d2840;
-      --border:       #1e2d47;
-      --border-light: #2a3d5c;
+      --bg:             #080c14;
+      --surface:        #0f1623;
+      --surface-2:      #161f30;
+      --surface-3:      #1d2840;
+      --border:         #1e2d47;
+      --border-light:   #2a3d5c;
 
-      --ust-purple:   #4f2d7f;
-      --ust-violet:   #7c3aed;
-      --ust-glow:     rgba(124, 58, 237, 0.22);
+      /* Dynamic Theme Variables (Defaults to St. Thomas) */
+      --team-primary:   #5b2d86;
+      --team-accent:    #7c3aed;
+      --team-glow:      rgba(124, 58, 237, 0.25);
+      --team-light:     #c4b5fd;
+      --team-gradient:  linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 50%, #5b2d86 100%);
 
       /* Medal Tones */
-      --gold:         #fbbf24;
-      --gold-bg:      rgba(251, 191, 36, 0.12);
-      --gold-border:  rgba(251, 191, 36, 0.35);
+      --gold:           #fbbf24;
+      --gold-bg:        rgba(251, 191, 36, 0.12);
+      --silver:         #e2e8f0;
+      --silver-bg:      rgba(226, 232, 240, 0.12);
+      --bronze:         #f97316;
+      --bronze-bg:      rgba(249, 115, 22, 0.12);
 
-      --silver:       #e2e8f0;
-      --silver-bg:    rgba(226, 232, 240, 0.12);
-      --silver-border:rgba(226, 232, 240, 0.35);
+      --text:           #e8edf5;
+      --text-muted:     #7a8fa8;
+      --text-faint:     #3d5068;
 
-      --bronze:       #f97316;
-      --bronze-bg:    rgba(249, 115, 22, 0.12);
-      --bronze-border:rgba(249, 115, 22, 0.35);
+      --green:          #10b981;
+      --red:            #ef4444;
 
-      --text:         #e8edf5;
-      --text-muted:   #7a8fa8;
-      --text-faint:   #3d5068;
+      --radius:         12px;
+      --radius-sm:      6px;
+    }
 
-      --green:        #10b981;
-      --red:          #ef4444;
+    [data-theme="stthomas"] {
+      --team-primary:   #5b2d86;
+      --team-accent:    #8b5cf6;
+      --team-glow:      rgba(139, 92, 246, 0.25);
+      --team-light:     #ddd6fe;
+      --team-gradient:  linear-gradient(135deg, #ede9fe 0%, #a78bfa 50%, #5b2d86 100%);
+    }
 
-      --radius:       12px;
-      --radius-sm:    6px;
+    [data-theme="sdstate"] {
+      --team-primary:   #0033a0;
+      --team-accent:    #ffd100;
+      --team-glow:      rgba(255, 209, 0, 0.25);
+      --team-light:     #fef08a;
+      --team-gradient:  linear-gradient(135deg, #fef08a 0%, #ffd100 45%, #0033a0 100%);
+    }
+
+    [data-theme="uncbears"] {
+      --team-primary:   #002b49;
+      --team-accent:    #e5a823;
+      --team-glow:      rgba(229, 168, 35, 0.28);
+      --team-light:     #fde68a;
+      --team-gradient:  linear-gradient(135deg, #fef3c7 0%, #e5a823 45%, #002b49 100%);
+    }
+
+    [data-theme="oru"] {
+      --team-primary:   #002d62;
+      --team-accent:    #c5b358;
+      --team-glow:      rgba(197, 179, 88, 0.28);
+      --team-light:     #fef3c7;
+      --team-gradient:  linear-gradient(135deg, #fffbeb 0%, #c5b358 50%, #002d62 100%);
+    }
+
+    [data-theme="omaha"] {
+      --team-primary:   #d12631;
+      --team-accent:    #f87171;
+      --team-glow:      rgba(209, 38, 49, 0.28);
+      --team-light:     #fecaca;
+      --team-gradient:  linear-gradient(135deg, #fee2e2 0%, #f87171 45%, #991b1b 100%);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,6 +92,7 @@
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       padding: 2rem 1.25rem 4rem;
+      transition: background-color 0.3s;
     }
 
     .container { max-width: 1200px; margin: 0 auto; }
@@ -66,7 +106,7 @@
       gap: 1rem;
       padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
     }
 
     .wordmark {
@@ -80,8 +120,9 @@
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--ust-violet);
+      color: var(--team-accent);
       font-family: 'JetBrains Mono', monospace;
+      transition: color 0.2s;
     }
 
     h1 {
@@ -89,9 +130,10 @@
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.1;
-      background: linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 50%, #6d28d9 100%);
+      background: var(--team-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      transition: all 0.3s ease;
     }
 
     .meta {
@@ -102,25 +144,70 @@
     }
 
     .meta a {
-      color: var(--ust-violet);
+      color: var(--team-accent);
       text-decoration: none;
     }
-
     .meta a:hover { text-decoration: underline; }
+
+    /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
+    .selector-block {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-caption {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .team-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .team-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.55rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .team-pill:hover {
+      border-color: var(--border-light);
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .team-pill.active {
+      background: var(--surface-2);
+      border-color: var(--team-accent);
+      color: #fff;
+      box-shadow: 0 0 15px var(--team-glow);
+    }
+
+    .team-pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
     /* ── Search Spotlight ────────────────────────────────────────────────────── */
     .search-section {
-      margin-bottom: 2rem;
-    }
-
-    .search-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      display: block;
+      margin-bottom: 1.75rem;
     }
 
     .search-row {
@@ -152,18 +239,18 @@
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 700;
       width: 120px;
-      padding: 0.5rem 0.75rem 0.5rem 2.2rem;
+      padding: 0.45rem 0.75rem 0.45rem 2.2rem;
       text-align: center;
       transition: all 0.2s;
       outline: none;
     }
 
     #playerSearch:focus {
-      border-color: var(--ust-violet);
-      box-shadow: 0 0 0 3px var(--ust-glow);
+      border-color: var(--team-accent);
+      box-shadow: 0 0 0 3px var(--team-glow);
     }
 
     .search-hint {
@@ -186,12 +273,12 @@
     #spotlightCard {
       display: none;
       background: var(--surface);
-      border: 1.5px solid var(--ust-violet);
+      border: 1.5px solid var(--team-accent);
       border-radius: var(--radius);
-      box-shadow: 0 0 35px var(--ust-glow), 0 8px 32px rgba(0,0,0,0.5);
+      box-shadow: 0 0 35px var(--team-glow), 0 8px 32px rgba(0,0,0,0.5);
       overflow: hidden;
-      margin-bottom: 2.5rem;
-      animation: fadeIn 0.25s ease;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.2s ease;
     }
 
     @keyframes fadeIn {
@@ -200,8 +287,8 @@
     }
 
     .spotlight-header {
-      background: linear-gradient(135deg, var(--ust-purple) 0%, #1e1138 100%);
-      padding: 1.25rem 1.5rem;
+      background: linear-gradient(135deg, var(--team-primary) 0%, var(--surface-2) 100%);
+      padding: 1.15rem 1.5rem;
       display: flex;
       align-items: center;
       gap: 1.25rem;
@@ -209,31 +296,31 @@
     }
 
     .jersey-badge {
-      background: var(--ust-violet);
-      color: #fff;
+      background: var(--team-accent);
+      color: #000;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
       font-weight: 800;
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+      box-shadow: 0 0 20px var(--team-glow);
     }
 
     .spotlight-name {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     .spotlight-sub {
       font-size: 0.82rem;
-      color: #c4b5fd;
-      margin-top: 0.2rem;
+      color: var(--team-light);
+      margin-top: 0.15rem;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -243,23 +330,23 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-muted);
-      padding: 0.85rem 1.5rem 0.5rem;
+      padding: 0.75rem 1.25rem 0.4rem;
       border-bottom: 1px solid var(--border);
     }
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
       gap: 1px;
       background: var(--border);
     }
 
     .stat-cell {
       background: var(--surface);
-      padding: 0.9rem 1rem;
+      padding: 0.8rem 0.95rem;
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.2rem;
       position: relative;
       transition: background 0.15s;
     }
@@ -279,7 +366,7 @@
 
     .stat-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--text);
     }
@@ -289,19 +376,19 @@
       background: var(--gold-bg);
       border-bottom: 2px solid var(--gold);
     }
-    .stat-cell.rank-1 .stat-val { color: var(--gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.35); }
+    .stat-cell.rank-1 .stat-val { color: var(--gold); }
 
     .stat-cell.rank-2 {
       background: var(--silver-bg);
       border-bottom: 2px solid var(--silver);
     }
-    .stat-cell.rank-2 .stat-val { color: var(--silver); text-shadow: 0 0 10px rgba(226, 232, 240, 0.3); }
+    .stat-cell.rank-2 .stat-val { color: var(--silver); }
 
     .stat-cell.rank-3 {
       background: var(--bronze-bg);
       border-bottom: 2px solid var(--bronze);
     }
-    .stat-cell.rank-3 .stat-val { color: var(--bronze); text-shadow: 0 0 10px rgba(249, 115, 22, 0.3); }
+    .stat-cell.rank-3 .stat-val { color: var(--bronze); }
 
     .rank-tag {
       font-size: 0.65rem;
@@ -313,11 +400,11 @@
     .rank-2 .rank-tag { background: var(--silver); color: #000; }
     .rank-3 .rank-tag { background: var(--bronze); color: #000; }
 
-    /* ── Tabs ────────────────────────────────────────────────────────────────── */
+    /* ── Tabs (Batting / Pitching) ───────────────────────────────────────────── */
     .tabs {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
       flex-wrap: wrap;
     }
 
@@ -333,15 +420,16 @@
       transition: all 0.15s;
     }
 
-    .tab-btn:hover { border-color: var(--ust-violet); color: var(--text); }
+    .tab-btn:hover { border-color: var(--team-accent); color: var(--text); }
 
     .tab-btn.active {
-      background: var(--ust-violet);
-      border-color: var(--ust-violet);
-      color: #fff;
+      background: var(--team-accent);
+      border-color: var(--team-accent);
+      color: #000;
+      font-weight: 700;
     }
 
-    /* ── Full Table ──────────────────────────────────────────────────────────── */
+    /* ── Full Table Card ─────────────────────────────────────────────────────── */
     .table-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -390,10 +478,10 @@
 
     thead th:hover:not(:first-child):not(:nth-child(2)) {
       color: var(--text);
-      background: rgba(124, 58, 237, 0.15);
+      background: var(--team-glow);
     }
 
-    thead th.sorted { color: #c4b5fd; }
+    thead th.sorted { color: var(--team-accent); }
 
     tbody td {
       padding: 0.6rem 0.85rem;
@@ -423,10 +511,10 @@
     tbody tr:hover td { background: rgba(255,255,255,0.025); }
 
     tbody tr.row-highlight td {
-      background: var(--ust-glow) !important;
+      background: var(--team-glow) !important;
     }
 
-    tbody tr.row-highlight td:first-child { color: #c4b5fd; }
+    tbody tr.row-highlight td:first-child { color: var(--team-accent); }
 
     .status-bar {
       display: flex;
@@ -442,7 +530,6 @@
       border-radius: 50%;
       background: var(--green);
     }
-
     .status-dot.error { background: var(--red); }
 
     .empty {
@@ -452,27 +539,49 @@
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.6rem; }
+      h1 { font-size: 1.5rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
-<body>
+<body data-theme="stthomas">
 
 <div class="container">
 
   <!-- Header -->
   <header>
     <div class="wordmark">
-      <span class="wordmark-eyebrow">TAPbot · 2026 Season</span>
-      <h1>Tommie Baseball Stats</h1>
+      <span class="wordmark-eyebrow" id="eyebrowText">Summit League · 2026 Season</span>
+      <h1 id="pageTitle">Summit League Baseball Season Stats</h1>
     </div>
     <div class="meta" id="metaBar">Loading data…</div>
   </header>
 
+  <!-- Team Selector -->
+  <section class="selector-block">
+    <span class="section-caption">Select Team</span>
+    <div class="team-pills" id="teamPills">
+      <button class="team-pill active" data-team="stthomas" onclick="selectTeam('stthomas', this)">
+        <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
+      </button>
+      <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
+        <span class="team-pill-dot" style="color:#ffd100"></span> South Dakota State
+      </button>
+      <button class="team-pill" data-team="uncbears" onclick="selectTeam('uncbears', this)">
+        <span class="team-pill-dot" style="color:#e5a823"></span> Northern Colorado
+      </button>
+      <button class="team-pill" data-team="oru" onclick="selectTeam('oru', this)">
+        <span class="team-pill-dot" style="color:#c5b358"></span> Oral Roberts
+      </button>
+      <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
+        <span class="team-pill-dot" style="color:#f87171"></span> Omaha
+      </button>
+    </div>
+  </section>
+
   <!-- Player Search -->
   <section class="search-section">
-    <label class="search-label" for="playerSearch">Search by Jersey Number</label>
+    <span class="section-caption">Search Team Roster</span>
     <div class="search-row">
       <div class="search-input-wrap">
         <span class="search-icon">#</span>
@@ -486,22 +595,22 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Enter a jersey number to view player stat cards and Top 3 highlights (🥇 🥈 🥉).</span>
+      <span class="search-hint">Enter a jersey number to view spotlight stat card & team rank badges (1st, 2nd, 3rd).</span>
     </div>
   </section>
 
   <!-- Not Found Banner -->
   <div class="not-found" id="notFound">
-    No player found with that jersey number.
+    No player found with that jersey number on this roster.
   </div>
 
-  <!-- Spotlight Card (Search result) -->
+  <!-- Spotlight Card -->
   <div id="spotlightCard">
     <div class="spotlight-header">
       <div class="jersey-badge" id="spotJersey">—</div>
       <div>
         <div class="spotlight-name" id="spotName">—</div>
-        <div class="spotlight-sub" id="spotSub">University of St. Thomas Baseball</div>
+        <div class="spotlight-sub" id="spotSub">Team Baseball</div>
       </div>
     </div>
 
@@ -518,7 +627,7 @@
     </div>
   </div>
 
-  <!-- Full Roster Tabs -->
+  <!-- Batting / Pitching Tabs -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('batting', this)">Batting</button>
     <button class="tab-btn" onclick="switchTab('pitching', this)">Pitching</button>
@@ -546,13 +655,45 @@
 </div>
 
 <script>
-  let RAW_DATA = null;
-  let BATTING_PLAYERS = [];
-  let PITCHING_PLAYERS = [];
-  let activeTab = 'batting';
-  let sortCol   = null;
-  let sortDir   = 1;
-  let searchNum = '';
+  // ── Team Registry & Config ──────────────────────────────────────────────────
+  const TEAMS = {
+    stthomas: {
+      id: 'stthomas',
+      name: 'University of St. Thomas Tommies',
+      shortName: 'St. Thomas',
+      file: 'baseball_stats.json',
+      altFile: 'stthomas.json',
+      badgeColor: '#000'
+    },
+    sdstate: {
+      id: 'sdstate',
+      name: 'South Dakota State Jackrabbits',
+      shortName: 'South Dakota State',
+      file: 'sdstate.json',
+      badgeColor: '#000'
+    },
+    uncbears: {
+      id: 'uncbears',
+      name: 'Northern Colorado Bears',
+      shortName: 'Northern Colorado',
+      file: 'uncbears.json',
+      badgeColor: '#000'
+    },
+    oru: {
+      id: 'oru',
+      name: 'Oral Roberts Golden Eagles',
+      shortName: 'Oral Roberts',
+      file: 'oru.json',
+      badgeColor: '#000'
+    },
+    omaha: {
+      id: 'omaha',
+      name: 'Omaha Mavericks',
+      shortName: 'Omaha',
+      file: 'omaha.json',
+      badgeColor: '#fff'
+    }
+  };
 
   const BATTING_KEYS = [
     { key: 'AVG',  label: 'AVG' },
@@ -574,6 +715,91 @@
     { key: 'SO',   label: 'SO' }
   ];
 
+  let CURRENT_TEAM = 'stthomas';
+  let RAW_DATA = null;
+  let BATTING_PLAYERS = [];
+  let PITCHING_PLAYERS = [];
+  let activeTab = 'batting';
+  let sortCol   = null;
+  let sortDir   = 1;
+  let searchNum = '';
+
+  // ── Team Switching ──────────────────────────────────────────────────────────
+  function selectTeam(teamId, btn) {
+    if (!TEAMS[teamId]) return;
+    CURRENT_TEAM = teamId;
+
+    // Apply CSS Theme & Active Pill
+    document.body.setAttribute('data-theme', teamId);
+    document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Reset Search & Load Team Data
+    document.getElementById('playerSearch').value = '';
+    searchNum = '';
+    document.getElementById('spotlightCard').style.display = 'none';
+    document.getElementById('notFound').style.display = 'none';
+
+    loadTeamData(teamId);
+  }
+
+  // ── Load Stats JSON ─────────────────────────────────────────────────────────
+  async function loadTeamData(teamId) {
+    const team = TEAMS[teamId];
+    document.getElementById('statusDot').className = 'status-dot';
+    document.getElementById('statusText').textContent = 'Loading…';
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="15" class="empty">Loading ${team.shortName} stats…</td></tr>`;
+
+    try {
+      let res = await fetch(`${team.file}?t=${Date.now()}`);
+      if (!res.ok && team.altFile) {
+        res = await fetch(`${team.altFile}?t=${Date.now()}`);
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      RAW_DATA = await res.json();
+
+      // Normalize Schema
+      if (RAW_DATA.hitting || RAW_DATA.pitching) {
+        BATTING_PLAYERS = RAW_DATA.hitting || [];
+        PITCHING_PLAYERS = RAW_DATA.pitching || [];
+      } else if (Array.isArray(RAW_DATA)) {
+        BATTING_PLAYERS = RAW_DATA
+          .filter(p => p.batting_stats)
+          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.batting_stats }));
+        PITCHING_PLAYERS = RAW_DATA
+          .filter(p => p.pitching_stats)
+          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.pitching_stats }));
+      } else {
+        BATTING_PLAYERS = [];
+        PITCHING_PLAYERS = [];
+      }
+
+      calculateRanks();
+
+      const teamName = RAW_DATA.team || team.name;
+      document.getElementById('spotSub').textContent = teamName;
+      document.getElementById('statusDot').className = 'status-dot';
+      document.getElementById('statusText').textContent = `${BATTING_PLAYERS.length + PITCHING_PLAYERS.length} Players`;
+
+      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
+      document.getElementById('metaBar').innerHTML =
+        `${team.shortName} · Updated: ${updatedTime} · <a href="${team.file}" target="_blank">${team.file} ↗</a>`;
+
+      renderTable();
+    } catch (err) {
+      document.getElementById('statusDot').className = 'status-dot error';
+      document.getElementById('statusText').textContent = 'Error';
+      document.getElementById('tableBody').innerHTML =
+        `<tr><td colspan="15" class="empty" style="color:#f87171">
+          Failed to load stats for ${team.name} (${team.file}).<br>
+          <small style="color:var(--text-muted)">Ensure multi-school scraper has run and generated this file.</small>
+        </td></tr>`;
+      document.getElementById('metaBar').textContent = `Error loading ${team.file}`;
+    }
+  }
+
+  // ── Stat Parser & Ranking System ───────────────────────────────────────────
   function parseStat(val, key) {
     if (val === undefined || val === null || val === '-' || val === '') return -999999;
     if (key === 'W-L') {
@@ -588,32 +814,22 @@
   function calculateRanks() {
     RANKS = { batting: {}, pitching: {} };
 
-    // Batting
+    // Batting Rank Map
     BATTING_KEYS.forEach(k => {
       const vals = BATTING_PLAYERS
         .map(p => parseStat(p[k.key], k.key))
         .filter(v => v !== -999999);
-      
       const distinct = [...new Set(vals)].sort((a, b) => b - a);
-      RANKS.batting[k.key] = {
-        1: distinct[0],
-        2: distinct[1],
-        3: distinct[2]
-      };
+      RANKS.batting[k.key] = { 1: distinct[0], 2: distinct[1], 3: distinct[2] };
     });
 
-    // Pitching
+    // Pitching Rank Map
     PITCHING_KEYS.forEach(k => {
       const vals = PITCHING_PLAYERS
         .map(p => parseStat(p[k.key], k.key))
         .filter(v => v !== -999999 && v > 0);
-
       const distinct = [...new Set(vals)].sort((a, b) => k.lowerIsBetter ? a - b : b - a);
-      RANKS.pitching[k.key] = {
-        1: distinct[0],
-        2: distinct[1],
-        3: distinct[2]
-      };
+      RANKS.pitching[k.key] = { 1: distinct[0], 2: distinct[1], 3: distinct[2] };
     });
   }
 
@@ -628,46 +844,7 @@
     return null;
   }
 
-  // ── Fetch & Parse baseball_stats.json ───────────────────────────────────────
-  async function loadData() {
-    try {
-      const res = await fetch('baseball_stats.json?t=' + Date.now());
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      RAW_DATA = await res.json();
-      
-      // Adapt to both flat arrays or categorized schema in baseball_stats.json
-      if (RAW_DATA.hitting || RAW_DATA.pitching) {
-        BATTING_PLAYERS = RAW_DATA.hitting || [];
-        PITCHING_PLAYERS = RAW_DATA.pitching || [];
-      } else if (Array.isArray(RAW_DATA)) {
-        BATTING_PLAYERS = RAW_DATA
-          .filter(p => p.batting_stats)
-          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.batting_stats }));
-        PITCHING_PLAYERS = RAW_DATA
-          .filter(p => p.pitching_stats)
-          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.pitching_stats }));
-      }
-
-      calculateRanks();
-
-      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
-      document.getElementById('metaBar').innerHTML =
-        `Updated: ${updatedTime} · <a href="baseball_stats.json" target="_blank">baseball_stats.json ↗</a>`;
-      
-      renderTable();
-    } catch (err) {
-      document.getElementById('statusDot').className = 'status-dot error';
-      document.getElementById('statusText').textContent = 'Error';
-      document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="15" class="empty" style="color:#f87171">
-          Failed to load baseball_stats.json — make sure the scraper has run.<br>
-          <small style="color:var(--text-muted)">${err.message}</small>
-        </td></tr>`;
-      document.getElementById('metaBar').textContent = 'Error loading baseball_stats.json';
-    }
-  }
-
-  // ── Tab Switch ─────────────────────────────────────────────────────────────
+  // ── Tab Switch (Batting / Pitching) ─────────────────────────────────────────
   function switchTab(tab, btn) {
     activeTab = tab;
     sortCol = null;
@@ -700,7 +877,7 @@
     </tr>`;
 
     if (!rows.length) {
-      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data found.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data found for this team.</td></tr>`;
       return;
     }
 
@@ -735,7 +912,7 @@
     if (searchNum) highlightRow(searchNum);
   }
 
-  // ── Spotlight Search & Top 3 Highlighting ──────────────────────────────────
+  // ── Spotlight Search ───────────────────────────────────────────────────────
   document.getElementById('playerSearch').addEventListener('input', function () {
     searchNum = this.value.trim();
     const notFound = document.getElementById('notFound');
@@ -748,7 +925,6 @@
       return;
     }
 
-    // Look up across both hitting and pitching tables
     const hittingPlayer = BATTING_PLAYERS.find(p => String(p.number) === searchNum);
     const pitchingPlayer = PITCHING_PLAYERS.find(p => String(p.number) === searchNum);
 
@@ -819,7 +995,8 @@
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  loadData();
+  // Initial load
+  loadTeamData('stthomas');
 </script>
 
 </body>
