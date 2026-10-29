@@ -1,41 +1,28 @@
 #!/usr/bin/env python3
 """
-scrape.py — Tommie Baseball Stats Scraper
-Fetches live stats from https://tommiesports.com/sports/baseball/stats/2026
-and extracts Batting and Pitching statistics from the embedded Nuxt data payload.
+scraper/scrape_baseball.py
+Fetches Tommie Baseball stats using Playwright (headless Chromium),
+resolves the Nuxt 3 devalue JSON payload, and writes to --out path.
+
+Usage:
+  python scraper/scrape_baseball.py --out docs/baseball_stats.json --year 2026
 """
 
+import argparse
 import json
+import os
 import re
-import sys
-import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
-URL = "https://tommiesports.com/sports/baseball/stats/2026"
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-}
+DEFAULT_URL  = "https://tommiesports.com/sports/baseball/stats/2026"
+DEFAULT_OUT  = "docs/baseball_stats.json"
+DEFAULT_YEAR = "2026"
 
 
-def fetch_html(url):
-    """Fetches HTML page content with custom headers."""
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=20) as response:
-        return response.read().decode("utf-8")
-
-
-def parse_devalue_payload(raw_json_str):
-    """
-    Nuxt 3 devalue format: Root array where elements reference other array indices.
-    This resolves the index pointers back into standard Python dicts/lists/values.
-    """
+# ── Nuxt 3 devalue resolver ────────────────────────────────────────────────────
+def resolve_nuxt_payload(raw_json_str):
     pool = json.loads(raw_json_str)
     if not isinstance(pool, list):
         return pool
@@ -47,219 +34,293 @@ def parse_devalue_payload(raw_json_str):
             if val < 0 or val >= len(pool):
                 return val
             if val in memo:
-                return memo[val]
-            target = pool[val]
-            memo[val] = None  # Guard against circular references
-            resolved_target = resolve(target)
-            memo[val] = resolved_target
-            return resolved_target
-
-        elif isinstance(val, list):
-            return [resolve(x) for x in val]
-
-        elif isinstance(val, dict):
+                return memo
+[val]
+            memo
+[val] = None
+            result = resolve(pool
+[val])
+            memo
+[val] = result
+            return result
+        if isinstance(val, list):
+            return 
+[resolve(x) for x in val]
+        if isinstance(val, dict):
             return {k: resolve(v) for k, v in val.items()}
-
         return val
 
-    # Resolved root state
-    return resolve(pool[0] if len(pool) > 0 else {})
+    return resolve(pool
+[0] if pool else {})
 
 
-def find_key_recursive(obj, target_key):
-    """Recursively traverses dictionaries/lists to find a target key."""
+# ── Recursive key finders ──────────────────────────────────────────────────────
+def find_key(obj, key):
     if isinstance(obj, dict):
-        if target_key in obj:
-            return obj[target_key]
+        if key in obj:
+            return obj
+[key]
         for v in obj.values():
-            res = find_key_recursive(v, target_key)
-            if res is not None:
-                return res
+            r = find_key(v, key)
+            if r is not None:
+                return r
     elif isinstance(obj, list):
         for item in obj:
-            res = find_key_recursive(item, target_key)
-            if res is not None:
-                return res
+            r = find_key(item, key)
+            if r is not None:
+                return r
     return None
 
 
-def extract_stats(html_content):
-    soup = BeautifulSoup(html_content, "html.parser")
+def find_all_key(obj, key, results=None):
+    if results is None:
+        results = 
+[]
+    if isinstance(obj, dict):
+        if key in obj:
+            results.append(obj
+[key])
+        for v in obj.values():
+            find_all_key(v, key, results)
+    elif isinstance(obj, list):
+        for item in obj:
+            find_all_key(item, key, results)
+    return results
+
+
+# ── Fetch HTML via Playwright ──────────────────────────────────────────────────
+def fetch_html_playwright(url):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            )
+        )
+        page = context.new_page()
+
+        print(f"  Navigating to {url} ...")
+        page.goto(url, wait_until="networkidle", timeout=60000)
+
+        # Save debug screenshot
+        page.screenshot(path="debug_before_click.png", full_page=True)
+        print("  Screenshot saved: debug_before_click.png")
+
+        html = page.content()
+        browser.close()
+        return html
+
+
+# ── Extract stats from HTML ────────────────────────────────────────────────────
+def extract_stats(html, year):
+    soup = BeautifulSoup(html, "html.parser")
     payload_str = None
 
-    # 1. Look for Nuxt 3 data island tag (<script id="__NUXT_DATA__">)
-    nuxt_data_tag = soup.find("script", id="__NUXT_DATA__")
-    if nuxt_data_tag and nuxt_data_tag.string:
-        payload_str = nuxt_data_tag.string.strip()
+    # 1. Nuxt 3 data island <script id="__NUXT_DATA__">
+    tag = soup.find("script", id="__NUXT_DATA__")
+    if tag and tag.string:
+        payload_str = tag.string.strip()
+        print("  Found __NUXT_DATA__ script tag.")
 
-    # 2. Fallback to inline script containing __NUXT__ or stats definitions
+    # 2. Inline window.__NUXT__ fallback
     if not payload_str:
         for script in soup.find_all("script"):
             text = script.string or ""
             if "overallIndividualStats" in text or "__NUXT__" in text:
-                match = re.search(r"(\[.*\])", text, re.DOTALL)
-                if match:
-                    payload_str = match.group(1)
+                m = re.search(r"(\
+[.*\])", text, re.DOTALL)
+                if m:
+                    payload_str = m.group(1)
+                    print("  Found inline __NUXT__ payload.")
                     break
 
     if not payload_str:
-        raise ValueError("Could not find embedded Nuxt JSON state in the page source.")
+        raise ValueError(
+            "Could not locate Nuxt JSON payload in page source. "
+            "Check debug_before_click.png for what the page rendered."
+        )
 
-    # Resolve Nuxt payload structure
-    resolved_data = parse_devalue_payload(payload_str)
-    individual_stats = find_key_recursive(resolved_data, "overallIndividualStats")
+    data = resolve_nuxt_payload(payload_str)
 
-    if not individual_stats or not isinstance(individual_stats, list):
-        raise ValueError("Could not locate 'overallIndividualStats' within Nuxt payload.")
+    all_stat_lists = find_all_key(data, "overallIndividualStats")
+    print(f"  Found {len(all_stat_lists)} overallIndividualStats node(s).")
 
-    def clean_val(v, default="0"):
-        if v is None or v == -1 or v == "-1" or str(v).strip() == "":
+    # Deduplicate entries across all stat nodes
+    seen = set()
+    entries = 
+[]
+    for stat_list in all_stat_lists:
+        if not isinstance(stat_list, list):
+            continue
+        for entry in stat_list:
+            if not isinstance(entry, dict):
+                continue
+            uid = (str(entry.get("playerName", "")), str(entry.get("playerUniform", "")))
+            if uid not in seen:
+                seen.add(uid)
+                entries.append(entry)
+
+    print(f"  Total unique player entries: {len(entries)}")
+
+    def clean(v, default="0"):
+        if v is None or v == -1 or str(v).strip() in ("-1", ""):
             return default
         return str(v).strip()
 
-    players_by_jersey = {}
-    hitting_list = []
-    pitching_list = []
-    hitting_by_num = {}
-    pitching_by_num = {}
+    def is_valid(v):
+        return v not in (None, -1, "-1", "", "0", 0)
 
-    for entry in individual_stats:
-        if not isinstance(entry, dict) or entry.get("isAFooterStat") == 1:
+    hitting_list    = 
+[]
+    pitching_list   = 
+[]
+    hitting_by_num  = {}
+    pitching_by_num = {}
+    players_map     = {}
+
+    for entry in entries:
+        if entry.get("isAFooterStat") == 1:
             continue
 
-        raw_jersey = str(entry.get("playerUniform", "")).strip()
-        player_name = str(entry.get("playerName", "")).strip()
-
-        if not raw_jersey or not player_name or player_name == "-1":
+        raw_num = str(entry.get("playerUniform", "")).strip()
+        name    = str(entry.get("playerName", "")).strip()
+        if not raw_num or not name or name == "-1":
             continue
 
         try:
-            jersey_int = int(raw_jersey)
-            jersey_str = str(jersey_int)
+            jersey_int = int(raw_num)
         except ValueError:
             jersey_int = 999
-            jersey_str = raw_jersey
 
-        # --- Batting Stats (AVG, R, H, 2B, 3B, HR, RBI, OPS, SLG%) ---
-        avg = clean_val(entry.get("battingAverage"), ".000")
-        ab  = clean_val(entry.get("atBats"), "0")
-        r   = clean_val(entry.get("runs"), "0")
-        h   = clean_val(entry.get("hits"), "0")
-        d2b = clean_val(entry.get("doubles"), "0")
-        d3b = clean_val(entry.get("triples"), "0")
-        hr  = clean_val(entry.get("homeRuns"), "0")
-        rbi = clean_val(entry.get("runsBattedIn"), "0")
-        ops = clean_val(entry.get("ops"), ".000")
-        slg = clean_val(entry.get("sluggingPercentage"), ".000")
+        # Batting
+        avg = clean(entry.get("battingAverage"), ".000")
+        ab  = clean(entry.get("atBats"),         "0")
+        r   = clean(entry.get("runs"),            "0")
+        h   = clean(entry.get("hits"),            "0")
+        d2  = clean(entry.get("doubles"),         "0")
+        d3  = clean(entry.get("triples"),         "0")
+        hr  = clean(entry.get("homeRuns"),        "0")
+        rbi = clean(entry.get("runsBattedIn"),    "0")
+        ops = clean(entry.get("ops"),             ".000")
+        slg = clean(entry.get("sluggingPercentage"), ".000")
 
-        # --- Pitching Stats (ERA, WHIP, W-L, IP, SO) ---
-        era   = clean_val(entry.get("earnedRunAverage"), "-")
-        whip  = clean_val(entry.get("whip"), "-")
-        wins  = clean_val(entry.get("wins"), "0")
-        loss  = clean_val(entry.get("losses"), "0")
-        ip    = clean_val(entry.get("inningsPitched"), "0.0")
-        so    = clean_val(entry.get("strikeoutsPitching", entry.get("strikeouts")), "0")
-        wl    = f"{wins}-{loss}"
+        has_batting = (
+            is_valid(entry.get("atBats")) or
+            is_valid(entry.get("hits"))   or
+            is_valid(entry.get("runs"))
+        )
 
-        has_batting  = int(ab) > 0 or r != "0" or h != "0"
-        has_pitching = era != "-" or ip != "0.0" or int(wins) > 0 or int(loss) > 0
+        # Pitching
+        era  = clean(entry.get("earnedRunAverage"), "-")
+        whip = clean(entry.get("whip"),             "-")
+        wins = clean(entry.get("wins"),             "0")
+        loss = clean(entry.get("losses"),           "0")
+        ip   = clean(entry.get("inningsPitched"),   "0.0")
+        so_raw = (
+            entry.get("strikeoutsPitching") or
+            entry.get("strikeoutsAllowed")  or
+            entry.get("pitchingStrikeouts") or
+            entry.get("strikeouts")
+        )
+        so  = clean(so_raw, "0")
+        wl  = f"{wins}-{loss}"
 
-        # Batting item
+        has_pitching = (
+            is_valid(entry.get("earnedRunAverage")) or
+            is_valid(entry.get("inningsPitched"))   or
+            is_valid(entry.get("wins"))             or
+            is_valid(entry.get("losses"))           or
+            is_valid(entry.get("whip"))
+        )
+
         if has_batting:
-            bat_item = {
-                "number": jersey_str,
-                "jersey_num": jersey_int,
-                "player": player_name,
-                "AVG": avg,
-                "R": r,
-                "H": h,
-                "2B": d2b,
-                "3B": d3b,
-                "HR": hr,
-                "RBI": rbi,
-                "OPS": ops,
-                "SLG%": slg
+            bat = {
+                "number": raw_num, "player": name,
+                "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3,
+                "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg,
+                "_sort": jersey_int
             }
-            hitting_list.append(bat_item)
-            hitting_by_num[jersey_str] = bat_item
+            hitting_list.append(bat)
+            hitting_by_num
+[raw_num] = {k: v for k, v in bat.items() if k != "_sort"}
 
-        # Pitching item
         if has_pitching:
-            pitch_item = {
-                "number": jersey_str,
-                "jersey_num": jersey_int,
-                "player": player_name,
-                "ERA": era,
-                "WHIP": whip,
-                "W-L": wl,
-                "IP": ip,
-                "SO": so
+            pit = {
+                "number": raw_num, "player": name,
+                "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
+                "_sort": jersey_int
             }
-            pitching_list.append(pitch_item)
-            pitching_by_num[jersey_str] = pitch_item
+            pitching_list.append(pit)
+            pitching_by_num
+[raw_num] = {k: v for k, v in pit.items() if k != "_sort"}
 
-        # Combined player object
         if has_batting or has_pitching:
-            p_obj = {
+            p = players_map.get(jersey_int, {
                 "jersey_number": jersey_int,
-                "player_name": player_name
-            }
+                "player_name": name
+            })
             if has_batting:
-                p_obj["batting_stats"] = {
-                    "AVG": avg, "R": r, "H": h, "2B": d2b, "3B": d3b,
+                p
+["batting_stats"] = {
+                    "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3,
                     "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg
                 }
             if has_pitching:
-                p_obj["pitching_stats"] = {
+                p
+["pitching_stats"] = {
                     "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so
                 }
-            players_by_jersey[jersey_int] = p_obj
+            players_map
+[jersey_int] = p
 
-    # Sort all lists by jersey number ascending
-    hitting_list.sort(key=lambda x: x["jersey_num"])
-    pitching_list.sort(key=lambda x: x["jersey_num"])
-    all_players_sorted = [players_by_jersey[k] for k in sorted(players_by_jersey.keys())]
-
-    # Clean internal sorting key before output
-    for item in hitting_list:
-        item.pop("jersey_num", None)
-    for item in pitching_list:
-        item.pop("jersey_num", None)
+    hitting_list.sort(key=lambda x: x.pop("_sort"))
+    pitching_list.sort(key=lambda x: x.pop("_sort"))
+    players_sorted = 
+[players_map
+[k] for k in sorted(players_map)]
 
     return {
-        "status": "ok",
-        "season": "2026",
-        "generated_at": datetime.utcnow().isoformat() + "Z",
-        "players": all_players_sorted,
-        "hitting": hitting_list,
-        "pitching": pitching_list,
-        "hitting_by_number": hitting_by_num,
-        "pitching_by_number": pitching_by_num
+        "team":               "University of St. Thomas Tommies Baseball",
+        "sport":              "baseball",
+        "season":             year,
+        "source":             DEFAULT_URL,
+        "status":             "ok",
+        "generated_at":       datetime.now(timezone.utc).isoformat(),
+        "players":            players_sorted,
+        "hitting":            hitting_list,
+        "pitching":           pitching_list,
+        "hitting_by_number":  hitting_by_num,
+        "pitching_by_number": pitching_by_num,
     }
 
 
+# ── Main ───────────────────────────────────────────────────────────────────────
 def main():
-    target_url = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].startswith("http") else URL
-    output_file = sys.argv[2] if len(sys.argv) > 2 else "baseball_stats.json"
+    parser = argparse.ArgumentParser(description="Scrape Tommie Baseball Stats")
+    parser.add_argument("--out",  default=DEFAULT_OUT,  help="Output JSON path")
+    parser.add_argument("--year", default=DEFAULT_YEAR, help="Season year")
+    parser.add_argument("--url",  default=DEFAULT_URL,  help="Stats page URL")
+    args = parser.parse_args()
 
-    print(f"Fetching page source from: {target_url}...")
-    try:
-        html = fetch_html(target_url)
-    except Exception as e:
-        print(f"Failed to fetch {target_url}: {e}")
-        return
+    url = args.url.replace("2026", args.year) if args.year != "2026" else args.url
 
-    print("Parsing Nuxt JSON state...")
-    try:
-        data = extract_stats(html)
-    except Exception as e:
-        print(f"Error extracting data: {e}")
-        return
+    print(f"Fetching (Playwright): {url}")
+    html = fetch_html_playwright(url)
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
+    print("Parsing Nuxt payload...")
+    result = extract_stats(html, args.year)
 
-    print(f"Successfully saved stats for {len(data['players'])} players to '{output_file}' (sorted by jersey number).")
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2)
+
+    h = len(result
+["hitting"])
+    p = len(result
+["pitching"])
+    print(f"Done — {h} batters, {p} pitchers → {args.out}")
 
 
 if __name__ == "__main__":
