@@ -93,7 +93,17 @@ def fetch_html_playwright(url):
         page = context.new_page()
 
         print(f"  Navigating to {url} ...")
-        page.goto(url, wait_until="networkidle", timeout=60000)
+
+        # Use domcontentloaded instead of networkidle to prevent timeout from background analytics/ads
+        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+
+        # Wait specifically for the Nuxt data payload script to be loaded
+        try:
+            page.wait_for_selector("script#__NUXT_DATA__", timeout=30000)
+            print("  __NUXT_DATA__ script tag found.")
+        except Exception:
+            print("  WARNING: script#__NUXT_DATA__ not found via selector — allowing hydration buffer.")
+            page.wait_for_timeout(5000)
 
         # Save debug screenshot for GitHub Actions artifact upload
         page.screenshot(path="debug_before_click.png", full_page=True)
