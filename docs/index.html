@@ -3,18 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TAPbot · Tommie Baseball Stats</title>
+  <title>Tommie Baseball Stats · TAPbot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Design concept: ──────────────────────────────────────────────────────
-       Dark diamond. Deep navy field, purple-to-violet gradient accents,
-       monospaced stat numbers for scoreboard styling.
-       Spotlight card highlights single-player lookups.
-    ─────────────────────────────────────────────────────────────────────────── */
-
     :root {
       --bg:           #080c14;
       --surface:      #0f1623;
@@ -25,10 +19,20 @@
 
       --ust-purple:   #4f2d7f;
       --ust-violet:   #7c3aed;
-      --ust-glow:     rgba(124, 58, 237, 0.18);
+      --ust-glow:     rgba(124, 58, 237, 0.22);
 
-      --gold:         #f59e0b;
-      --gold-dim:     rgba(245, 158, 11, 0.12);
+      /* Medal Tones */
+      --gold:         #fbbf24;
+      --gold-bg:      rgba(251, 191, 36, 0.12);
+      --gold-border:  rgba(251, 191, 36, 0.35);
+
+      --silver:       #e2e8f0;
+      --silver-bg:    rgba(226, 232, 240, 0.12);
+      --silver-border:rgba(226, 232, 240, 0.35);
+
+      --bronze:       #f97316;
+      --bronze-bg:    rgba(249, 115, 22, 0.12);
+      --bronze-border:rgba(249, 115, 22, 0.35);
 
       --text:         #e8edf5;
       --text-muted:   #7a8fa8;
@@ -37,7 +41,7 @@
       --green:        #10b981;
       --red:          #ef4444;
 
-      --radius:       10px;
+      --radius:       12px;
       --radius-sm:    6px;
     }
 
@@ -51,8 +55,7 @@
       padding: 2rem 1.25rem 4rem;
     }
 
-    /* ── Layout ─────────────────────────────────────────────────────────────── */
-    .container { max-width: 1280px; margin: 0 auto; }
+    .container { max-width: 1200px; margin: 0 auto; }
 
     /* ── Header ─────────────────────────────────────────────────────────────── */
     header {
@@ -69,11 +72,11 @@
     .wordmark {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.25rem;
     }
 
     .wordmark-eyebrow {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -82,17 +85,17 @@
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 50%, #4f2d7f 100%);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 50%, #6d28d9 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .meta {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       text-align: right;
@@ -107,7 +110,7 @@
 
     /* ── Search Spotlight ────────────────────────────────────────────────────── */
     .search-section {
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .search-label {
@@ -138,7 +141,8 @@
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-faint);
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
       pointer-events: none;
     }
 
@@ -148,16 +152,14 @@
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       width: 120px;
-      padding: 0.6rem 0.75rem 0.6rem 2.5rem;
+      padding: 0.5rem 0.75rem 0.5rem 2.2rem;
       text-align: center;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.2s;
       outline: none;
     }
-
-    #playerSearch::placeholder { color: var(--text-faint); font-size: 1rem; }
 
     #playerSearch:focus {
       border-color: var(--ust-violet);
@@ -165,17 +167,17 @@
     }
 
     .search-hint {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
     }
 
     .not-found {
       display: none;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.25);
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
       border-radius: var(--radius-sm);
       padding: 0.65rem 1rem;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: #f87171;
       margin-bottom: 1.5rem;
     }
@@ -186,7 +188,7 @@
       background: var(--surface);
       border: 1.5px solid var(--ust-violet);
       border-radius: var(--radius);
-      box-shadow: 0 0 40px var(--ust-glow), 0 8px 32px rgba(0,0,0,0.4);
+      box-shadow: 0 0 35px var(--ust-glow), 0 8px 32px rgba(0,0,0,0.5);
       overflow: hidden;
       margin-bottom: 2.5rem;
       animation: fadeIn 0.25s ease;
@@ -198,7 +200,7 @@
     }
 
     .spotlight-header {
-      background: linear-gradient(135deg, var(--ust-purple) 0%, #1d1040 100%);
+      background: linear-gradient(135deg, var(--ust-purple) 0%, #1e1138 100%);
       padding: 1.25rem 1.5rem;
       display: flex;
       align-items: center;
@@ -210,8 +212,8 @@
       background: var(--ust-violet);
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.75rem;
-      font-weight: 700;
+      font-size: 1.8rem;
+      font-weight: 800;
       width: 64px;
       height: 64px;
       border-radius: 50%;
@@ -223,41 +225,42 @@
     }
 
     .spotlight-name {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     .spotlight-sub {
-      font-size: 0.8rem;
-      color: #a78bfa;
+      font-size: 0.82rem;
+      color: #c4b5fd;
       margin-top: 0.2rem;
       font-family: 'JetBrains Mono', monospace;
     }
 
     .stat-section-title {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-faint);
+      color: var(--text-muted);
       padding: 0.85rem 1.5rem 0.5rem;
       border-bottom: 1px solid var(--border);
     }
 
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
       gap: 1px;
       background: var(--border);
     }
 
     .stat-cell {
       background: var(--surface);
-      padding: 0.85rem 1rem;
+      padding: 0.9rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
+      position: relative;
       transition: background 0.15s;
     }
 
@@ -269,18 +272,46 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .stat-val {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--text);
     }
 
-    .stat-val.accent { color: #a78bfa; }
-    .stat-val.gold   { color: var(--gold); }
-    .stat-val.green  { color: var(--green); }
+    /* ── Top 3 Medal Styling (Only Top 3 Highlighted) ── */
+    .stat-cell.rank-1 {
+      background: var(--gold-bg);
+      border-bottom: 2px solid var(--gold);
+    }
+    .stat-cell.rank-1 .stat-val { color: var(--gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.35); }
+
+    .stat-cell.rank-2 {
+      background: var(--silver-bg);
+      border-bottom: 2px solid var(--silver);
+    }
+    .stat-cell.rank-2 .stat-val { color: var(--silver); text-shadow: 0 0 10px rgba(226, 232, 240, 0.3); }
+
+    .stat-cell.rank-3 {
+      background: var(--bronze-bg);
+      border-bottom: 2px solid var(--bronze);
+    }
+    .stat-cell.rank-3 .stat-val { color: var(--bronze); text-shadow: 0 0 10px rgba(249, 115, 22, 0.3); }
+
+    .rank-tag {
+      font-size: 0.65rem;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 800;
+    }
+    .rank-1 .rank-tag { background: var(--gold); color: #000; }
+    .rank-2 .rank-tag { background: var(--silver); color: #000; }
+    .rank-3 .rank-tag { background: var(--bronze); color: #000; }
 
     /* ── Tabs ────────────────────────────────────────────────────────────────── */
     .tabs {
@@ -294,9 +325,9 @@
       background: var(--surface-2);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 0.45rem 1rem;
+      padding: 0.5rem 1.25rem;
       border-radius: var(--radius-sm);
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
@@ -328,7 +359,7 @@
     }
 
     .table-card-title {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
     }
 
@@ -337,16 +368,16 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
     }
 
     thead th {
-      background: rgba(0,0,0,0.25);
+      background: rgba(0,0,0,0.3);
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.55rem 0.85rem;
+      padding: 0.65rem 0.85rem;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       text-align: center;
@@ -359,19 +390,19 @@
 
     thead th:hover:not(:first-child):not(:nth-child(2)) {
       color: var(--text);
-      background: rgba(124, 58, 237, 0.1);
+      background: rgba(124, 58, 237, 0.15);
     }
 
-    thead th.sorted { color: #a78bfa; }
+    thead th.sorted { color: #c4b5fd; }
 
     tbody td {
-      padding: 0.55rem 0.85rem;
+      padding: 0.6rem 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--text);
       white-space: nowrap;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
+      font-size: 0.82rem;
     }
 
     tbody td:first-child,
@@ -388,25 +419,21 @@
     }
 
     tbody td:nth-child(2) { font-weight: 600; }
-
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: rgba(255,255,255,0.025); }
 
-    /* Highlight row when jersey matches search */
     tbody tr.row-highlight td {
       background: var(--ust-glow) !important;
     }
 
-    tbody tr.row-highlight td:first-child { color: #a78bfa; }
+    tbody tr.row-highlight td:first-child { color: #c4b5fd; }
 
-    /* ── Status / Empty States ───────────────────────────────────────────────── */
     .status-bar {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-size: 0.78rem;
       font-family: 'JetBrains Mono', monospace;
-      padding: 0.5rem 0;
       color: var(--text-muted);
     }
 
@@ -414,22 +441,16 @@
       width: 8px; height: 8px;
       border-radius: 50%;
       background: var(--green);
-      flex-shrink: 0;
     }
-
-    .status-dot.stale  { background: var(--gold); }
-    .status-dot.error  { background: var(--red); }
 
     .empty {
       padding: 3rem;
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.9rem;
     }
 
-    /* ── Responsive ──────────────────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      h1 { font-size: 1.5rem; }
+      h1 { font-size: 1.6rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
@@ -444,7 +465,7 @@
       <span class="wordmark-eyebrow">TAPbot · 2026 Season</span>
       <h1>Tommie Baseball Stats</h1>
     </div>
-    <div class="meta" id="metaBar">Loading…</div>
+    <div class="meta" id="metaBar">Loading data…</div>
   </header>
 
   <!-- Player Search -->
@@ -463,7 +484,7 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Type a jersey number to spotlight that player's stat line.</span>
+      <span class="search-hint">Enter a jersey number to view player stat cards and Top 3 highlights (🥇 🥈 🥉).</span>
     </div>
   </section>
 
@@ -472,149 +493,184 @@
     No player found with that jersey number.
   </div>
 
-  <!-- Spotlight Card (shown when player found) -->
+  <!-- Spotlight Card (Search result) -->
   <div id="spotlightCard">
     <div class="spotlight-header">
       <div class="jersey-badge" id="spotJersey">—</div>
       <div>
         <div class="spotlight-name" id="spotName">—</div>
-        <div class="spotlight-sub" id="spotSub">—</div>
+        <div class="spotlight-sub" id="spotSub">University of St. Thomas Baseball</div>
       </div>
     </div>
 
-    <!-- Hitting Stats -->
+    <!-- Hitting Section -->
     <div id="spotHittingSection">
-      <div class="stat-section-title">⚾ Hitting</div>
+      <div class="stat-section-title">⚾ Batting Stats</div>
       <div class="stat-grid" id="spotHittingGrid"></div>
     </div>
 
-    <!-- Pitching Stats -->
+    <!-- Pitching Section -->
     <div id="spotPitchingSection">
-      <div class="stat-section-title">⚡ Pitching</div>
+      <div class="stat-section-title">⚡ Pitching Stats</div>
       <div class="stat-grid" id="spotPitchingGrid"></div>
     </div>
   </div>
 
-  <!-- Full Roster Tables -->
+  <!-- Full Roster Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('hitting', this)">Hitting</button>
+    <button class="tab-btn active" onclick="switchTab('batting', this)">Batting</button>
     <button class="tab-btn" onclick="switchTab('pitching', this)">Pitching</button>
   </div>
 
+  <!-- Table Card -->
   <div class="table-card">
     <div class="table-card-header">
-      <span class="table-card-title" id="tableTitle">Hitting Stats — Full Roster</span>
+      <span class="table-card-title" id="tableTitle">Batting Stats — Full Roster</span>
       <div class="status-bar">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">—</span>
+        <div class="status-dot"></div>
+        <span id="statusText">Ready</span>
       </div>
     </div>
     <div class="table-wrap">
       <table id="statsTable">
         <thead id="tableHead"></thead>
         <tbody id="tableBody">
-          <tr><td colspan="20" class="empty">Loading stats…</td></tr>
+          <tr><td colspan="15" class="empty">Loading stats…</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
-  // ── State ──────────────────────────────────────────────────────────────────
-  let DATA      = null;
-  let activeTab = 'hitting';
+  let RAW_PLAYERS = [];
+  let BATTING_PLAYERS = [];
+  let PITCHING_PLAYERS = [];
+  let activeTab = 'batting';
   let sortCol   = null;
-  let sortDir   = 1;   // 1 = asc, -1 = desc
+  let sortDir   = 1;
   let searchNum = '';
 
-  // ── Exact Target Columns Matching Scraper ──────────────────────────────────
-  const HITTING_DISPLAY = [
-    { key: 'AVG',  label: 'AVG'  },
-    { key: 'R',    label: 'R'    },
-    { key: 'H',    label: 'H'    },
-    { key: '2B',   label: '2B'   },
-    { key: '3B',   label: '3B'   },
-    { key: 'HR',   label: 'HR'   },
-    { key: 'RBI',  label: 'RBI'  },
-    { key: 'OPS',  label: 'OPS'  },
+  const BATTING_KEYS = [
+    { key: 'AVG',  label: 'AVG' },
+    { key: 'R',    label: 'R' },
+    { key: 'H',    label: 'H' },
+    { key: '2B',   label: '2B' },
+    { key: '3B',   label: '3B' },
+    { key: 'HR',   label: 'HR' },
+    { key: 'RBI',  label: 'RBI' },
+    { key: 'OPS',  label: 'OPS' },
     { key: 'SLG%', label: 'SLG%' }
   ];
 
-  const PITCHING_DISPLAY = [
-    { key: 'ERA',  label: 'ERA'  },
-    { key: 'WHIP', label: 'WHIP' },
-    { key: 'W-L',  label: 'W-L'  },
-    { key: 'IP',   label: 'IP'   },
-    { key: 'SO',   label: 'SO'   }
+  const PITCHING_KEYS = [
+    { key: 'ERA',  label: 'ERA',  lowerIsBetter: true },
+    { key: 'WHIP', label: 'WHIP', lowerIsBetter: true },
+    { key: 'W-L',  label: 'W-L' },
+    { key: 'IP',   label: 'IP' },
+    { key: 'SO',   label: 'SO' }
   ];
 
-  // Visual Accents
-  const ACCENT_STATS = new Set(['AVG', 'OPS', 'ERA', 'WHIP']);
-  const GOLD_STATS   = new Set(['HR', 'RBI', '2B', '3B', 'W-L']);
-  const GREEN_STATS  = new Set(['SO', 'R', 'H']);
-
-  // ── Fetch ──────────────────────────────────────────────────────────────────
-  async function loadData() {
-    try {
-      const res = await fetch('baseball_stats.json?t=' + Date.now());
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      DATA = await res.json();
-      onDataLoaded();
-    } catch (err) {
-      document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="20" class="empty" style="color:#f87171">
-          Failed to load baseball_stats.json — run the scraper first.<br>
-          <small style="color:var(--text-muted)">${err.message}</small>
-        </td></tr>`;
-      document.getElementById('metaBar').textContent = 'Error loading data';
+  // Helper to parse numbers safely for sorting/ranks
+  function parseStat(val, key) {
+    if (val === undefined || val === null || val === '-' || val === '') return -999999;
+    if (key === 'W-L') {
+      const parts = String(val).split('-');
+      return parseFloat(parts[0]) || 0;
     }
+    return parseFloat(val) || 0;
   }
 
-  function onDataLoaded() {
-    // Meta bar
-    const ts = DATA.generated_at
-      ? new Date(DATA.generated_at).toLocaleString()
-      : '—';
-    document.getElementById('metaBar').innerHTML =
-      `Updated: ${ts}<br><a href="baseball_stats.json" target="_blank">data.json ↗</a>`;
+  // Pre-calculate Top 3 values for each category across full roster
+  let RANKS = { batting: {}, pitching: {} };
 
-    // Status dot
-    const dot  = document.getElementById('statusDot');
-    const stxt = document.getElementById('statusText');
-    if (DATA.status === 'ok') {
-      dot.className = 'status-dot';
-      stxt.textContent = 'Live';
-    } else if (DATA.status === 'stale') {
-      dot.className = 'status-dot stale';
-      stxt.textContent = 'Stale — last good scrape';
-    } else {
-      dot.className = 'status-dot error';
-      stxt.textContent = 'Error';
+  function calculateRanks() {
+    RANKS = { batting: {}, pitching: {} };
+
+    // Batting
+    BATTING_KEYS.forEach(k => {
+      const vals = BATTING_PLAYERS
+        .map(p => parseStat(p.batting_stats?.[k.key], k.key))
+        .filter(v => v !== -999999);
+      
+      const distinct = [...new Set(vals)].sort((a, b) => b - a);
+      RANKS.batting[k.key] = {
+        1: distinct[0],
+        2: distinct[1],
+        3: distinct[2]
+      };
+    });
+
+    // Pitching
+    PITCHING_KEYS.forEach(k => {
+      const vals = PITCHING_PLAYERS
+        .map(p => parseStat(p.pitching_stats?.[k.key], k.key))
+        .filter(v => v !== -999999 && v > 0); // exclude 0/invalids for ERA/WHIP if unplayed
+
+      const distinct = [...new Set(vals)].sort((a, b) => k.lowerIsBetter ? a - b : b - a);
+      RANKS.pitching[k.key] = {
+        1: distinct[0],
+        2: distinct[1],
+        3: distinct[2]
+      };
+    });
+  }
+
+  function getRank(type, key, val) {
+    const num = parseStat(val, key);
+    if (num === -999999 || (key === 'ERA' && num <= 0)) return null;
+    const r = RANKS[type]?.[key];
+    if (!r) return null;
+    if (num === r[1]) return 1;
+    if (num === r[2]) return 2;
+    if (num === r[3]) return 3;
+    return null;
+  }
+
+  // ── Fetch & Parse JSON ─────────────────────────────────────────────────────
+  async function loadData() {
+    try {
+      const res = await fetch('output.json?t=' + Date.now());
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      RAW_PLAYERS = await res.json();
+      
+      BATTING_PLAYERS = RAW_PLAYERS.filter(p => p.batting_stats);
+      PITCHING_PLAYERS = RAW_PLAYERS.filter(p => p.pitching_stats);
+
+      calculateRanks();
+
+      document.getElementById('metaBar').innerHTML =
+        `Loaded ${RAW_PLAYERS.length} players · <a href="output.json" target="_blank">output.json ↗</a>`;
+      
+      renderTable();
+    } catch (err) {
+      document.getElementById('tableBody').innerHTML =
+        `<tr><td colspan="15" class="empty" style="color:#f87171">
+          Failed to load output.json — ensure scrape.py has generated output.json.<br>
+          <small style="color:var(--text-muted)">${err.message}</small>
+        </td></tr>`;
+      document.getElementById('metaBar').textContent = 'Error loading output.json';
     }
-
-    renderTable();
   }
 
   // ── Tab Switch ─────────────────────────────────────────────────────────────
   function switchTab(tab, btn) {
     activeTab = tab;
-    sortCol   = null;
+    sortCol = null;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tableTitle').textContent =
-      tab === 'hitting' ? 'Hitting Stats — Full Roster' : 'Pitching Stats — Full Roster';
+      tab === 'batting' ? 'Batting Stats — Full Roster' : 'Pitching Stats — Full Roster';
     renderTable();
     if (searchNum) highlightRow(searchNum);
   }
 
   // ── Render Full Table ──────────────────────────────────────────────────────
   function renderTable() {
-    if (!DATA) return;
-
-    const rows = DATA[activeTab] || [];
-    const cols = activeTab === 'hitting' ? HITTING_DISPLAY : PITCHING_DISPLAY;
+    const isBatting = activeTab === 'batting';
+    const rows = isBatting ? BATTING_PLAYERS : PITCHING_PLAYERS;
+    const cols = isBatting ? BATTING_KEYS : PITCHING_KEYS;
 
     const head = document.getElementById('tableHead');
     const body = document.getElementById('tableBody');
@@ -623,138 +679,134 @@
     head.innerHTML = `<tr>
       <th>#</th>
       <th>Player</th>
-      ${cols.map(c => `<th onclick="sortBy('${c.key}')" class="${sortCol===c.key?'sorted':''}">${c.label}${sortCol===c.key?(sortDir===1?' ↑':' ↓'):''}</th>`).join('')}
+      ${cols.map(c => `
+        <th onclick="sortBy('${c.key}')" class="${sortCol === c.key ? 'sorted' : ''}">
+          ${c.label}${sortCol === c.key ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
+        </th>
+      `).join('')}
     </tr>`;
 
     if (!rows.length) {
-      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data available.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data found.</td></tr>`;
       return;
     }
 
     let sorted = [...rows];
     if (sortCol) {
       sorted.sort((a, b) => {
-        const av = parseFloat(a[sortCol]) || 0;
-        const bv = parseFloat(b[sortCol]) || 0;
+        const statsA = isBatting ? a.batting_stats : a.pitching_stats;
+        const statsB = isBatting ? b.batting_stats : b.pitching_stats;
+        const av = parseStat(statsA?.[sortCol], sortCol);
+        const bv = parseStat(statsB?.[sortCol], sortCol);
         return (av - bv) * sortDir;
       });
     }
 
     body.innerHTML = sorted.map(r => {
-      const isHL = r.number === searchNum && searchNum !== '';
-      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
-        <td>${r.number || '—'}</td>
-        <td>${esc(r.player)}</td>
-        ${cols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
+      const stats = isBatting ? r.batting_stats : r.pitching_stats;
+      const isHL = String(r.jersey_number) === String(searchNum);
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.jersey_number}">
+        <td>${r.jersey_number}</td>
+        <td>${esc(r.player_name)}</td>
+        ${cols.map(c => `<td>${stats?.[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
   }
 
-  // ── Sort ───────────────────────────────────────────────────────────────────
+  // ── Sorting ────────────────────────────────────────────────────────────────
   function sortBy(col) {
     if (sortCol === col) {
       sortDir *= -1;
     } else {
-      // For ERA/WHIP, default to ascending (lower is better); otherwise descending
       sortCol = col;
+      // Lower is better defaults to ascending
       sortDir = (col === 'ERA' || col === 'WHIP') ? 1 : -1;
     }
     renderTable();
     if (searchNum) highlightRow(searchNum);
   }
 
-  // ── Player Search / Spotlight ──────────────────────────────────────────────
+  // ── Spotlight Search & Top 3 Highlighting ──────────────────────────────────
   document.getElementById('playerSearch').addEventListener('input', function () {
     searchNum = this.value.trim();
     const notFound = document.getElementById('notFound');
     const card     = document.getElementById('spotlightCard');
 
-    if (!searchNum || !DATA) {
-      card.style.display     = 'none';
+    if (!searchNum) {
+      card.style.display = 'none';
       notFound.style.display = 'none';
-      renderTable();
+      highlightRow('');
       return;
     }
 
-    const hitting  = DATA.hitting_by_number?.[searchNum];
-    const pitching = DATA.pitching_by_number?.[searchNum];
+    const player = RAW_PLAYERS.find(p => String(p.jersey_number) === searchNum);
 
-    if (!hitting && !pitching) {
-      card.style.display     = 'none';
+    if (!player) {
+      card.style.display = 'none';
       notFound.style.display = 'block';
-      renderTable();
+      highlightRow('');
       return;
     }
 
     notFound.style.display = 'none';
     card.style.display     = 'block';
 
-    // Populate header
-    const playerName = (hitting || pitching).player || '—';
-    document.getElementById('spotJersey').textContent = `#${searchNum}`;
-    document.getElementById('spotName').textContent   = playerName;
-    document.getElementById('spotSub').textContent    =
-      `University of St. Thomas · ${DATA.season || '2026'} Baseball`;
+    document.getElementById('spotJersey').textContent = `#${player.jersey_number}`;
+    document.getElementById('spotName').textContent   = player.player_name;
 
-    // Hitting spotlight grid
+    // Batting Card
     const hSection = document.getElementById('spotHittingSection');
     const hGrid    = document.getElementById('spotHittingGrid');
-    if (hitting) {
-      hSection.style.display = '';
-      hGrid.innerHTML = HITTING_DISPLAY.map(c => {
-        const val = hitting[c.key] || '—';
-        let cls = '';
-        if (ACCENT_STATS.has(c.key)) cls = 'accent';
-        else if (GOLD_STATS.has(c.key)) cls = 'gold';
-        else if (GREEN_STATS.has(c.key)) cls = 'green';
-        return `<div class="stat-cell">
-          <span class="stat-key">${c.label}</span>
-          <span class="stat-val ${cls}">${val}</span>
+    if (player.batting_stats) {
+      hSection.style.display = 'block';
+      hGrid.innerHTML = BATTING_KEYS.map(c => {
+        const val = player.batting_stats[c.key] || '—';
+        const rank = getRank('batting', c.key, val);
+        const rankClass = rank ? `rank-${rank}` : '';
+        const rankBadge = rank ? `<span class="rank-tag">${rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</span>` : '';
+
+        return `<div class="stat-cell ${rankClass}">
+          <span class="stat-key">${c.label} ${rankBadge}</span>
+          <span class="stat-val">${val}</span>
         </div>`;
       }).join('');
     } else {
       hSection.style.display = 'none';
     }
 
-    // Pitching spotlight grid
+    // Pitching Card
     const pSection = document.getElementById('spotPitchingSection');
     const pGrid    = document.getElementById('spotPitchingGrid');
-    if (pitching) {
-      pSection.style.display = '';
-      pGrid.innerHTML = PITCHING_DISPLAY.map(c => {
-        const val = pitching[c.key] || '—';
-        let cls = '';
-        if (ACCENT_STATS.has(c.key)) cls = 'accent';
-        else if (GOLD_STATS.has(c.key)) cls = 'gold';
-        else if (GREEN_STATS.has(c.key)) cls = 'green';
-        return `<div class="stat-cell">
-          <span class="stat-key">${c.label}</span>
-          <span class="stat-val ${cls}">${val}</span>
+    if (player.pitching_stats) {
+      pSection.style.display = 'block';
+      pGrid.innerHTML = PITCHING_KEYS.map(c => {
+        const val = player.pitching_stats[c.key] || '—';
+        const rank = getRank('pitching', c.key, val);
+        const rankClass = rank ? `rank-${rank}` : '';
+        const rankBadge = rank ? `<span class="rank-tag">${rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</span>` : '';
+
+        return `<div class="stat-cell ${rankClass}">
+          <span class="stat-key">${c.label} ${rankBadge}</span>
+          <span class="stat-val">${val}</span>
         </div>`;
       }).join('');
     } else {
       pSection.style.display = 'none';
     }
 
-    // Highlight matching row in table
     highlightRow(searchNum);
   });
 
   function highlightRow(num) {
     document.querySelectorAll('#tableBody tr').forEach(tr => {
-      tr.classList.toggle('row-highlight', tr.dataset.num === num);
+      tr.classList.toggle('row-highlight', tr.dataset.num === String(num));
     });
   }
 
-  // ── Utility ────────────────────────────────────────────────────────────────
   function esc(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  // ── Boot ───────────────────────────────────────────────────────────────────
   loadData();
 </script>
 
