@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
 scraper/scrape_baseball.py
-Fetches Tommie Baseball stats using Playwright (headless Chromium),
-resolves the Nuxt 3 devalue JSON payload, and writes to --out path.
+Multi-school scraper for Sidearm Sports / Nuxt 3 baseball stats pages.
+Fetches stats via Playwright and writes individual team JSON files + master JSON to docs/.
 
 Usage:
-  python scraper/scrape_baseball.py --out docs/baseball_stats.json --year 2026
+  python scraper/scrape_baseball.py                 # Scrapes all schools (2026)
+  python scraper/scrape_baseball.py --year 2026     # Specify year
+  python scraper/scrape_baseball.py --school stthomas  # Scrape single school
 """
 
 import argparse
@@ -16,21 +18,50 @@ from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-DEFAULT_URL = "https://tommiesports.com/sports/baseball/stats/2026"
-DEFAULT_OUT = "docs/baseball_stats.json"
-DEFAULT_YEAR = "2026"
+# ── Configured Sidearm Sports Schools ──────────────────────────────────────────
+SCHOOLS = [
+    {
+        "id": "stthomas",
+        "name": "University of St. Thomas Tommies",
+        "url_template": "https://tommiesports.com/sports/baseball/stats/{year}",
+        "out_file": "baseball_stats.json",  # primary default for backward compat
+        "alias_file": "stthomas.json"
+    },
+    {
+        "id": "sdstate",
+        "name": "South Dakota State Jackrabbits",
+        "url_template": "https://gojacks.com/sports/baseball/stats/{year}",
+        "out_file": "sdstate.json"
+    },
+    {
+        "id": "uncbears",
+        "name": "Northern Colorado Bears",
+        "url_template": "https://uncbears.com/sports/baseball/stats/{year}",
+        "out_file": "uncbears.json"
+    },
+    {
+        "id": "oru",
+        "name": "Oral Roberts Golden Eagles",
+        "url_template": "https://oruathletics.com/sports/baseball/stats/{year}",
+        "out_file": "oru.json"
+    },
+    {
+        "id": "omaha",
+        "name": "Omaha Mavericks",
+        "url_template": "https://omahamavs.com/sports/baseball/stats/{year}",
+        "out_file": "omaha.json"
+    }
+]
+
+DEFAULT_DOCS_DIR = "docs"
 
 
 # ── Nuxt 3 devalue resolver ────────────────────────────────────────────────────
 def resolve_nuxt_payload(raw_json_str):
-    """
-    Nuxt 3 devalue parser.
-    The payload is a list where numbers are index pointers to other list items.
-    """
     try:
         pool = json.loads(raw_json_str)
     except Exception as e:
-        print(f"  JSON parse error: {e}")
+        print(f"    [Error] JSON parse error: {e}")
         return None
 
     if not isinstance(pool, list):
@@ -45,7 +76,7 @@ def resolve_nuxt_payload(raw_json_str):
             if val in memo:
                 return memo[val]
             target = pool[val]
-            memo[val] = None  # prevent infinite recursion
+            memo[val] = None
             res = resolve(target)
             memo[val] = res
             return res
@@ -55,9 +86,7 @@ def resolve_nuxt_payload(raw_json_str):
             return {k: resolve(v) for k, v in val.items()}
         return val
 
-    # Resolve all objects in the pool to ensure nothing is missed
-    resolved_pool = [resolve(item) for item in pool]
-    return resolved_pool
+    return [resolve(item) for item in pool]
 
 
 # ── Recursive search in resolved data ──────────────────────────────────────────
@@ -76,72 +105,47 @@ def find_all_records_by_key(obj, target_key, found=None):
     return found
 
 
-# ── Fetch HTML via Playwright ──────────────────────────────────────────────────
-def fetch_html_playwright(url):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            )
-        )
-        page = context.new_page()
+# ── Fetch HTML via Playwright page ────────────────────────────────────────────
+def fetch_html_with_page(page, url):
+    print(f"  Navigating to: {url}")
+    page.goto(url, wait_until="domcontentloaded", timeout=60000)
 
-        print(f"  Navigating to {url} ...")
-        page.goto(url, wait_until="domcontentloaded", timeout=60000)
+    try:
+        page.wait_for_selector("script#__NUXT_DATA__", timeout=25000)
+        print("    __NUXT_DATA__ script detected.")
+    except Exception:
+        print("    Buffer 5s for client hydration...")
+        page.wait_for_timeout(5000)
 
-        # Wait for the Nuxt data script or fallback buffer
-        try:
-            page.wait_for_selector("script#__NUXT_DATA__", timeout=25000)
-            print("  __NUXT_DATA__ script tag detected.")
-        except Exception:
-            print("  Waiting 5s for client hydration...")
-            page.wait_for_timeout(5000)
-
-        page.screenshot(path="debug_before_click.png", full_page=True)
-        print("  Screenshot saved: debug_before_click.png")
-
-        html = page.content()
-        browser.close()
-        return html
+    return page.content()
 
 
 # ── Extract stats from HTML ────────────────────────────────────────────────────
-def extract_stats(html, year):
+def extract_stats(html, school_meta, year):
     soup = BeautifulSoup(html, "html.parser")
     payload_str = None
 
-    # 1. Nuxt 3 data island
     tag = soup.find("script", id="__NUXT_DATA__")
     if tag and tag.string:
         payload_str = tag.string.strip()
-        print("  Found __NUXT_DATA__ script.")
-
-    # 2. Inline fallback
-    if not payload_str:
+    else:
         for script in soup.find_all("script"):
             text = script.string or ""
             if "overallIndividualStats" in text or "battingAverage" in text:
                 m = re.search(r"(\[.*\])", text, re.DOTALL)
                 if m:
                     payload_str = m.group(1)
-                    print("  Found inline JSON payload.")
                     break
 
     if not payload_str:
-        raise ValueError("Could not locate Nuxt JSON data in page source.")
+        raise ValueError("Could not locate Nuxt JSON payload in page source.")
 
     resolved_pool = resolve_nuxt_payload(payload_str)
     if not resolved_pool:
         raise ValueError("Failed to parse and resolve Nuxt JSON data.")
 
-    # Search for stats lists
     stat_lists = find_all_records_by_key(resolved_pool, "overallIndividualStats")
-    print(f"  Found {len(stat_lists)} 'overallIndividualStats' block(s).")
 
-    # Fallback to search any list containing dicts with 'playerUniform'
     if not stat_lists:
         def find_player_lists(obj, acc):
             if isinstance(obj, list):
@@ -154,9 +158,7 @@ def extract_stats(html, year):
                     find_player_lists(v, acc)
         stat_lists = []
         find_player_lists(resolved_pool, stat_lists)
-        print(f"  Fallback: Found {len(stat_lists)} lists with playerUniform.")
 
-    # Flatten and deduplicate entries
     raw_entries = []
     for slist in stat_lists:
         for entry in slist:
@@ -195,7 +197,7 @@ def extract_stats(html, year):
         except ValueError:
             jersey_int = 999
 
-        # Batting Fields
+        # Batting
         avg = clean_val(entry.get("battingAverage"), ".000")
         ab  = clean_val(entry.get("atBats"), "0")
         r   = clean_val(entry.get("runs"), "0")
@@ -207,7 +209,7 @@ def extract_stats(html, year):
         ops = clean_val(entry.get("ops"), ".000")
         slg = clean_val(entry.get("sluggingPercentage"), ".000")
 
-        # Pitching Fields
+        # Pitching
         era  = clean_val(entry.get("earnedRunAverage"), "-")
         whip = clean_val(entry.get("whip"), "-")
         wins = clean_val(entry.get("wins"), "0")
@@ -223,7 +225,6 @@ def extract_stats(html, year):
         so = clean_val(so_raw, "0")
         wl = f"{wins}-{loss}"
 
-        # Detection logic
         has_batting = (
             parse_float(ab) > 0
             or parse_float(h) > 0
@@ -239,7 +240,6 @@ def extract_stats(html, year):
             or (whip != "-" and whip != "0")
         )
 
-        # Build Hitting item
         if has_batting and raw_num not in hitting_by_num:
             bat = {
                 "number": raw_num,
@@ -258,7 +258,6 @@ def extract_stats(html, year):
             hitting_list.append(bat)
             hitting_by_num[raw_num] = {k: v for k, v in bat.items() if k != "_sort"}
 
-        # Build Pitching item
         if has_pitching and raw_num not in pitching_by_num:
             pit = {
                 "number": raw_num,
@@ -273,7 +272,6 @@ def extract_stats(html, year):
             pitching_list.append(pit)
             pitching_by_num[raw_num] = {k: v for k, v in pit.items() if k != "_sort"}
 
-        # Combined map
         if has_batting or has_pitching:
             p = players_map.get(jersey_int, {
                 "jersey_number": jersey_int,
@@ -290,16 +288,18 @@ def extract_stats(html, year):
                 }
             players_map[jersey_int] = p
 
-    # Sort by Jersey Number
     hitting_list.sort(key=lambda x: x.pop("_sort"))
     pitching_list.sort(key=lambda x: x.pop("_sort"))
     players_sorted = [players_map[k] for k in sorted(players_map.keys())]
 
+    target_url = school_meta["url_template"].format(year=year)
+
     return {
-        "team": "University of St. Thomas Tommies Baseball",
+        "team_id": school_meta["id"],
+        "team": school_meta["name"],
         "sport": "baseball",
         "season": year,
-        "source": DEFAULT_URL,
+        "source": target_url,
         "status": "ok",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "players": players_sorted,
@@ -312,28 +312,76 @@ def extract_stats(html, year):
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Scrape Tommie Baseball Stats")
-    parser.add_argument("--out", default=DEFAULT_OUT, help="Output JSON path")
-    parser.add_argument("--year", default=DEFAULT_YEAR, help="Season year")
-    parser.add_argument("--url", default=DEFAULT_URL, help="Stats page URL")
+    parser = argparse.ArgumentParser(description="Multi-school Sidearm Baseball Stats Scraper")
+    parser.add_argument("--year", default="2026", help="Season year (e.g. 2026)")
+    parser.add_argument("--docs-dir", default=DEFAULT_DOCS_DIR, help="Destination directory for output JSON files")
+    parser.add_argument("--school", default=None, help="Scrape only one school ID (e.g. stthomas, sdstate, uncbears, oru, omaha)")
     args = parser.parse_args()
 
-    url = args.url.replace("2026", args.year) if args.year != "2026" else args.url
+    os.makedirs(args.docs_dir, exist_ok=True)
 
-    print(f"Fetching (Playwright): {url}")
-    html = fetch_html_playwright(url)
+    schools_to_scrape = SCHOOLS
+    if args.school:
+        schools_to_scrape = [s for s in SCHOOLS if s["id"] == args.school.lower()]
+        if not schools_to_scrape:
+            print(f"Unknown school ID '{args.school}'. Available: {[s['id'] for s in SCHOOLS]}")
+            return
 
-    print("Parsing Nuxt payload...")
-    result = extract_stats(html, args.year)
+    print(f"Starting scrape for {len(schools_to_scrape)} school(s) [Year: {args.year}]...")
 
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2)
+    all_teams_data = {}
 
-    h = len(result["hitting"])
-    p = len(result["pitching"])
-    tot = len(result["players"])
-    print(f"Done — {h} batters, {p} pitchers ({tot} total players) → {args.out}")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            )
+        )
+        page = context.new_page()
+
+        for school in schools_to_scrape:
+            target_url = school["url_template"].format(year=args.year)
+            print(f"\n▶ [{school['id'].upper()}] {school['name']}")
+            try:
+                html = fetch_html_with_page(page, target_url)
+                stats = extract_stats(html, school, args.year)
+
+                out_path = os.path.join(args.docs_dir, school["out_file"])
+                with open(out_path, "w", encoding="utf-8") as f:
+                    json.dump(stats, f, indent=2)
+
+                # Write alias copy if defined (e.g. stthomas.json in addition to baseball_stats.json)
+                if "alias_file" in school:
+                    alias_path = os.path.join(args.docs_dir, school["alias_file"])
+                    with open(alias_path, "w", encoding="utf-8") as f:
+                        json.dump(stats, f, indent=2)
+
+                all_teams_data[school["id"]] = stats
+
+                h = len(stats["hitting"])
+                p_cnt = len(stats["pitching"])
+                print(f"  ✓ Saved: {h} batters, {p_cnt} pitchers → {out_path}")
+
+            except Exception as e:
+                print(f"  ✗ Failed for {school['name']}: {e}")
+
+        browser.close()
+
+    # Save aggregated conference file if scraping multiple schools
+    if len(schools_to_scrape) > 1:
+        master_file = os.path.join(args.docs_dir, "all_teams_stats.json")
+        with open(master_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "season": args.year,
+                "teams": all_teams_data
+            }, f, indent=2)
+        print(f"\n★ Master file saved: {master_file} ({len(all_teams_data)} teams)")
+
+    print("\nAll done!")
 
 
 if __name__ == "__main__":
