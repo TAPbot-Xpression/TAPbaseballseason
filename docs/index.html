@@ -284,7 +284,7 @@
       color: var(--text);
     }
 
-    /* ── Top 3 Medal Styling (Only Top 3 Highlighted) ── */
+    /* ── Top 3 Medal Styling ─────────────────────────────────────────────────── */
     .stat-cell.rank-1 {
       background: var(--gold-bg);
       border-bottom: 2px solid var(--gold);
@@ -443,6 +443,8 @@
       background: var(--green);
     }
 
+    .status-dot.error { background: var(--red); }
+
     .empty {
       padding: 3rem;
       text-align: center;
@@ -503,7 +505,7 @@
       </div>
     </div>
 
-    <!-- Hitting Section -->
+    <!-- Batting Section -->
     <div id="spotHittingSection">
       <div class="stat-section-title">⚾ Batting Stats</div>
       <div class="stat-grid" id="spotHittingGrid"></div>
@@ -527,7 +529,7 @@
     <div class="table-card-header">
       <span class="table-card-title" id="tableTitle">Batting Stats — Full Roster</span>
       <div class="status-bar">
-        <div class="status-dot"></div>
+        <div class="status-dot" id="statusDot"></div>
         <span id="statusText">Ready</span>
       </div>
     </div>
@@ -544,7 +546,7 @@
 </div>
 
 <script>
-  let RAW_PLAYERS = [];
+  let RAW_DATA = null;
   let BATTING_PLAYERS = [];
   let PITCHING_PLAYERS = [];
   let activeTab = 'batting';
@@ -572,7 +574,6 @@
     { key: 'SO',   label: 'SO' }
   ];
 
-  // Helper to parse numbers safely for sorting/ranks
   function parseStat(val, key) {
     if (val === undefined || val === null || val === '-' || val === '') return -999999;
     if (key === 'W-L') {
@@ -582,7 +583,6 @@
     return parseFloat(val) || 0;
   }
 
-  // Pre-calculate Top 3 values for each category across full roster
   let RANKS = { batting: {}, pitching: {} };
 
   function calculateRanks() {
@@ -591,7 +591,7 @@
     // Batting
     BATTING_KEYS.forEach(k => {
       const vals = BATTING_PLAYERS
-        .map(p => parseStat(p.batting_stats?.[k.key], k.key))
+        .map(p => parseStat(p[k.key], k.key))
         .filter(v => v !== -999999);
       
       const distinct = [...new Set(vals)].sort((a, b) => b - a);
@@ -605,8 +605,8 @@
     // Pitching
     PITCHING_KEYS.forEach(k => {
       const vals = PITCHING_PLAYERS
-        .map(p => parseStat(p.pitching_stats?.[k.key], k.key))
-        .filter(v => v !== -999999 && v > 0); // exclude 0/invalids for ERA/WHIP if unplayed
+        .map(p => parseStat(p[k.key], k.key))
+        .filter(v => v !== -999999 && v > 0);
 
       const distinct = [...new Set(vals)].sort((a, b) => k.lowerIsBetter ? a - b : b - a);
       RANKS.pitching[k.key] = {
@@ -628,29 +628,42 @@
     return null;
   }
 
-  // ── Fetch & Parse JSON ─────────────────────────────────────────────────────
+  // ── Fetch & Parse baseball_stats.json ───────────────────────────────────────
   async function loadData() {
     try {
-      const res = await fetch('output.json?t=' + Date.now());
+      const res = await fetch('baseball_stats.json?t=' + Date.now());
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      RAW_PLAYERS = await res.json();
+      RAW_DATA = await res.json();
       
-      BATTING_PLAYERS = RAW_PLAYERS.filter(p => p.batting_stats);
-      PITCHING_PLAYERS = RAW_PLAYERS.filter(p => p.pitching_stats);
+      // Adapt to both flat arrays or categorized schema in baseball_stats.json
+      if (RAW_DATA.hitting || RAW_DATA.pitching) {
+        BATTING_PLAYERS = RAW_DATA.hitting || [];
+        PITCHING_PLAYERS = RAW_DATA.pitching || [];
+      } else if (Array.isArray(RAW_DATA)) {
+        BATTING_PLAYERS = RAW_DATA
+          .filter(p => p.batting_stats)
+          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.batting_stats }));
+        PITCHING_PLAYERS = RAW_DATA
+          .filter(p => p.pitching_stats)
+          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.pitching_stats }));
+      }
 
       calculateRanks();
 
+      const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
       document.getElementById('metaBar').innerHTML =
-        `Loaded ${RAW_PLAYERS.length} players · <a href="output.json" target="_blank">output.json ↗</a>`;
+        `Updated: ${updatedTime} · <a href="baseball_stats.json" target="_blank">baseball_stats.json ↗</a>`;
       
       renderTable();
     } catch (err) {
+      document.getElementById('statusDot').className = 'status-dot error';
+      document.getElementById('statusText').textContent = 'Error';
       document.getElementById('tableBody').innerHTML =
         `<tr><td colspan="15" class="empty" style="color:#f87171">
-          Failed to load output.json — ensure scrape.py has generated output.json.<br>
+          Failed to load baseball_stats.json — make sure the scraper has run.<br>
           <small style="color:var(--text-muted)">${err.message}</small>
         </td></tr>`;
-      document.getElementById('metaBar').textContent = 'Error loading output.json';
+      document.getElementById('metaBar').textContent = 'Error loading baseball_stats.json';
     }
   }
 
@@ -694,21 +707,18 @@
     let sorted = [...rows];
     if (sortCol) {
       sorted.sort((a, b) => {
-        const statsA = isBatting ? a.batting_stats : a.pitching_stats;
-        const statsB = isBatting ? b.batting_stats : b.pitching_stats;
-        const av = parseStat(statsA?.[sortCol], sortCol);
-        const bv = parseStat(statsB?.[sortCol], sortCol);
+        const av = parseStat(a[sortCol], sortCol);
+        const bv = parseStat(b[sortCol], sortCol);
         return (av - bv) * sortDir;
       });
     }
 
     body.innerHTML = sorted.map(r => {
-      const stats = isBatting ? r.batting_stats : r.pitching_stats;
-      const isHL = String(r.jersey_number) === String(searchNum);
-      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.jersey_number}">
-        <td>${r.jersey_number}</td>
-        <td>${esc(r.player_name)}</td>
-        ${cols.map(c => `<td>${stats?.[c.key] || '—'}</td>`).join('')}
+      const isHL = String(r.number) === String(searchNum);
+      return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
+        <td>${r.number}</td>
+        <td>${esc(r.player)}</td>
+        ${cols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
   }
@@ -719,7 +729,6 @@
       sortDir *= -1;
     } else {
       sortCol = col;
-      // Lower is better defaults to ascending
       sortDir = (col === 'ERA' || col === 'WHIP') ? 1 : -1;
     }
     renderTable();
@@ -739,9 +748,11 @@
       return;
     }
 
-    const player = RAW_PLAYERS.find(p => String(p.jersey_number) === searchNum);
+    // Look up across both hitting and pitching tables
+    const hittingPlayer = BATTING_PLAYERS.find(p => String(p.number) === searchNum);
+    const pitchingPlayer = PITCHING_PLAYERS.find(p => String(p.number) === searchNum);
 
-    if (!player) {
+    if (!hittingPlayer && !pitchingPlayer) {
       card.style.display = 'none';
       notFound.style.display = 'block';
       highlightRow('');
@@ -751,16 +762,17 @@
     notFound.style.display = 'none';
     card.style.display     = 'block';
 
-    document.getElementById('spotJersey').textContent = `#${player.jersey_number}`;
-    document.getElementById('spotName').textContent   = player.player_name;
+    const playerName = (hittingPlayer || pitchingPlayer).player || '—';
+    document.getElementById('spotJersey').textContent = `#${searchNum}`;
+    document.getElementById('spotName').textContent   = playerName;
 
     // Batting Card
     const hSection = document.getElementById('spotHittingSection');
     const hGrid    = document.getElementById('spotHittingGrid');
-    if (player.batting_stats) {
+    if (hittingPlayer) {
       hSection.style.display = 'block';
       hGrid.innerHTML = BATTING_KEYS.map(c => {
-        const val = player.batting_stats[c.key] || '—';
+        const val = hittingPlayer[c.key] || '—';
         const rank = getRank('batting', c.key, val);
         const rankClass = rank ? `rank-${rank}` : '';
         const rankBadge = rank ? `<span class="rank-tag">${rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</span>` : '';
@@ -777,10 +789,10 @@
     // Pitching Card
     const pSection = document.getElementById('spotPitchingSection');
     const pGrid    = document.getElementById('spotPitchingGrid');
-    if (player.pitching_stats) {
+    if (pitchingPlayer) {
       pSection.style.display = 'block';
       pGrid.innerHTML = PITCHING_KEYS.map(c => {
-        const val = player.pitching_stats[c.key] || '—';
+        const val = pitchingPlayer[c.key] || '—';
         const rank = getRank('pitching', c.key, val);
         const rankClass = rank ? `rank-${rank}` : '';
         const rankBadge = rank ? `<span class="rank-tag">${rank === 1 ? '1st' : rank === 2 ? '2nd' : '3rd'}</span>` : '';
