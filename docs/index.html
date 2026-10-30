@@ -20,10 +20,10 @@
 
       /* Dynamic Theme Variables (Defaults to St. Thomas) */
       --team-primary:   #5b2d86;
-      --team-accent:    #7c3aed;
-      --team-glow:      rgba(124, 58, 237, 0.25);
-      --team-light:     #c4b5fd;
-      --team-gradient:  linear-gradient(135deg, #c4b5fd 0%, #8b5cf6 50%, #5b2d86 100%);
+      --team-accent:    #8b5cf6;
+      --team-glow:      rgba(139, 92, 246, 0.28);
+      --team-light:     #ddd6fe;
+      --team-btn-text:  #ffffff;
 
       /* Medal Tones */
       --gold:           #fbbf24;
@@ -41,55 +41,55 @@
       --red:            #ef4444;
 
       --radius:         12px;
-      --radius-sm:      6px;
+      --radius-sm:      8px;
     }
 
     [data-theme="stthomas"] {
       --team-primary:   #5b2d86;
       --team-accent:    #8b5cf6;
-      --team-glow:      rgba(139, 92, 246, 0.25);
+      --team-glow:      rgba(139, 92, 246, 0.3);
       --team-light:     #ddd6fe;
-      --team-gradient:  linear-gradient(135deg, #ede9fe 0%, #a78bfa 50%, #5b2d86 100%);
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="sdstate"] {
       --team-primary:   #0033a0;
-      --team-accent:    #ffd100;
-      --team-glow:      rgba(255, 209, 0, 0.25);
-      --team-light:     #fef08a;
-      --team-gradient:  linear-gradient(135deg, #fef08a 0%, #ffd100 45%, #0033a0 100%);
+      --team-accent:    #0055b8;
+      --team-glow:      rgba(0, 85, 184, 0.35);
+      --team-light:     #93c5fd;
+      --team-btn-text:  #ffffff;
+    }
+
+    [data-theme="ndsu"] {
+      --team-primary:   #005643;
+      --team-accent:    #007a5e;
+      --team-glow:      rgba(0, 122, 94, 0.35);
+      --team-light:     #86efac;
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="uncbears"] {
       --team-primary:   #002b49;
-      --team-accent:    #e5a823;
-      --team-glow:      rgba(229, 168, 35, 0.28);
-      --team-light:     #fde68a;
-      --team-gradient:  linear-gradient(135deg, #fef3c7 0%, #e5a823 45%, #002b49 100%);
+      --team-accent:    #154770;
+      --team-glow:      rgba(21, 71, 112, 0.38);
+      --team-light:     #bae6fd;
+      --team-btn-text:  #ffffff;
     }
 
     [data-theme="oru"] {
       --team-primary:   #002d62;
       --team-accent:    #c5b358;
-      --team-glow:      rgba(197, 179, 88, 0.28);
+      --team-glow:      rgba(197, 179, 88, 0.32);
       --team-light:     #fef3c7;
-      --team-gradient:  linear-gradient(135deg, #fffbeb 0%, #c5b358 50%, #002d62 100%);
+      --team-btn-text:  #000000;
     }
 
     [data-theme="omaha"] {
       --team-primary:   #d12631;
-      --team-accent:    #f87171;
-      --team-glow:      rgba(209, 38, 49, 0.28);
+      --team-accent:    #ef4444;
+      --team-glow:      rgba(239, 68, 68, 0.32);
       --team-light:     #fecaca;
-      --team-gradient:  linear-gradient(135deg, #fee2e2 0%, #f87171 45%, #991b1b 100%);
-    }
-
-    [data-theme="ndsu"] {
-      --team-primary:   #005643;
-      --team-accent:    #ffd100;
-      --team-glow:      rgba(255, 209, 0, 0.28);
-      --team-light:     #fef08a;
-      --team-gradient:  linear-gradient(135deg, #fef9c3 0%, #ffd100 45%, #005643 100%);
+      --team-btn-text:  #ffffff;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,7 +99,7 @@
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 2rem 1.25rem 4rem;
+      padding: 2.25rem 1.25rem 4rem;
       transition: background-color 0.3s;
     }
 
@@ -107,11 +107,6 @@
 
     /* ── Header ─────────────────────────────────────────────────────────────── */
     header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1rem;
       padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--border);
       margin-bottom: 1.75rem;
@@ -120,7 +115,7 @@
     .wordmark {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.35rem;
     }
 
     .wordmark-eyebrow {
@@ -134,32 +129,32 @@
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       font-weight: 900;
       letter-spacing: -0.03em;
-      line-height: 1.1;
-      background: var(--team-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transition: all 0.3s ease;
+      line-height: 1.15;
+      color: #e2e8f0; /* Static light grey */
     }
 
     .meta {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
-      text-align: right;
+      text-align: left;
+      margin-top: 0.25rem;
+      line-height: 1.4;
     }
 
     .meta a {
       color: var(--team-accent);
       text-decoration: none;
+      font-weight: 600;
     }
     .meta a:hover { text-decoration: underline; }
 
     /* ── Team Selector Ribbon ────────────────────────────────────────────────── */
     .selector-block {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
     }
 
     .section-caption {
@@ -168,7 +163,7 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.55rem;
       display: block;
     }
 
@@ -182,9 +177,9 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 0.55rem 1rem;
+      padding: 0.6rem 1.05rem;
       border-radius: 9999px;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -207,8 +202,8 @@
     }
 
     .team-pill-dot {
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: currentColor;
     }
@@ -305,7 +300,7 @@
 
     .jersey-badge {
       background: var(--team-accent);
-      color: #000;
+      color: var(--team-btn-text, #ffffff);
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.7rem;
       font-weight: 800;
@@ -408,33 +403,42 @@
     .rank-2 .rank-tag { background: var(--silver); color: #000; }
     .rank-3 .rank-tag { background: var(--bronze); color: #000; }
 
-    /* ── Tabs (Batting / Pitching) ───────────────────────────────────────────── */
+    /* ── Batting & Pitching Buttons (Larger & Easier to Read) ──────────────────── */
     .tabs {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
       flex-wrap: wrap;
     }
 
     .tab-btn {
       background: var(--surface-2);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       color: var(--text-muted);
-      padding: 0.5rem 1.25rem;
+      padding: 0.75rem 1.75rem;
       border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
       cursor: pointer;
-      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
     }
 
-    .tab-btn:hover { border-color: var(--team-accent); color: var(--text); }
+    .tab-btn:hover {
+      border-color: var(--team-accent);
+      color: var(--text);
+      background: var(--surface-3);
+    }
 
     .tab-btn.active {
       background: var(--team-accent);
       border-color: var(--team-accent);
-      color: #000;
-      font-weight: 700;
+      color: var(--team-btn-text, #ffffff);
+      font-weight: 800;
+      box-shadow: 0 0 16px var(--team-glow);
     }
 
     /* ── Full Table Card ─────────────────────────────────────────────────────── */
@@ -447,7 +451,7 @@
 
     .table-card-header {
       background: var(--surface-2);
-      padding: 0.85rem 1.15rem;
+      padding: 0.9rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -455,7 +459,7 @@
     }
 
     .table-card-title {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
     }
 
@@ -473,7 +477,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.65rem 0.85rem;
+      padding: 0.7rem 0.85rem;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       text-align: center;
@@ -492,7 +496,7 @@
     thead th.sorted { color: var(--team-accent); }
 
     tbody td {
-      padding: 0.6rem 0.85rem;
+      padding: 0.65rem 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--text);
       white-space: nowrap;
@@ -547,8 +551,9 @@
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.5rem; }
+      h1 { font-size: 1.6rem; }
       .stat-grid { grid-template-columns: repeat(3, 1fr); }
+      .tab-btn { padding: 0.6rem 1.25rem; font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -561,8 +566,9 @@
     <div class="wordmark">
       <span class="wordmark-eyebrow" id="eyebrowText">Summit League · 2026 Season</span>
       <h1 id="pageTitle">Summit League Baseball Season Stats</h1>
+      <!-- Metadata placed directly underneath title -->
+      <div class="meta" id="metaBar">Loading data…</div>
     </div>
-    <div class="meta" id="metaBar">Loading data…</div>
   </header>
 
   <!-- Team Selector -->
@@ -573,19 +579,19 @@
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
       <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
-        <span class="team-pill-dot" style="color:#ffd100"></span> South Dakota State
+        <span class="team-pill-dot" style="color:#0055b8"></span> South Dakota State
       </button>
       <button class="team-pill" data-team="ndsu" onclick="selectTeam('ndsu', this)">
-        <span class="team-pill-dot" style="color:#ffd100"></span> North Dakota State
+        <span class="team-pill-dot" style="color:#007a5e"></span> North Dakota State
       </button>
       <button class="team-pill" data-team="uncbears" onclick="selectTeam('uncbears', this)">
-        <span class="team-pill-dot" style="color:#e5a823"></span> Northern Colorado
+        <span class="team-pill-dot" style="color:#154770"></span> Northern Colorado
       </button>
       <button class="team-pill" data-team="oru" onclick="selectTeam('oru', this)">
         <span class="team-pill-dot" style="color:#c5b358"></span> Oral Roberts
       </button>
       <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
-        <span class="team-pill-dot" style="color:#f87171"></span> Omaha
+        <span class="team-pill-dot" style="color:#ef4444"></span> Omaha
       </button>
     </div>
   </section>
@@ -640,8 +646,8 @@
 
   <!-- Batting / Pitching Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('batting', this)">Batting</button>
-    <button class="tab-btn" onclick="switchTab('pitching', this)">Pitching</button>
+    <button class="tab-btn active" onclick="switchTab('batting', this)">⚾ Batting</button>
+    <button class="tab-btn" onclick="switchTab('pitching', this)">⚡ Pitching</button>
   </div>
 
   <!-- Table Card -->
@@ -796,7 +802,7 @@
 
       const updatedTime = RAW_DATA.generated_at ? new Date(RAW_DATA.generated_at).toLocaleString() : 'Live';
       document.getElementById('metaBar').innerHTML =
-        `${team.shortName} · Updated: ${updatedTime} · <a href="${team.file}" target="_blank">${team.file} ↗</a>`;
+        `<strong>${team.name}</strong> · Updated: ${updatedTime} · <a href="${team.file}" target="_blank">${team.file} ↗</a>`;
 
       renderTable();
     } catch (err) {
