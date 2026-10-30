@@ -49,7 +49,7 @@ def fetch_html_playwright(url):
     """Playwright fetch for JS-rendered pages (Sidearm/Nuxt roster)."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(user_agent=FETCH_HEADERS,["User-Agent"])
+        context = browser.new_context(user_agent=FETCH_HEADERS["User-Agent"])
         page = context.new_page()
         print(f"  ,[Playwright] Navigating to: {url}")
         page.goto(url, wait_until="domcontentloaded", timeout=60000)
