@@ -2,9 +2,9 @@
 """
 scraper/scrape_ndsu.py
 Scrapes North Dakota State Bison baseball stats from StatBroadcast HTML (teamcume.htm).
-Locates tables by matching the specific header markers:
-  - Batting: table directly following "Record:" / containing "avg", "ab", "rbi", "slg%"
-  - Pitching: table following "(All games Sorted by Earned run avg)" / containing "era", "w-l", "ip"
+Locates tables by matching column header signatures:
+  - Batting:  table containing "avg", "ab", "rbi", "slg%"
+  - Pitching: table containing "era", "w-l", "ip", "so"
 Outputs to docs/ndsu.json in the standard schema.
 
 Usage:
@@ -35,12 +35,14 @@ HEADERS = {
 }
 
 
+# ── Fetch ──────────────────────────────────────────────────────────────────────
 def fetch_html(url):
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=25) as r:
         return r.read().decode("utf-8", errors="replace")
 
 
+# ── Helpers ────────────────────────────────────────────────────────────────────
 def clean(val, default="0"):
     if val is None:
         return default
@@ -67,13 +69,11 @@ def parse_float(val):
 
 
 def parse_ip(ip_str):
-    """Parses '42.1' as 42 + 1/3 innings."""
+    """Parses StatBroadcast IP format: '42.1' = 42 and 1/3 innings."""
     try:
         parts = str(ip_str).split(".")
-        full = int(parts
-[0])
-        outs = int(parts
-[1]) if len(parts) > 1 else 0
+        full = int(parts[0])
+        outs = int(parts[1]) if len(parts) > 1 else 0
         return full + outs / 3.0
     except Exception:
         return 0.0
@@ -98,31 +98,39 @@ def compute_whip(bb, h, ip_str):
 
 def split_jersey_and_name(text):
     """
-    Extracts jersey number from strings like '25 Becker, Colten' or 'Colten Becker (25)'
-    or returns ('999', text) if not prefixed with a number.
+    Extracts jersey number and name from StatBroadcast player cell text.
+    Handles formats like:
+      '25 Becker, Colten'
+      '3 Smith, Dante'
+      'Becker, Colten' (no number)
     """
     text = text.strip()
-    # Pattern: "25 Becker, Colten" or "25 Colten Becker"
+    # Pattern: leading 1-2 digit number followed by space then name
     m = re.match(r"^(\d{1,2})\s+(.+)$", text)
     if m:
         return m.group(1).strip(), m.group(2).strip()
-
-    # Pattern: "Becker, Colten 25"
+    # Pattern: name followed by trailing number
     m2 = re.search(r"^(.*?)\s+(\d{1,2})$", text)
     if m2:
         return m2.group(2).strip(), m2.group(1).strip()
-
     return "999", text
 
 
+# ── Table Utilities ────────────────────────────────────────────────────────────
+def get_col(header_cols, *candidates):
+    """Return index of first matching candidate in header_cols list."""
+    for candidate in candidates:
+        for i, h in enumerate(header_cols):
+            if h.strip().lower() == candidate.lower():
+                return i
+    return None
+
+
 def extract_table_rows(table):
-    """Extracts raw text cells for each row in a table."""
-    all_rows = 
-[]
+    """Extract all non-empty rows from a BeautifulSoup table as lists of cell text."""
+    all_rows = []
     for tr in table.find_all("tr"):
-        cells = 
-[td.get_text(" ", strip=True) for td in tr.find_all(
-["td", "th"])]
+        cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
         if any(c.strip() for c in cells):
             all_rows.append(cells)
     return all_rows
@@ -130,10 +138,9 @@ def extract_table_rows(table):
 
 # ── Batting Parser ─────────────────────────────────────────────────────────────
 def parse_batting_table(soup):
-    batting_players = 
-[]
+    batting_players = []
 
-    # Find the table that contains batting headers: 'avg', 'ab', 'rbi'
+    # Find table whose text contains batting header signature
     target_table = None
     for table in soup.find_all("table"):
         text = table.get_text(" ", strip=True).lower()
@@ -149,13 +156,11 @@ def parse_batting_table(soup):
     if len(rows) < 2:
         return batting_players
 
-    # Locate the header row index
+    # Find header row containing 'avg' and 'ab'
     header_idx = None
-    header_cols = 
-[]
+    header_cols = []
     for idx, row in enumerate(rows):
-        row_lower = 
-[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "avg" in row_lower and "ab" in row_lower:
             header_idx = idx
             header_cols = row_lower
@@ -165,78 +170,52 @@ def parse_batting_table(soup):
         print("  WARNING: Could not match Batting column headers.")
         return batting_players
 
-    def get_col(candidates):
-        for c in candidates:
-            for i, h in enumerate(header_cols):
-                if h == c.lower():
-                    return i
-        return None
+    print(f"  Batting header found at row {header_idx}: {header_cols}")
 
-    c_player = get_col(
-["player", "name", "batter"])
-    c_avg    = get_col(
-["avg"])
-    c_ab     = get_col(
-["ab"])
-    c_r      = get_col(
-["r"])
-    c_h      = get_col(
-["h"])
-    c_2b     = get_col(
-["2b"])
-    c_3b     = get_col(
-["3b"])
-    c_hr     = get_col(
-["hr"])
-    c_rbi    = get_col(
-["rbi"])
-    c_slg    = get_col(
-["slg%", "slg"])
-    c_obp    = get_col(
-["ob%", "obp"])
-    c_ops    = get_col(
-["ops"])
+    c_player = get_col(header_cols, "player", "name", "batter")
+    c_avg    = get_col(header_cols, "avg")
+    c_ab     = get_col(header_cols, "ab")
+    c_r      = get_col(header_cols, "r")
+    c_h      = get_col(header_cols, "h")
+    c_2b     = get_col(header_cols, "2b")
+    c_3b     = get_col(header_cols, "3b")
+    c_hr     = get_col(header_cols, "hr")
+    c_rbi    = get_col(header_cols, "rbi")
+    c_slg    = get_col(header_cols, "slg%", "slg")
+    c_obp    = get_col(header_cols, "ob%", "obp")
+    c_ops    = get_col(header_cols, "ops")
 
-    for row in rows
-[header_idx + 1:]:
+    def cell(row, idx, default="0"):
+        if idx is None or idx >= len(row):
+            return default
+        return row[idx].strip()
+
+    for row in rows[header_idx + 1:]:
         if len(row) <= 2:
             continue
 
-        raw_player = row
-[c_player] if c_player is not None and c_player < len(row) else row
-[0]
-        raw_player = raw_player.strip()
-
-        # Stop / Ignore Totals & Opponents
-        if not raw_player or raw_player.lower().startswith("total") or raw_player.lower().startswith("opponent"):
+        raw_player = cell(row, c_player, "").strip() if c_player is not None else row[0].strip()
+        if not raw_player:
             continue
 
-        # Extract number and name
+        # Skip Totals and Opponents rows
+        rp_lower = raw_player.lower()
+        if rp_lower.startswith("total") or rp_lower.startswith("opponent"):
+            continue
+
         num, name = split_jersey_and_name(raw_player)
 
-        avg = clean_avg(row
-[c_avg]) if c_avg is not None and c_avg < len(row) else ".000"
-        ab  = clean(row
-[c_ab]) if c_ab is not None and c_ab < len(row) else "0"
-        r   = clean(row
-[c_r]) if c_r is not None and c_r < len(row) else "0"
-        h   = clean(row
-[c_h]) if c_h is not None and c_h < len(row) else "0"
-        d2  = clean(row
-[c_2b]) if c_2b is not None and c_2b < len(row) else "0"
-        d3  = clean(row
-[c_3b]) if c_3b is not None and c_3b < len(row) else "0"
-        hr  = clean(row
-[c_hr]) if c_hr is not None and c_hr < len(row) else "0"
-        rbi = clean(row
-[c_rbi]) if c_rbi is not None and c_rbi < len(row) else "0"
-        slg = clean_avg(row
-[c_slg]) if c_slg is not None and c_slg < len(row) else ".000"
-        obp = clean_avg(row
-[c_obp]) if c_obp is not None and c_obp < len(row) else ".000"
-
-        ops = clean_avg(row
-[c_ops]) if c_ops is not None and c_ops < len(row) else compute_ops(obp, slg)
+        avg = clean_avg(cell(row, c_avg))
+        ab  = clean(cell(row, c_ab))
+        r   = clean(cell(row, c_r))
+        h   = clean(cell(row, c_h))
+        d2  = clean(cell(row, c_2b))
+        d3  = clean(cell(row, c_3b))
+        hr  = clean(cell(row, c_hr))
+        rbi = clean(cell(row, c_rbi))
+        slg = clean_avg(cell(row, c_slg))
+        obp = clean_avg(cell(row, c_obp))
+        ops = clean_avg(cell(row, c_ops)) if c_ops is not None else compute_ops(obp, slg)
 
         if parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(r) > 0:
             batting_players.append({
@@ -258,10 +237,9 @@ def parse_batting_table(soup):
 
 # ── Pitching Parser ────────────────────────────────────────────────────────────
 def parse_pitching_table(soup):
-    pitching_players = 
-[]
+    pitching_players = []
 
-    # Find the table that contains pitching headers: 'era', 'w-l', 'ip', 'so'
+    # Find table whose text contains pitching header signature
     target_table = None
     for table in soup.find_all("table"):
         text = table.get_text(" ", strip=True).lower()
@@ -277,12 +255,11 @@ def parse_pitching_table(soup):
     if len(rows) < 2:
         return pitching_players
 
+    # Find header row containing 'era', 'ip', 'w-l'
     header_idx = None
-    header_cols = 
-[]
+    header_cols = []
     for idx, row in enumerate(rows):
-        row_lower = 
-[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "era" in row_lower and "ip" in row_lower and "w-l" in row_lower:
             header_idx = idx
             header_cols = row_lower
@@ -292,147 +269,107 @@ def parse_pitching_table(soup):
         print("  WARNING: Could not match Pitching column headers.")
         return pitching_players
 
-    def get_col(candidates):
-        for c in candidates:
-            for i, h in enumerate(header_cols):
-                if h == c.lower():
-                    return i
-        return None
+    print(f"  Pitching header found at row {header_idx}: {header_cols}")
 
-    c_player = get_col(
-["player", "name", "pitcher"])
-    c_era    = get_col(
-["era"])
-    c_wl     = get_col(
-["w-l", "w-l-s", "wl"])
-    c_ip     = get_col(
-["ip"])
-    c_h      = get_col(
-["h"])
-    c_bb     = get_col(
-["bb"])
-    c_so     = get_col(
-["so", "k"])
-    c_whip   = get_col(
-["whip"])
+    c_player = get_col(header_cols, "player", "name", "pitcher")
+    c_era    = get_col(header_cols, "era")
+    c_wl     = get_col(header_cols, "w-l", "w-l-s", "wl")
+    c_ip     = get_col(header_cols, "ip")
+    c_h      = get_col(header_cols, "h")
+    c_bb     = get_col(header_cols, "bb")
+    c_so     = get_col(header_cols, "so", "k")
+    c_whip   = get_col(header_cols, "whip")
 
-    for row in rows
-[header_idx + 1:]:
+    def cell(row, idx, default="0"):
+        if idx is None or idx >= len(row):
+            return default
+        return row[idx].strip()
+
+    for row in rows[header_idx + 1:]:
         if len(row) <= 2:
             continue
 
-        raw_player = row
-[c_player] if c_player is not None and c_player < len(row) else row
-[0]
-        raw_player = raw_player.strip()
+        raw_player = cell(row, c_player, "").strip() if c_player is not None else row[0].strip()
+        if not raw_player:
+            continue
 
-        # Stop / Ignore Totals & Opponents
-        if not raw_player or raw_player.lower().startswith("total") or raw_player.lower().startswith("opponent"):
+        # Skip Totals and Opponents rows
+        rp_lower = raw_player.lower()
+        if rp_lower.startswith("total") or rp_lower.startswith("opponent"):
             continue
 
         num, name = split_jersey_and_name(raw_player)
 
-        era  = clean_avg(row
-[c_era]) if c_era is not None and c_era < len(row) else "-"
-        wl   = clean(row
-[c_wl], "0-0") if c_wl is not None and c_wl < len(row) else "0-0"
-        ip   = clean(row
-[c_ip], "0.0") if c_ip is not None and c_ip < len(row) else "0.0"
-        h    = clean(row
-[c_h], "0") if c_h is not None and c_h < len(row) else "0"
-        bb   = clean(row
-[c_bb], "0") if c_bb is not None and c_bb < len(row) else "0"
-        so   = clean(row
-[c_so], "0") if c_so is not None and c_so < len(row) else "0"
+        ip_raw = cell(row, c_ip, "0.0")
+        ip_dec = parse_ip(ip_raw)
+        if ip_dec == 0:
+            continue
 
-        whip = clean_avg(row
-[c_whip]) if c_whip is not None and c_whip < len(row) else compute_whip(bb, h, ip)
+        era  = clean_avg(cell(row, c_era))
+        wl   = clean(cell(row, c_wl, "0-0"), "0-0")
+        h    = clean(cell(row, c_h))
+        bb   = clean(cell(row, c_bb))
+        so   = clean(cell(row, c_so))
+        whip = clean_avg(cell(row, c_whip)) if c_whip is not None else compute_whip(bb, h, ip_raw)
 
-        if parse_float(ip) > 0 or era != "-":
-            pitching_players.append({
-                "number": num,
-                "player": name,
-                "ERA":    era,
-                "WHIP":   whip,
-                "W-L":    wl,
-                "IP":     ip,
-                "SO":     so,
-            })
+        pitching_players.append({
+            "number": num,
+            "player": name,
+            "ERA":    era,
+            "WHIP":   whip,
+            "W-L":    wl,
+            "IP":     ip_raw,
+            "SO":     so,
+        })
 
     return pitching_players
 
 
-# ── Unified Player Combiner ───────────────────────────────────────────────────
+# ── Build Combined Players Map ─────────────────────────────────────────────────
 def build_players(hitting, pitching):
     players_map = {}
 
     for entry in hitting:
         try:
-            jersey_int = int(entry
-["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
-
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry
-["player"]
+            "player_name":   entry["player"]
         })
-        p
-["batting_stats"] = {
-            "AVG":  entry
-["AVG"],
-            "R":    entry
-["R"],
-            "H":    entry
-["H"],
-            "2B":   entry
-["2B"],
-            "3B":   entry
-["3B"],
-            "HR":   entry
-["HR"],
-            "RBI":  entry
-["RBI"],
-            "OPS":  entry
-["OPS"],
-            "SLG%": entry
-["SLG%"],
+        p["batting_stats"] = {
+            "AVG":  entry["AVG"],
+            "R":    entry["R"],
+            "H":    entry["H"],
+            "2B":   entry["2B"],
+            "3B":   entry["3B"],
+            "HR":   entry["HR"],
+            "RBI":  entry["RBI"],
+            "OPS":  entry["OPS"],
+            "SLG%": entry["SLG%"],
         }
-        players_map
-[jersey_int] = p
+        players_map[jersey_int] = p
 
     for entry in pitching:
         try:
-            jersey_int = int(entry
-["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
-
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry
-["player"]
+            "player_name":   entry["player"]
         })
-        p
-["pitching_stats"] = {
-            "ERA":  entry
-["ERA"],
-            "WHIP": entry
-["WHIP"],
-            "W-L":  entry
-["W-L"],
-            "IP":   entry
-["IP"],
-            "SO":   entry
-["SO"],
+        p["pitching_stats"] = {
+            "ERA":  entry["ERA"],
+            "WHIP": entry["WHIP"],
+            "W-L":  entry["W-L"],
+            "IP":   entry["IP"],
+            "SO":   entry["SO"],
         }
-        players_map
-[jersey_int] = p
+        players_map[jersey_int] = p
 
-    return 
-[players_map
-[k] for k in sorted(players_map.keys())]
+    return [players_map[k] for k in sorted(players_map.keys())]
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
@@ -456,14 +393,14 @@ def main():
 
     print("Parsing batting table...")
     hitting = parse_batting_table(soup)
+    print(f"  Found {len(hitting)} batters.")
 
     print("Parsing pitching table...")
     pitching = parse_pitching_table(soup)
+    print(f"  Found {len(pitching)} pitchers.")
 
-    hitting_by_num  = {p
-["number"]: p for p in hitting}
-    pitching_by_num = {p
-["number"]: p for p in pitching}
+    hitting_by_num  = {p["number"]: p for p in hitting}
+    pitching_by_num = {p["number"]: p for p in pitching}
     players_sorted  = build_players(hitting, pitching)
 
     result = {
