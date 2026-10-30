@@ -103,7 +103,7 @@
       transition: background-color 0.3s;
     }
 
-    .container { max-width: 1200px; margin: 0 auto; }
+    .container { max-width: 1240px; margin: 0 auto; }
 
     /* ── Header ─────────────────────────────────────────────────────────────── */
     header {
@@ -133,7 +133,7 @@
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.15;
-      color: #e2e8f0; /* Static light grey */
+      color: #e2e8f0;
     }
 
     .meta {
@@ -403,7 +403,7 @@
     .rank-2 .rank-tag { background: var(--silver); color: #000; }
     .rank-3 .rank-tag { background: var(--bronze); color: #000; }
 
-    /* ── Batting & Pitching Buttons (Larger & Easier to Read) ──────────────────── */
+    /* ── Batting & Pitching Buttons ──────────────────────────────────────────── */
     .tabs {
       display: flex;
       gap: 0.75rem;
@@ -485,10 +485,10 @@
       user-select: none;
     }
 
-    thead th:first-child,
-    thead th:nth-child(2) { text-align: left; cursor: default; }
+    thead th.col-left { text-align: left; cursor: default; }
+    thead th.col-center-fixed { text-align: center; cursor: default; }
 
-    thead th:hover:not(:first-child):not(:nth-child(2)) {
+    thead th:hover:not(.col-left):not(.col-center-fixed) {
       color: var(--text);
       background: var(--team-glow);
     }
@@ -505,20 +505,29 @@
       font-size: 0.82rem;
     }
 
-    tbody td:first-child,
-    tbody td:nth-child(2) {
+    tbody td.col-player {
       text-align: left;
       font-family: 'Inter', sans-serif;
+      font-weight: 600;
     }
 
-    tbody td:first-child {
+    tbody td.col-jersey {
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       width: 48px;
+      text-align: left;
     }
 
-    tbody td:nth-child(2) { font-weight: 600; }
+    tbody td.col-pos,
+    tbody td.col-yr {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      width: 54px;
+    }
+
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: rgba(255,255,255,0.025); }
 
@@ -526,7 +535,7 @@
       background: var(--team-glow) !important;
     }
 
-    tbody tr.row-highlight td:first-child { color: var(--team-accent); }
+    tbody tr.row-highlight td.col-jersey { color: var(--team-accent); }
 
     .status-bar {
       display: flex;
@@ -564,34 +573,33 @@
   <!-- Header -->
   <header>
     <div class="wordmark">
-      <span class="wordmark-eyebrow" id="eyebrowText">Summit League · 2026 Season</span>
+      <span class="wordmark-eyebrow" id="eyebrowText">TAPbot · 2026 Season</span>
       <h1 id="pageTitle">Summit League Baseball Season Stats</h1>
-      <!-- Metadata placed directly underneath title -->
       <div class="meta" id="metaBar">Loading data…</div>
     </div>
   </header>
 
-  <!-- Team Selector -->
+  <!-- Team Selector (Alphabetical Order) -->
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
-      <button class="team-pill active" data-team="stthomas" onclick="selectTeam('stthomas', this)">
-        <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
-      </button>
-      <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
-        <span class="team-pill-dot" style="color:#0055b8"></span> South Dakota State
-      </button>
       <button class="team-pill" data-team="ndsu" onclick="selectTeam('ndsu', this)">
         <span class="team-pill-dot" style="color:#007a5e"></span> North Dakota State
       </button>
       <button class="team-pill" data-team="uncbears" onclick="selectTeam('uncbears', this)">
         <span class="team-pill-dot" style="color:#154770"></span> Northern Colorado
       </button>
+      <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
+        <span class="team-pill-dot" style="color:#ef4444"></span> Omaha
+      </button>
       <button class="team-pill" data-team="oru" onclick="selectTeam('oru', this)">
         <span class="team-pill-dot" style="color:#c5b358"></span> Oral Roberts
       </button>
-      <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
-        <span class="team-pill-dot" style="color:#ef4444"></span> Omaha
+      <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
+        <span class="team-pill-dot" style="color:#0055b8"></span> South Dakota State
+      </button>
+      <button class="team-pill active" data-team="stthomas" onclick="selectTeam('stthomas', this)">
+        <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
     </div>
   </section>
@@ -612,7 +620,7 @@
           aria-label="Player jersey number"
         />
       </div>
-      <span class="search-hint">Enter a jersey number to view spotlight stat card & team rank badges (1st, 2nd, 3rd).</span>
+      <span class="search-hint">Enter a jersey number to view a specific player's stats</span>
     </div>
   </section>
 
@@ -663,7 +671,7 @@
       <table id="statsTable">
         <thead id="tableHead"></thead>
         <tbody id="tableBody">
-          <tr><td colspan="15" class="empty">Loading stats…</td></tr>
+          <tr><td colspan="17" class="empty">Loading stats…</td></tr>
         </tbody>
       </table>
     </div>
@@ -674,19 +682,6 @@
 <script>
   // ── Team Registry & Config ──────────────────────────────────────────────────
   const TEAMS = {
-    stthomas: {
-      id: 'stthomas',
-      name: 'University of St. Thomas Tommies',
-      shortName: 'St. Thomas',
-      file: 'baseball_stats.json',
-      altFile: 'stthomas.json'
-    },
-    sdstate: {
-      id: 'sdstate',
-      name: 'South Dakota State Jackrabbits',
-      shortName: 'South Dakota State',
-      file: 'sdstate.json'
-    },
     ndsu: {
       id: 'ndsu',
       name: 'North Dakota State Bison',
@@ -699,17 +694,30 @@
       shortName: 'Northern Colorado',
       file: 'uncbears.json'
     },
+    omaha: {
+      id: 'omaha',
+      name: 'Omaha Mavericks',
+      shortName: 'Omaha',
+      file: 'omaha.json'
+    },
     oru: {
       id: 'oru',
       name: 'Oral Roberts Golden Eagles',
       shortName: 'Oral Roberts',
       file: 'oru.json'
     },
-    omaha: {
-      id: 'omaha',
-      name: 'Omaha Mavericks',
-      shortName: 'Omaha',
-      file: 'omaha.json'
+    sdstate: {
+      id: 'sdstate',
+      name: 'South Dakota State Jackrabbits',
+      shortName: 'South Dakota State',
+      file: 'sdstate.json'
+    },
+    stthomas: {
+      id: 'stthomas',
+      name: 'University of St. Thomas Tommies',
+      shortName: 'St. Thomas',
+      file: 'baseball_stats.json',
+      altFile: 'stthomas.json'
     }
   };
 
@@ -747,12 +755,10 @@
     if (!TEAMS[teamId]) return;
     CURRENT_TEAM = teamId;
 
-    // Apply CSS Theme & Active Pill
     document.body.setAttribute('data-theme', teamId);
     document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
-    // Reset Search & Load Team Data
     document.getElementById('playerSearch').value = '';
     searchNum = '';
     document.getElementById('spotlightCard').style.display = 'none';
@@ -766,7 +772,7 @@
     const team = TEAMS[teamId];
     document.getElementById('statusDot').className = 'status-dot';
     document.getElementById('statusText').textContent = 'Loading…';
-    document.getElementById('tableBody').innerHTML = `<tr><td colspan="15" class="empty">Loading ${team.shortName} stats…</td></tr>`;
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="17" class="empty">Loading ${team.shortName} stats…</td></tr>`;
 
     try {
       let res = await fetch(`${team.file}?t=${Date.now()}`);
@@ -779,15 +785,35 @@
 
       // Normalize Schema
       if (RAW_DATA.hitting || RAW_DATA.pitching) {
-        BATTING_PLAYERS = RAW_DATA.hitting || [];
-        PITCHING_PLAYERS = RAW_DATA.pitching || [];
+        BATTING_PLAYERS = (RAW_DATA.hitting || []).map(p => ({
+          ...p,
+          position: p.position || '',
+          year: p.year || ''
+        }));
+        PITCHING_PLAYERS = (RAW_DATA.pitching || []).map(p => ({
+          ...p,
+          position: p.position || '',
+          year: p.year || ''
+        }));
       } else if (Array.isArray(RAW_DATA)) {
         BATTING_PLAYERS = RAW_DATA
           .filter(p => p.batting_stats)
-          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.batting_stats }));
+          .map(p => ({
+            number: String(p.jersey_number),
+            player: p.player_name,
+            position: p.position || '',
+            year: p.year || '',
+            ...p.batting_stats
+          }));
         PITCHING_PLAYERS = RAW_DATA
           .filter(p => p.pitching_stats)
-          .map(p => ({ number: String(p.jersey_number), player: p.player_name, ...p.pitching_stats }));
+          .map(p => ({
+            number: String(p.jersey_number),
+            player: p.player_name,
+            position: p.position || '',
+            year: p.year || '',
+            ...p.pitching_stats
+          }));
       } else {
         BATTING_PLAYERS = [];
         PITCHING_PLAYERS = [];
@@ -809,7 +835,7 @@
       document.getElementById('statusDot').className = 'status-dot error';
       document.getElementById('statusText').textContent = 'Error';
       document.getElementById('tableBody').innerHTML =
-        `<tr><td colspan="15" class="empty" style="color:#f87171">
+        `<tr><td colspan="17" class="empty" style="color:#f87171">
           Failed to load stats for ${team.name} (${team.file}).<br>
           <small style="color:var(--text-muted)">Ensure scraper has run and generated this file.</small>
         </td></tr>`;
@@ -883,10 +909,12 @@
     const head = document.getElementById('tableHead');
     const body = document.getElementById('tableBody');
 
-    // Header
+    // Header with Pos and Yr columns to the left of Player
     head.innerHTML = `<tr>
-      <th>#</th>
-      <th>Player</th>
+      <th class="col-left">#</th>
+      <th class="col-center-fixed">Pos</th>
+      <th class="col-center-fixed">Yr</th>
+      <th class="col-left">Player</th>
       ${cols.map(c => `
         <th onclick="sortBy('${c.key}')" class="${sortCol === c.key ? 'sorted' : ''}">
           ${c.label}${sortCol === c.key ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
@@ -895,7 +923,7 @@
     </tr>`;
 
     if (!rows.length) {
-      body.innerHTML = `<tr><td colspan="${cols.length + 2}" class="empty">No ${activeTab} data found for this team.</td></tr>`;
+      body.innerHTML = `<tr><td colspan="${cols.length + 4}" class="empty">No ${activeTab} data found for this team.</td></tr>`;
       return;
     }
 
@@ -911,8 +939,10 @@
     body.innerHTML = sorted.map(r => {
       const isHL = String(r.number) === String(searchNum);
       return `<tr class="${isHL ? 'row-highlight' : ''}" data-num="${r.number}">
-        <td>${r.number}</td>
-        <td>${esc(r.player)}</td>
+        <td class="col-jersey">${r.number || '—'}</td>
+        <td class="col-pos">${r.position || '—'}</td>
+        <td class="col-yr">${r.year || '—'}</td>
+        <td class="col-player">${esc(r.player)}</td>
         ${cols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}
       </tr>`;
     }).join('');
@@ -956,9 +986,14 @@
     notFound.style.display = 'none';
     card.style.display     = 'block';
 
-    const playerName = (hittingPlayer || pitchingPlayer).player || '—';
+    const pObj = hittingPlayer || pitchingPlayer;
+    const playerName = pObj.player || '—';
+    const playerPos = pObj.position ? ` · ${pObj.position}` : '';
+    const playerYr = pObj.year ? ` · ${pObj.year}` : '';
+
     document.getElementById('spotJersey').textContent = `#${searchNum}`;
     document.getElementById('spotName').textContent   = playerName;
+    document.getElementById('spotSub').textContent    = `${RAW_DATA.team || TEAMS[CURRENT_TEAM].name}${playerPos}${playerYr}`;
 
     // Batting Card
     const hSection = document.getElementById('spotHittingSection');
