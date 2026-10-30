@@ -4,12 +4,15 @@
   "sport": "baseball",
   "season": "2026",
   "source": "https://gojacks.com/sports/baseball/stats/2026",
+  "source_roster": "https://gojacks.com/sports/baseball/roster",
   "status": "ok",
-  "generated_at": "2026-10-30T02:20:35.033238+00:00",
+  "generated_at": "2026-10-30T02:49:36.550851+00:00",
   "players": [
     {
       "jersey_number": 1,
-      "player_name": "Siegert, Owen",
+      "player_name": "Owen Siegert",
+      "position": "OF/P",
+      "year": "L/L",
       "batting_stats": {
         "AVG": ".360",
         "R": "13",
@@ -24,7 +27,9 @@
     },
     {
       "jersey_number": 2,
-      "player_name": "Grawe, Nolan",
+      "player_name": "Nolan Grawe",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".330",
         "R": "23",
@@ -39,7 +44,9 @@
     },
     {
       "jersey_number": 3,
-      "player_name": "Werk, Matthew",
+      "player_name": "Matthew Werk",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "3.86",
         "WHIP": "1.29",
@@ -50,7 +57,9 @@
     },
     {
       "jersey_number": 4,
-      "player_name": "Jirschele, Keagen",
+      "player_name": "Keagen Jirschele",
+      "position": "IF/P",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".282",
         "R": "20",
@@ -65,7 +74,9 @@
     },
     {
       "jersey_number": 5,
-      "player_name": "Wroblewski, Luke",
+      "player_name": "Luke Wroblewski",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".269",
         "R": "26",
@@ -80,7 +91,9 @@
     },
     {
       "jersey_number": 6,
-      "player_name": "Jones, Luke",
+      "player_name": "Luke Jones",
+      "position": "C",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".200",
         "R": "5",
@@ -95,7 +108,9 @@
     },
     {
       "jersey_number": 7,
-      "player_name": "Finney, Travis",
+      "player_name": "Travis Finney",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".154",
         "R": "1",
@@ -110,7 +125,9 @@
     },
     {
       "jersey_number": 8,
-      "player_name": "Brown, Brady",
+      "player_name": "Brady Brown",
+      "position": "OF",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".125",
         "R": "2",
@@ -125,7 +142,9 @@
     },
     {
       "jersey_number": 9,
-      "player_name": "Luskey, Luke",
+      "player_name": "Luke Luskey",
+      "position": "IF",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".337",
         "R": "23",
@@ -140,7 +159,9 @@
     },
     {
       "jersey_number": 10,
-      "player_name": "Wachter, Nate",
+      "player_name": "Nate Wachter",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".326",
         "R": "17",
@@ -155,7 +176,9 @@
     },
     {
       "jersey_number": 11,
-      "player_name": "Augedahl, Tristan",
+      "player_name": "Tristan Augedahl",
+      "position": "P",
+      "year": "L/L",
       "pitching_stats": {
         "ERA": "8.18",
         "WHIP": "1.68",
@@ -166,7 +189,9 @@
     },
     {
       "jersey_number": 12,
-      "player_name": "McDowell, Drew",
+      "player_name": "Drew McDowell",
+      "position": "P",
+      "year": "R/R",
       "pitching_stats": {
         "ERA": "3.71",
         "WHIP": "1.24",
@@ -177,7 +202,9 @@
     },
     {
       "jersey_number": 13,
-      "player_name": "Lang, Mason",
+      "player_name": "Mason Lang",
+      "position": "C",
+      "year": "L/R",
       "batting_stats": {
         "AVG": ".333",
         "R": "0",
@@ -192,7 +219,9 @@
     },
     {
       "jersey_number": 14,
-      "player_name": "Taylor, Carter",
+      "player_name": "Carter Taylor",
+      "position": "OF",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".264",
         "R": "12",
@@ -207,7 +236,9 @@
     },
     {
       "jersey_number": 15,
-      "player_name": "Werk, Nic",
+      "player_name": "Nic Werk",
+      "position": "UT",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".238",
         "R": "15",
@@ -222,7 +253,9 @@
     },
     {
       "jersey_number": 17,
-      "player_name": "Sjuts, Jacob",
+      "player_name": "Jacob Sjuts",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "7.71",
         "WHIP": "2.57",
@@ -233,7 +266,9 @@
     },
     {
       "jersey_number": 19,
-      "player_name": "Richardson, Dylan",
+      "player_name": "Dylan Richardson",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "10.29",
         "WHIP": "2.00",
@@ -244,7 +279,9 @@
     },
     {
       "jersey_number": 20,
-      "player_name": "Madison, Ty",
+      "player_name": "Ty Madison",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "3.13",
         "WHIP": "1.02",
@@ -255,7 +292,9 @@
     },
     {
       "jersey_number": 22,
-      "player_name": "Schlecht, Sam",
+      "player_name": "Sam Schlecht",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "7.09",
         "WHIP": "1.68",
@@ -266,7 +305,9 @@
     },
     {
       "jersey_number": 24,
-      "player_name": "Rylance, Kaden",
+      "player_name": "Kaden Rylance",
+      "position": "P",
+      "year": "R/R",
       "pitching_stats": {
         "ERA": "7.04",
         "WHIP": "1.61",
@@ -277,7 +318,9 @@
     },
     {
       "jersey_number": 25,
-      "player_name": "Sorensen, Grant",
+      "player_name": "Grant Sorensen",
+      "position": "IF",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".150",
         "R": "6",
@@ -292,7 +335,9 @@
     },
     {
       "jersey_number": 27,
-      "player_name": "Novotny, Sam",
+      "player_name": "Sam Novotny",
+      "position": "P",
+      "year": "R/R",
       "pitching_stats": {
         "ERA": "7.71",
         "WHIP": "1.53",
@@ -303,7 +348,9 @@
     },
     {
       "jersey_number": 28,
-      "player_name": "Vogt, Jaren",
+      "player_name": "Jaren Vogt",
+      "position": "UT/P",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".214",
         "R": "3",
@@ -325,7 +372,9 @@
     },
     {
       "jersey_number": 29,
-      "player_name": "Kent, Will",
+      "player_name": "Will Kent",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "81.00",
         "WHIP": "9.00",
@@ -336,7 +385,9 @@
     },
     {
       "jersey_number": 30,
-      "player_name": "Franke, Dayton",
+      "player_name": "Dayton Franke",
+      "position": "IF",
+      "year": "L/L",
       "batting_stats": {
         "AVG": ".253",
         "R": "12",
@@ -351,7 +402,9 @@
     },
     {
       "jersey_number": 31,
-      "player_name": "Husar, Trey",
+      "player_name": "Trey Husar",
+      "position": "P",
+      "year": "L/L",
       "batting_stats": {
         "AVG": ".000",
         "R": "3",
@@ -373,7 +426,9 @@
     },
     {
       "jersey_number": 32,
-      "player_name": "Henry, Austin",
+      "player_name": "Austin Henry",
+      "position": "P",
+      "year": "R/R",
       "pitching_stats": {
         "ERA": "18.00",
         "WHIP": "3.75",
@@ -384,7 +439,9 @@
     },
     {
       "jersey_number": 34,
-      "player_name": "Evenson, Luke",
+      "player_name": "Luke Evenson",
+      "position": "C/OF",
+      "year": "R/R",
       "batting_stats": {
         "AVG": ".133",
         "R": "3",
@@ -399,7 +456,9 @@
     },
     {
       "jersey_number": 35,
-      "player_name": "Campbell, Logan",
+      "player_name": "Logan Campbell",
+      "position": "P/UT",
+      "year": "L/R",
       "pitching_stats": {
         "ERA": "24.55",
         "WHIP": "3.27",
@@ -410,7 +469,9 @@
     },
     {
       "jersey_number": 36,
-      "player_name": "Barney, Avon",
+      "player_name": "Avon Barney",
+      "position": "P",
+      "year": "L/L",
       "pitching_stats": {
         "ERA": "18.00",
         "WHIP": "2.00",
@@ -423,7 +484,9 @@
   "hitting": [
     {
       "number": "1",
-      "player": "Siegert, Owen",
+      "player": "Owen Siegert",
+      "position": "OF/P",
+      "year": "L/L",
       "AVG": ".343",
       "R": "23",
       "H": "48",
@@ -436,7 +499,9 @@
     },
     {
       "number": "2",
-      "player": "Grawe, Nolan",
+      "player": "Nolan Grawe",
+      "position": "",
+      "year": "",
       "AVG": ".310",
       "R": "50",
       "H": "70",
@@ -449,7 +514,9 @@
     },
     {
       "number": "4",
-      "player": "Jirschele, Keagen",
+      "player": "Keagen Jirschele",
+      "position": "IF/P",
+      "year": "R/R",
       "AVG": ".259",
       "R": "33",
       "H": "42",
@@ -462,7 +529,9 @@
     },
     {
       "number": "5",
-      "player": "Wroblewski, Luke",
+      "player": "Luke Wroblewski",
+      "position": "",
+      "year": "",
       "AVG": ".226",
       "R": "41",
       "H": "33",
@@ -475,7 +544,9 @@
     },
     {
       "number": "6",
-      "player": "Jones, Luke",
+      "player": "Luke Jones",
+      "position": "C",
+      "year": "R/R",
       "AVG": ".278",
       "R": "14",
       "H": "27",
@@ -488,7 +559,9 @@
     },
     {
       "number": "7",
-      "player": "Finney, Travis",
+      "player": "Travis Finney",
+      "position": "",
+      "year": "",
       "AVG": ".210",
       "R": "11",
       "H": "13",
@@ -501,7 +574,9 @@
     },
     {
       "number": "8",
-      "player": "Brown, Brady",
+      "player": "Brady Brown",
+      "position": "OF",
+      "year": "R/R",
       "AVG": ".132",
       "R": "9",
       "H": "5",
@@ -514,7 +589,9 @@
     },
     {
       "number": "9",
-      "player": "Luskey, Luke",
+      "player": "Luke Luskey",
+      "position": "IF",
+      "year": "R/R",
       "AVG": ".291",
       "R": "47",
       "H": "59",
@@ -527,7 +604,9 @@
     },
     {
       "number": "10",
-      "player": "Wachter, Nate",
+      "player": "Nate Wachter",
+      "position": "",
+      "year": "",
       "AVG": ".303",
       "R": "32",
       "H": "57",
@@ -540,7 +619,9 @@
     },
     {
       "number": "13",
-      "player": "Lang, Mason",
+      "player": "Mason Lang",
+      "position": "C",
+      "year": "L/R",
       "AVG": ".200",
       "R": "3",
       "H": "6",
@@ -553,7 +634,9 @@
     },
     {
       "number": "14",
-      "player": "Taylor, Carter",
+      "player": "Carter Taylor",
+      "position": "OF",
+      "year": "R/R",
       "AVG": ".303",
       "R": "32",
       "H": "47",
@@ -566,7 +649,9 @@
     },
     {
       "number": "15",
-      "player": "Werk, Nic",
+      "player": "Nic Werk",
+      "position": "UT",
+      "year": "R/R",
       "AVG": ".266",
       "R": "29",
       "H": "42",
@@ -579,7 +664,9 @@
     },
     {
       "number": "25",
-      "player": "Sorensen, Grant",
+      "player": "Grant Sorensen",
+      "position": "IF",
+      "year": "R/R",
       "AVG": ".295",
       "R": "16",
       "H": "18",
@@ -592,7 +679,9 @@
     },
     {
       "number": "28",
-      "player": "Vogt, Jaren",
+      "player": "Jaren Vogt",
+      "position": "UT/P",
+      "year": "R/R",
       "AVG": ".214",
       "R": "3",
       "H": "3",
@@ -605,7 +694,9 @@
     },
     {
       "number": "30",
-      "player": "Franke, Dayton",
+      "player": "Dayton Franke",
+      "position": "IF",
+      "year": "L/L",
       "AVG": ".210",
       "R": "23",
       "H": "38",
@@ -618,7 +709,9 @@
     },
     {
       "number": "31",
-      "player": "Husar, Trey",
+      "player": "Trey Husar",
+      "position": "P",
+      "year": "L/L",
       "AVG": ".000",
       "R": "3",
       "H": "0",
@@ -631,7 +724,9 @@
     },
     {
       "number": "34",
-      "player": "Evenson, Luke",
+      "player": "Luke Evenson",
+      "position": "C/OF",
+      "year": "R/R",
       "AVG": ".200",
       "R": "12",
       "H": "8",
@@ -646,7 +741,9 @@
   "pitching": [
     {
       "number": "3",
-      "player": "Werk, Matthew",
+      "player": "Matthew Werk",
+      "position": "",
+      "year": "",
       "ERA": "5.04",
       "WHIP": "1.52",
       "W-L": "1-1",
@@ -655,7 +752,9 @@
     },
     {
       "number": "11",
-      "player": "Augedahl, Tristan",
+      "player": "Tristan Augedahl",
+      "position": "P",
+      "year": "L/L",
       "ERA": "7.50",
       "WHIP": "1.86",
       "W-L": "3-2",
@@ -664,7 +763,9 @@
     },
     {
       "number": "12",
-      "player": "McDowell, Drew",
+      "player": "Drew McDowell",
+      "position": "P",
+      "year": "R/R",
       "ERA": "4.20",
       "WHIP": "1.02",
       "W-L": "4-3",
@@ -673,7 +774,9 @@
     },
     {
       "number": "17",
-      "player": "Sjuts, Jacob",
+      "player": "Jacob Sjuts",
+      "position": "",
+      "year": "",
       "ERA": "5.73",
       "WHIP": "1.64",
       "W-L": "0-3",
@@ -682,7 +785,9 @@
     },
     {
       "number": "19",
-      "player": "Richardson, Dylan",
+      "player": "Dylan Richardson",
+      "position": "",
+      "year": "",
       "ERA": "10.02",
       "WHIP": "2.27",
       "W-L": "0-0",
@@ -691,7 +796,9 @@
     },
     {
       "number": "20",
-      "player": "Madison, Ty",
+      "player": "Ty Madison",
+      "position": "",
+      "year": "",
       "ERA": "4.67",
       "WHIP": "1.18",
       "W-L": "4-5",
@@ -700,7 +807,9 @@
     },
     {
       "number": "22",
-      "player": "Schlecht, Sam",
+      "player": "Sam Schlecht",
+      "position": "",
+      "year": "",
       "ERA": "5.88",
       "WHIP": "1.48",
       "W-L": "4-5",
@@ -709,7 +818,9 @@
     },
     {
       "number": "24",
-      "player": "Rylance, Kaden",
+      "player": "Kaden Rylance",
+      "position": "P",
+      "year": "R/R",
       "ERA": "7.11",
       "WHIP": "1.60",
       "W-L": "3-3",
@@ -718,7 +829,9 @@
     },
     {
       "number": "27",
-      "player": "Novotny, Sam",
+      "player": "Sam Novotny",
+      "position": "P",
+      "year": "R/R",
       "ERA": "7.99",
       "WHIP": "1.68",
       "W-L": "3-7",
@@ -727,7 +840,9 @@
     },
     {
       "number": "28",
-      "player": "Vogt, Jaren",
+      "player": "Jaren Vogt",
+      "position": "UT/P",
+      "year": "R/R",
       "ERA": "18.78",
       "WHIP": "3.78",
       "W-L": "0-0",
@@ -736,7 +851,9 @@
     },
     {
       "number": "29",
-      "player": "Kent, Will",
+      "player": "Will Kent",
+      "position": "",
+      "year": "",
       "ERA": "27.00",
       "WHIP": "4.00",
       "W-L": "0-0",
@@ -745,7 +862,9 @@
     },
     {
       "number": "31",
-      "player": "Husar, Trey",
+      "player": "Trey Husar",
+      "position": "P",
+      "year": "L/L",
       "ERA": "12.27",
       "WHIP": "2.86",
       "W-L": "1-0",
@@ -754,7 +873,9 @@
     },
     {
       "number": "32",
-      "player": "Henry, Austin",
+      "player": "Austin Henry",
+      "position": "P",
+      "year": "R/R",
       "ERA": "6.00",
       "WHIP": "2.28",
       "W-L": "0-2",
@@ -763,7 +884,9 @@
     },
     {
       "number": "35",
-      "player": "Campbell, Logan",
+      "player": "Logan Campbell",
+      "position": "P/UT",
+      "year": "L/R",
       "ERA": "13.75",
       "WHIP": "2.26",
       "W-L": "1-1",
@@ -772,7 +895,9 @@
     },
     {
       "number": "36",
-      "player": "Barney, Avon",
+      "player": "Avon Barney",
+      "position": "P",
+      "year": "L/L",
       "ERA": "14.14",
       "WHIP": "3.43",
       "W-L": "0-1",
@@ -783,7 +908,9 @@
   "hitting_by_number": {
     "2": {
       "number": "2",
-      "player": "Grawe, Nolan",
+      "player": "Nolan Grawe",
+      "position": "",
+      "year": "",
       "AVG": ".310",
       "R": "50",
       "H": "70",
@@ -796,7 +923,9 @@
     },
     "10": {
       "number": "10",
-      "player": "Wachter, Nate",
+      "player": "Nate Wachter",
+      "position": "",
+      "year": "",
       "AVG": ".303",
       "R": "32",
       "H": "57",
@@ -809,7 +938,9 @@
     },
     "14": {
       "number": "14",
-      "player": "Taylor, Carter",
+      "player": "Carter Taylor",
+      "position": "OF",
+      "year": "R/R",
       "AVG": ".303",
       "R": "32",
       "H": "47",
@@ -822,7 +953,9 @@
     },
     "9": {
       "number": "9",
-      "player": "Luskey, Luke",
+      "player": "Luke Luskey",
+      "position": "IF",
+      "year": "R/R",
       "AVG": ".291",
       "R": "47",
       "H": "59",
@@ -835,7 +968,9 @@
     },
     "15": {
       "number": "15",
-      "player": "Werk, Nic",
+      "player": "Nic Werk",
+      "position": "UT",
+      "year": "R/R",
       "AVG": ".266",
       "R": "29",
       "H": "42",
@@ -848,7 +983,9 @@
     },
     "4": {
       "number": "4",
-      "player": "Jirschele, Keagen",
+      "player": "Keagen Jirschele",
+      "position": "IF/P",
+      "year": "R/R",
       "AVG": ".259",
       "R": "33",
       "H": "42",
@@ -861,7 +998,9 @@
     },
     "5": {
       "number": "5",
-      "player": "Wroblewski, Luke",
+      "player": "Luke Wroblewski",
+      "position": "",
+      "year": "",
       "AVG": ".226",
       "R": "41",
       "H": "33",
@@ -874,7 +1013,9 @@
     },
     "30": {
       "number": "30",
-      "player": "Franke, Dayton",
+      "player": "Dayton Franke",
+      "position": "IF",
+      "year": "L/L",
       "AVG": ".210",
       "R": "23",
       "H": "38",
@@ -887,7 +1028,9 @@
     },
     "1": {
       "number": "1",
-      "player": "Siegert, Owen",
+      "player": "Owen Siegert",
+      "position": "OF/P",
+      "year": "L/L",
       "AVG": ".343",
       "R": "23",
       "H": "48",
@@ -900,7 +1043,9 @@
     },
     "25": {
       "number": "25",
-      "player": "Sorensen, Grant",
+      "player": "Grant Sorensen",
+      "position": "IF",
+      "year": "R/R",
       "AVG": ".295",
       "R": "16",
       "H": "18",
@@ -913,7 +1058,9 @@
     },
     "6": {
       "number": "6",
-      "player": "Jones, Luke",
+      "player": "Luke Jones",
+      "position": "C",
+      "year": "R/R",
       "AVG": ".278",
       "R": "14",
       "H": "27",
@@ -926,7 +1073,9 @@
     },
     "28": {
       "number": "28",
-      "player": "Vogt, Jaren",
+      "player": "Jaren Vogt",
+      "position": "UT/P",
+      "year": "R/R",
       "AVG": ".214",
       "R": "3",
       "H": "3",
@@ -939,7 +1088,9 @@
     },
     "7": {
       "number": "7",
-      "player": "Finney, Travis",
+      "player": "Travis Finney",
+      "position": "",
+      "year": "",
       "AVG": ".210",
       "R": "11",
       "H": "13",
@@ -952,7 +1103,9 @@
     },
     "34": {
       "number": "34",
-      "player": "Evenson, Luke",
+      "player": "Luke Evenson",
+      "position": "C/OF",
+      "year": "R/R",
       "AVG": ".200",
       "R": "12",
       "H": "8",
@@ -965,7 +1118,9 @@
     },
     "13": {
       "number": "13",
-      "player": "Lang, Mason",
+      "player": "Mason Lang",
+      "position": "C",
+      "year": "L/R",
       "AVG": ".200",
       "R": "3",
       "H": "6",
@@ -978,7 +1133,9 @@
     },
     "8": {
       "number": "8",
-      "player": "Brown, Brady",
+      "player": "Brady Brown",
+      "position": "OF",
+      "year": "R/R",
       "AVG": ".132",
       "R": "9",
       "H": "5",
@@ -991,7 +1148,9 @@
     },
     "31": {
       "number": "31",
-      "player": "Husar, Trey",
+      "player": "Trey Husar",
+      "position": "P",
+      "year": "L/L",
       "AVG": ".000",
       "R": "3",
       "H": "0",
@@ -1006,7 +1165,9 @@
   "pitching_by_number": {
     "20": {
       "number": "20",
-      "player": "Madison, Ty",
+      "player": "Ty Madison",
+      "position": "",
+      "year": "",
       "ERA": "4.67",
       "WHIP": "1.18",
       "W-L": "4-5",
@@ -1015,7 +1176,9 @@
     },
     "22": {
       "number": "22",
-      "player": "Schlecht, Sam",
+      "player": "Sam Schlecht",
+      "position": "",
+      "year": "",
       "ERA": "5.88",
       "WHIP": "1.48",
       "W-L": "4-5",
@@ -1024,7 +1187,9 @@
     },
     "27": {
       "number": "27",
-      "player": "Novotny, Sam",
+      "player": "Sam Novotny",
+      "position": "P",
+      "year": "R/R",
       "ERA": "7.99",
       "WHIP": "1.68",
       "W-L": "3-7",
@@ -1033,7 +1198,9 @@
     },
     "12": {
       "number": "12",
-      "player": "McDowell, Drew",
+      "player": "Drew McDowell",
+      "position": "P",
+      "year": "R/R",
       "ERA": "4.20",
       "WHIP": "1.02",
       "W-L": "4-3",
@@ -1042,7 +1209,9 @@
     },
     "3": {
       "number": "3",
-      "player": "Werk, Matthew",
+      "player": "Matthew Werk",
+      "position": "",
+      "year": "",
       "ERA": "5.04",
       "WHIP": "1.52",
       "W-L": "1-1",
@@ -1051,7 +1220,9 @@
     },
     "17": {
       "number": "17",
-      "player": "Sjuts, Jacob",
+      "player": "Jacob Sjuts",
+      "position": "",
+      "year": "",
       "ERA": "5.73",
       "WHIP": "1.64",
       "W-L": "0-3",
@@ -1060,7 +1231,9 @@
     },
     "32": {
       "number": "32",
-      "player": "Henry, Austin",
+      "player": "Austin Henry",
+      "position": "P",
+      "year": "R/R",
       "ERA": "6.00",
       "WHIP": "2.28",
       "W-L": "0-2",
@@ -1069,7 +1242,9 @@
     },
     "24": {
       "number": "24",
-      "player": "Rylance, Kaden",
+      "player": "Kaden Rylance",
+      "position": "P",
+      "year": "R/R",
       "ERA": "7.11",
       "WHIP": "1.60",
       "W-L": "3-3",
@@ -1078,7 +1253,9 @@
     },
     "11": {
       "number": "11",
-      "player": "Augedahl, Tristan",
+      "player": "Tristan Augedahl",
+      "position": "P",
+      "year": "L/L",
       "ERA": "7.50",
       "WHIP": "1.86",
       "W-L": "3-2",
@@ -1087,7 +1264,9 @@
     },
     "19": {
       "number": "19",
-      "player": "Richardson, Dylan",
+      "player": "Dylan Richardson",
+      "position": "",
+      "year": "",
       "ERA": "10.02",
       "WHIP": "2.27",
       "W-L": "0-0",
@@ -1096,7 +1275,9 @@
     },
     "31": {
       "number": "31",
-      "player": "Husar, Trey",
+      "player": "Trey Husar",
+      "position": "P",
+      "year": "L/L",
       "ERA": "12.27",
       "WHIP": "2.86",
       "W-L": "1-0",
@@ -1105,7 +1286,9 @@
     },
     "35": {
       "number": "35",
-      "player": "Campbell, Logan",
+      "player": "Logan Campbell",
+      "position": "P/UT",
+      "year": "L/R",
       "ERA": "13.75",
       "WHIP": "2.26",
       "W-L": "1-1",
@@ -1114,7 +1297,9 @@
     },
     "36": {
       "number": "36",
-      "player": "Barney, Avon",
+      "player": "Avon Barney",
+      "position": "P",
+      "year": "L/L",
       "ERA": "14.14",
       "WHIP": "3.43",
       "W-L": "0-1",
@@ -1123,7 +1308,9 @@
     },
     "28": {
       "number": "28",
-      "player": "Vogt, Jaren",
+      "player": "Jaren Vogt",
+      "position": "UT/P",
+      "year": "R/R",
       "ERA": "18.78",
       "WHIP": "3.78",
       "W-L": "0-0",
@@ -1132,7 +1319,9 @@
     },
     "29": {
       "number": "29",
-      "player": "Kent, Will",
+      "player": "Will Kent",
+      "position": "",
+      "year": "",
       "ERA": "27.00",
       "WHIP": "4.00",
       "W-L": "0-0",

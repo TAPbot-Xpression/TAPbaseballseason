@@ -4,12 +4,15 @@
   "sport": "baseball",
   "season": "2026",
   "source": "https://oruathletics.com/sports/baseball/stats/2026",
+  "source_roster": "https://oruathletics.com/sports/baseball/roster",
   "status": "ok",
-  "generated_at": "2026-10-30T02:21:03.617508+00:00",
+  "generated_at": "2026-10-30T02:50:34.458987+00:00",
   "players": [
     {
       "jersey_number": 2,
-      "player_name": "Campbell, Keaton",
+      "player_name": "Keaton Campbell",
+      "position": "INF 6'1\"",
+      "year": "R-So.",
       "batting_stats": {
         "AVG": ".185",
         "R": "9",
@@ -24,7 +27,9 @@
     },
     {
       "jersey_number": 4,
-      "player_name": "McMurray, Tanner",
+      "player_name": "Tanner McMurray",
+      "position": "INF/C INF/C 5'9\"",
+      "year": "R-So.",
       "batting_stats": {
         "AVG": ".000",
         "R": "0",
@@ -39,7 +44,9 @@
     },
     {
       "jersey_number": 5,
-      "player_name": "Coil, Owen",
+      "player_name": "Owen Coil",
+      "position": "INF OF 5'9\"",
+      "year": "Jr.",
       "batting_stats": {
         "AVG": ".111",
         "R": "0",
@@ -54,7 +61,9 @@
     },
     {
       "jersey_number": 6,
-      "player_name": "Kelly, Cooper",
+      "player_name": "Cooper Kelly",
+      "position": "INF INF 6'1\"",
+      "year": "Gr.",
       "batting_stats": {
         "AVG": ".271",
         "R": "40",
@@ -69,7 +78,9 @@
     },
     {
       "jersey_number": 7,
-      "player_name": "Davis, Martell",
+      "player_name": "Martell Davis",
+      "position": "C C 5'11\"",
+      "year": "Jr.",
       "batting_stats": {
         "AVG": ".293",
         "R": "41",
@@ -84,7 +95,9 @@
     },
     {
       "jersey_number": 8,
-      "player_name": "Edmunson, Will",
+      "player_name": "Will Edmunson",
+      "position": "RHP/INF UTL 6'0\"",
+      "year": "Fr.",
       "batting_stats": {
         "AVG": ".294",
         "R": "33",
@@ -99,7 +112,9 @@
     },
     {
       "jersey_number": 10,
-      "player_name": "Tanaka, Makani",
+      "player_name": "Makani Tanaka",
+      "position": "OF OF 6'0\"",
+      "year": "R-Jr.",
       "batting_stats": {
         "AVG": ".323",
         "R": "49",
@@ -114,7 +129,9 @@
     },
     {
       "jersey_number": 11,
-      "player_name": "Kane-Yates, Wailele",
+      "player_name": "Wailele Kane-Yates",
+      "position": "OF OF 6'1\"",
+      "year": "Jr.",
       "batting_stats": {
         "AVG": ".315",
         "R": "39",
@@ -129,7 +146,9 @@
     },
     {
       "jersey_number": 12,
-      "player_name": "Combs, Cooper",
+      "player_name": "Cooper Combs",
+      "position": "INF 6'4\"",
+      "year": "So.",
       "batting_stats": {
         "AVG": ".289",
         "R": "39",
@@ -144,7 +163,9 @@
     },
     {
       "jersey_number": 13,
-      "player_name": "Brodrick, Tyler",
+      "player_name": "Tyler Brodrick",
+      "position": "RHP RHP 6'1\"",
+      "year": "Fr.",
       "batting_stats": {
         "AVG": ".209",
         "R": "11",
@@ -159,7 +180,9 @@
     },
     {
       "jersey_number": 15,
-      "player_name": "Walls, Dawson",
+      "player_name": "Dawson Walls",
+      "position": "C/OF C/OF 6'1\"",
+      "year": "Jr.",
       "batting_stats": {
         "AVG": ".333",
         "R": "0",
@@ -174,7 +197,9 @@
     },
     {
       "jersey_number": 16,
-      "player_name": "Nicholson, Austin",
+      "player_name": "Austin Nicholson",
+      "position": "RHP RHP 6'3\"",
+      "year": "Gr.",
       "batting_stats": {
         "AVG": ".150",
         "R": "1",
@@ -189,7 +214,9 @@
     },
     {
       "jersey_number": 17,
-      "player_name": "Thornton, Maddox",
+      "player_name": "Maddox Thornton",
+      "position": "RHP RHP 6'5\"",
+      "year": "R-Jr.",
       "pitching_stats": {
         "ERA": "4.71",
         "WHIP": "1.37",
@@ -200,7 +227,9 @@
     },
     {
       "jersey_number": 18,
-      "player_name": "Williams, Luke",
+      "player_name": "Luke Williams",
+      "position": "LHP LHP 6'0\"",
+      "year": "R-So.",
       "pitching_stats": {
         "ERA": "6.66",
         "WHIP": "1.64",
@@ -211,7 +240,9 @@
     },
     {
       "jersey_number": 19,
-      "player_name": "Sanford, Braydon",
+      "player_name": "Braydon Sanford",
+      "position": "RHP RHP 6'4\"",
+      "year": "Sr.",
       "pitching_stats": {
         "ERA": "5.28",
         "WHIP": "1.70",
@@ -222,7 +253,9 @@
     },
     {
       "jersey_number": 20,
-      "player_name": "Ellis, Hudson",
+      "player_name": "Hudson Ellis",
+      "position": "INF INF 5'11\"",
+      "year": "Fr.",
       "batting_stats": {
         "AVG": ".281",
         "R": "35",
@@ -237,7 +270,9 @@
     },
     {
       "jersey_number": 21,
-      "player_name": "Fender, Ethan",
+      "player_name": "Ethan Fender",
+      "position": "OF OF 6'0\"",
+      "year": "R-So.",
       "batting_stats": {
         "AVG": ".217",
         "R": "20",
@@ -252,7 +287,9 @@
     },
     {
       "jersey_number": 23,
-      "player_name": "Dudding, Kole",
+      "player_name": "Kole Dudding",
+      "position": "INF/OF INF/OF 5'10\"",
+      "year": "R-Jr.",
       "batting_stats": {
         "AVG": ".226",
         "R": "17",
@@ -267,7 +304,9 @@
     },
     {
       "jersey_number": 24,
-      "player_name": "Moore, Cooper",
+      "player_name": "Cooper Moore",
+      "position": "RHP RHP 6'2\"",
+      "year": "Jr.",
       "pitching_stats": {
         "ERA": "20.65",
         "WHIP": "3.00",
@@ -278,7 +317,9 @@
     },
     {
       "jersey_number": 26,
-      "player_name": "Love, Nathan",
+      "player_name": "Nathan Love",
+      "position": "OF OF 5'9\"",
+      "year": "Gr.",
       "pitching_stats": {
         "ERA": "4.34",
         "WHIP": "1.33",
@@ -289,7 +330,9 @@
     },
     {
       "jersey_number": 27,
-      "player_name": "Ruthardt, Keaton",
+      "player_name": "Keaton Ruthardt",
+      "position": "RHP RHP 6'0\"",
+      "year": "R-Sr.",
       "pitching_stats": {
         "ERA": "4.56",
         "WHIP": "1.39",
@@ -300,7 +343,9 @@
     },
     {
       "jersey_number": 28,
-      "player_name": "Ferris, Kash",
+      "player_name": "Kash Ferris",
+      "position": "RHP 6'2\"",
+      "year": "Jr.",
       "pitching_stats": {
         "ERA": "1.71",
         "WHIP": "1.04",
@@ -311,7 +356,9 @@
     },
     {
       "jersey_number": 30,
-      "player_name": "Hill, Louis",
+      "player_name": "Louis Hill",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".000",
         "R": "0",
@@ -326,7 +373,9 @@
     },
     {
       "jersey_number": 31,
-      "player_name": "Hill, Jack",
+      "player_name": "Jack Hill",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "3.21",
         "WHIP": ".97",
@@ -337,7 +386,9 @@
     },
     {
       "jersey_number": 32,
-      "player_name": "Rouse, Weston",
+      "player_name": "Weston Rouse",
+      "position": "LHP LHP 6'5\"",
+      "year": "R-Jr.",
       "pitching_stats": {
         "ERA": "1.85",
         "WHIP": "1.03",
@@ -348,7 +399,9 @@
     },
     {
       "jersey_number": 33,
-      "player_name": "Farrell, Jackson",
+      "player_name": "Jackson Farrell",
+      "position": "LHP 6'4\"",
+      "year": "R-So.",
       "pitching_stats": {
         "ERA": "3.32",
         "WHIP": "1.16",
@@ -359,7 +412,9 @@
     },
     {
       "jersey_number": 35,
-      "player_name": "Nichols, Nate",
+      "player_name": "Nate Nichols",
+      "position": "OF 5'10\"",
+      "year": "Sr.",
       "batting_stats": {
         "AVG": ".148",
         "R": "2",
@@ -374,7 +429,9 @@
     },
     {
       "jersey_number": 37,
-      "player_name": "Mainord, Matthew",
+      "player_name": "Matthew Mainord",
+      "position": "OF/C OF/C 5'11\"",
+      "year": "Jr.",
       "batting_stats": {
         "AVG": ".280",
         "R": "21",
@@ -389,7 +446,9 @@
     },
     {
       "jersey_number": 38,
-      "player_name": "Johnson, Conner",
+      "player_name": "Conner Johnson",
+      "position": "RHP RHP 6'3\"",
+      "year": "So.",
       "pitching_stats": {
         "ERA": "6.98",
         "WHIP": "1.76",
@@ -400,7 +459,9 @@
     },
     {
       "jersey_number": 39,
-      "player_name": "Christensen, Dylan",
+      "player_name": "Dylan Christensen",
+      "position": "RHP RHP 6'2\"",
+      "year": "Gr.",
       "pitching_stats": {
         "ERA": "7.71",
         "WHIP": "2.14",
@@ -411,7 +472,9 @@
     },
     {
       "jersey_number": 41,
-      "player_name": "Puffinbarger, Luke",
+      "player_name": "Luke Puffinbarger",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "24.92",
         "WHIP": "3.00",
@@ -422,7 +485,9 @@
     },
     {
       "jersey_number": 43,
-      "player_name": "Yeary, Will",
+      "player_name": "Will Yeary",
+      "position": "RHP 6'2\"",
+      "year": "R-So.",
       "pitching_stats": {
         "ERA": "12.38",
         "WHIP": "2.25",
@@ -433,7 +498,9 @@
     },
     {
       "jersey_number": 44,
-      "player_name": "Teel, Easton",
+      "player_name": "Easton Teel",
+      "position": "RHP RHP 6'3\"",
+      "year": "Jr.",
       "pitching_stats": {
         "ERA": "3.26",
         "WHIP": "1.23",
@@ -444,7 +511,9 @@
     },
     {
       "jersey_number": 45,
-      "player_name": "Asher, Brenden",
+      "player_name": "Brenden Asher",
+      "position": "RHP RHP 6'0\"",
+      "year": "Jr.",
       "pitching_stats": {
         "ERA": "4.62",
         "WHIP": "1.49",
@@ -455,7 +524,9 @@
     },
     {
       "jersey_number": 47,
-      "player_name": "Martin, Trent",
+      "player_name": "Trent Martin",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "0.00",
         "WHIP": ".00",
@@ -468,7 +539,9 @@
   "hitting": [
     {
       "number": "2",
-      "player": "Campbell, Keaton",
+      "player": "Keaton Campbell",
+      "position": "INF 6'1\"",
+      "year": "R-So.",
       "AVG": ".185",
       "R": "9",
       "H": "20",
@@ -481,7 +554,9 @@
     },
     {
       "number": "4",
-      "player": "McMurray, Tanner",
+      "player": "Tanner McMurray",
+      "position": "INF/C INF/C 5'9\"",
+      "year": "R-So.",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -494,7 +569,9 @@
     },
     {
       "number": "5",
-      "player": "Coil, Owen",
+      "player": "Owen Coil",
+      "position": "INF OF 5'9\"",
+      "year": "Jr.",
       "AVG": ".111",
       "R": "0",
       "H": "1",
@@ -507,7 +584,9 @@
     },
     {
       "number": "6",
-      "player": "Kelly, Cooper",
+      "player": "Cooper Kelly",
+      "position": "INF INF 6'1\"",
+      "year": "Gr.",
       "AVG": ".271",
       "R": "40",
       "H": "56",
@@ -520,7 +599,9 @@
     },
     {
       "number": "7",
-      "player": "Davis, Martell",
+      "player": "Martell Davis",
+      "position": "C C 5'11\"",
+      "year": "Jr.",
       "AVG": ".293",
       "R": "41",
       "H": "68",
@@ -533,7 +614,9 @@
     },
     {
       "number": "8",
-      "player": "Edmunson, Will",
+      "player": "Will Edmunson",
+      "position": "RHP/INF UTL 6'0\"",
+      "year": "Fr.",
       "AVG": ".294",
       "R": "33",
       "H": "62",
@@ -546,7 +629,9 @@
     },
     {
       "number": "10",
-      "player": "Tanaka, Makani",
+      "player": "Makani Tanaka",
+      "position": "OF OF 6'0\"",
+      "year": "R-Jr.",
       "AVG": ".323",
       "R": "49",
       "H": "81",
@@ -559,7 +644,9 @@
     },
     {
       "number": "11",
-      "player": "Kane-Yates, Wailele",
+      "player": "Wailele Kane-Yates",
+      "position": "OF OF 6'1\"",
+      "year": "Jr.",
       "AVG": ".315",
       "R": "39",
       "H": "62",
@@ -572,7 +659,9 @@
     },
     {
       "number": "12",
-      "player": "Combs, Cooper",
+      "player": "Cooper Combs",
+      "position": "INF 6'4\"",
+      "year": "So.",
       "AVG": ".289",
       "R": "39",
       "H": "65",
@@ -585,7 +674,9 @@
     },
     {
       "number": "13",
-      "player": "Brodrick, Tyler",
+      "player": "Tyler Brodrick",
+      "position": "RHP RHP 6'1\"",
+      "year": "Fr.",
       "AVG": ".209",
       "R": "11",
       "H": "14",
@@ -598,7 +689,9 @@
     },
     {
       "number": "15",
-      "player": "Walls, Dawson",
+      "player": "Dawson Walls",
+      "position": "C/OF C/OF 6'1\"",
+      "year": "Jr.",
       "AVG": ".333",
       "R": "0",
       "H": "2",
@@ -611,7 +704,9 @@
     },
     {
       "number": "16",
-      "player": "Nicholson, Austin",
+      "player": "Austin Nicholson",
+      "position": "RHP RHP 6'3\"",
+      "year": "Gr.",
       "AVG": ".150",
       "R": "1",
       "H": "3",
@@ -624,7 +719,9 @@
     },
     {
       "number": "20",
-      "player": "Ellis, Hudson",
+      "player": "Hudson Ellis",
+      "position": "INF INF 5'11\"",
+      "year": "Fr.",
       "AVG": ".281",
       "R": "35",
       "H": "54",
@@ -637,7 +734,9 @@
     },
     {
       "number": "21",
-      "player": "Fender, Ethan",
+      "player": "Ethan Fender",
+      "position": "OF OF 6'0\"",
+      "year": "R-So.",
       "AVG": ".217",
       "R": "20",
       "H": "25",
@@ -650,7 +749,9 @@
     },
     {
       "number": "23",
-      "player": "Dudding, Kole",
+      "player": "Kole Dudding",
+      "position": "INF/OF INF/OF 5'10\"",
+      "year": "R-Jr.",
       "AVG": ".226",
       "R": "17",
       "H": "12",
@@ -663,7 +764,9 @@
     },
     {
       "number": "30",
-      "player": "Hill, Louis",
+      "player": "Louis Hill",
+      "position": "",
+      "year": "",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -676,7 +779,9 @@
     },
     {
       "number": "35",
-      "player": "Nichols, Nate",
+      "player": "Nate Nichols",
+      "position": "OF 5'10\"",
+      "year": "Sr.",
       "AVG": ".148",
       "R": "2",
       "H": "4",
@@ -689,7 +794,9 @@
     },
     {
       "number": "37",
-      "player": "Mainord, Matthew",
+      "player": "Matthew Mainord",
+      "position": "OF/C OF/C 5'11\"",
+      "year": "Jr.",
       "AVG": ".280",
       "R": "21",
       "H": "26",
@@ -704,7 +811,9 @@
   "pitching": [
     {
       "number": "17",
-      "player": "Thornton, Maddox",
+      "player": "Maddox Thornton",
+      "position": "RHP RHP 6'5\"",
+      "year": "R-Jr.",
       "ERA": "4.71",
       "WHIP": "1.37",
       "W-L": "1-2",
@@ -713,7 +822,9 @@
     },
     {
       "number": "18",
-      "player": "Williams, Luke",
+      "player": "Luke Williams",
+      "position": "LHP LHP 6'0\"",
+      "year": "R-So.",
       "ERA": "6.66",
       "WHIP": "1.64",
       "W-L": "3-4",
@@ -722,7 +833,9 @@
     },
     {
       "number": "19",
-      "player": "Sanford, Braydon",
+      "player": "Braydon Sanford",
+      "position": "RHP RHP 6'4\"",
+      "year": "Sr.",
       "ERA": "5.28",
       "WHIP": "1.70",
       "W-L": "3-0",
@@ -731,7 +844,9 @@
     },
     {
       "number": "24",
-      "player": "Moore, Cooper",
+      "player": "Cooper Moore",
+      "position": "RHP RHP 6'2\"",
+      "year": "Jr.",
       "ERA": "20.65",
       "WHIP": "3.00",
       "W-L": "0-1",
@@ -740,7 +855,9 @@
     },
     {
       "number": "26",
-      "player": "Love, Nathan",
+      "player": "Nathan Love",
+      "position": "OF OF 5'9\"",
+      "year": "Gr.",
       "ERA": "4.34",
       "WHIP": "1.33",
       "W-L": "4-2",
@@ -749,7 +866,9 @@
     },
     {
       "number": "27",
-      "player": "Ruthardt, Keaton",
+      "player": "Keaton Ruthardt",
+      "position": "RHP RHP 6'0\"",
+      "year": "R-Sr.",
       "ERA": "4.56",
       "WHIP": "1.39",
       "W-L": "0-1",
@@ -758,7 +877,9 @@
     },
     {
       "number": "28",
-      "player": "Ferris, Kash",
+      "player": "Kash Ferris",
+      "position": "RHP 6'2\"",
+      "year": "Jr.",
       "ERA": "1.71",
       "WHIP": "1.04",
       "W-L": "2-2",
@@ -767,7 +888,9 @@
     },
     {
       "number": "31",
-      "player": "Hill, Jack",
+      "player": "Jack Hill",
+      "position": "",
+      "year": "",
       "ERA": "3.21",
       "WHIP": ".97",
       "W-L": "6-1",
@@ -776,7 +899,9 @@
     },
     {
       "number": "32",
-      "player": "Rouse, Weston",
+      "player": "Weston Rouse",
+      "position": "LHP LHP 6'5\"",
+      "year": "R-Jr.",
       "ERA": "1.85",
       "WHIP": "1.03",
       "W-L": "2-0",
@@ -785,7 +910,9 @@
     },
     {
       "number": "33",
-      "player": "Farrell, Jackson",
+      "player": "Jackson Farrell",
+      "position": "LHP 6'4\"",
+      "year": "R-So.",
       "ERA": "3.32",
       "WHIP": "1.16",
       "W-L": "4-1",
@@ -794,7 +921,9 @@
     },
     {
       "number": "38",
-      "player": "Johnson, Conner",
+      "player": "Conner Johnson",
+      "position": "RHP RHP 6'3\"",
+      "year": "So.",
       "ERA": "6.98",
       "WHIP": "1.76",
       "W-L": "2-2",
@@ -803,7 +932,9 @@
     },
     {
       "number": "39",
-      "player": "Christensen, Dylan",
+      "player": "Dylan Christensen",
+      "position": "RHP RHP 6'2\"",
+      "year": "Gr.",
       "ERA": "7.71",
       "WHIP": "2.14",
       "W-L": "0-1",
@@ -812,7 +943,9 @@
     },
     {
       "number": "41",
-      "player": "Puffinbarger, Luke",
+      "player": "Luke Puffinbarger",
+      "position": "",
+      "year": "",
       "ERA": "24.92",
       "WHIP": "3.00",
       "W-L": "0-0",
@@ -821,7 +954,9 @@
     },
     {
       "number": "43",
-      "player": "Yeary, Will",
+      "player": "Will Yeary",
+      "position": "RHP 6'2\"",
+      "year": "R-So.",
       "ERA": "12.38",
       "WHIP": "2.25",
       "W-L": "1-0",
@@ -830,7 +965,9 @@
     },
     {
       "number": "44",
-      "player": "Teel, Easton",
+      "player": "Easton Teel",
+      "position": "RHP RHP 6'3\"",
+      "year": "Jr.",
       "ERA": "3.26",
       "WHIP": "1.23",
       "W-L": "4-3",
@@ -839,7 +976,9 @@
     },
     {
       "number": "45",
-      "player": "Asher, Brenden",
+      "player": "Brenden Asher",
+      "position": "RHP RHP 6'0\"",
+      "year": "Jr.",
       "ERA": "4.62",
       "WHIP": "1.49",
       "W-L": "3-4",
@@ -848,7 +987,9 @@
     },
     {
       "number": "47",
-      "player": "Martin, Trent",
+      "player": "Trent Martin",
+      "position": "",
+      "year": "",
       "ERA": "0.00",
       "WHIP": ".00",
       "W-L": "0-0",
@@ -859,7 +1000,9 @@
   "hitting_by_number": {
     "10": {
       "number": "10",
-      "player": "Tanaka, Makani",
+      "player": "Makani Tanaka",
+      "position": "OF OF 6'0\"",
+      "year": "R-Jr.",
       "AVG": ".323",
       "R": "49",
       "H": "81",
@@ -872,7 +1015,9 @@
     },
     "11": {
       "number": "11",
-      "player": "Kane-Yates, Wailele",
+      "player": "Wailele Kane-Yates",
+      "position": "OF OF 6'1\"",
+      "year": "Jr.",
       "AVG": ".315",
       "R": "39",
       "H": "62",
@@ -885,7 +1030,9 @@
     },
     "8": {
       "number": "8",
-      "player": "Edmunson, Will",
+      "player": "Will Edmunson",
+      "position": "RHP/INF UTL 6'0\"",
+      "year": "Fr.",
       "AVG": ".294",
       "R": "33",
       "H": "62",
@@ -898,7 +1045,9 @@
     },
     "7": {
       "number": "7",
-      "player": "Davis, Martell",
+      "player": "Martell Davis",
+      "position": "C C 5'11\"",
+      "year": "Jr.",
       "AVG": ".293",
       "R": "41",
       "H": "68",
@@ -911,7 +1060,9 @@
     },
     "12": {
       "number": "12",
-      "player": "Combs, Cooper",
+      "player": "Cooper Combs",
+      "position": "INF 6'4\"",
+      "year": "So.",
       "AVG": ".289",
       "R": "39",
       "H": "65",
@@ -924,7 +1075,9 @@
     },
     "20": {
       "number": "20",
-      "player": "Ellis, Hudson",
+      "player": "Hudson Ellis",
+      "position": "INF INF 5'11\"",
+      "year": "Fr.",
       "AVG": ".281",
       "R": "35",
       "H": "54",
@@ -937,7 +1090,9 @@
     },
     "6": {
       "number": "6",
-      "player": "Kelly, Cooper",
+      "player": "Cooper Kelly",
+      "position": "INF INF 6'1\"",
+      "year": "Gr.",
       "AVG": ".271",
       "R": "40",
       "H": "56",
@@ -950,7 +1105,9 @@
     },
     "15": {
       "number": "15",
-      "player": "Walls, Dawson",
+      "player": "Dawson Walls",
+      "position": "C/OF C/OF 6'1\"",
+      "year": "Jr.",
       "AVG": ".333",
       "R": "0",
       "H": "2",
@@ -963,7 +1120,9 @@
     },
     "37": {
       "number": "37",
-      "player": "Mainord, Matthew",
+      "player": "Matthew Mainord",
+      "position": "OF/C OF/C 5'11\"",
+      "year": "Jr.",
       "AVG": ".280",
       "R": "21",
       "H": "26",
@@ -976,7 +1135,9 @@
     },
     "23": {
       "number": "23",
-      "player": "Dudding, Kole",
+      "player": "Kole Dudding",
+      "position": "INF/OF INF/OF 5'10\"",
+      "year": "R-Jr.",
       "AVG": ".226",
       "R": "17",
       "H": "12",
@@ -989,7 +1150,9 @@
     },
     "21": {
       "number": "21",
-      "player": "Fender, Ethan",
+      "player": "Ethan Fender",
+      "position": "OF OF 6'0\"",
+      "year": "R-So.",
       "AVG": ".217",
       "R": "20",
       "H": "25",
@@ -1002,7 +1165,9 @@
     },
     "13": {
       "number": "13",
-      "player": "Brodrick, Tyler",
+      "player": "Tyler Brodrick",
+      "position": "RHP RHP 6'1\"",
+      "year": "Fr.",
       "AVG": ".209",
       "R": "11",
       "H": "14",
@@ -1015,7 +1180,9 @@
     },
     "2": {
       "number": "2",
-      "player": "Campbell, Keaton",
+      "player": "Keaton Campbell",
+      "position": "INF 6'1\"",
+      "year": "R-So.",
       "AVG": ".185",
       "R": "9",
       "H": "20",
@@ -1028,7 +1195,9 @@
     },
     "16": {
       "number": "16",
-      "player": "Nicholson, Austin",
+      "player": "Austin Nicholson",
+      "position": "RHP RHP 6'3\"",
+      "year": "Gr.",
       "AVG": ".150",
       "R": "1",
       "H": "3",
@@ -1041,7 +1210,9 @@
     },
     "35": {
       "number": "35",
-      "player": "Nichols, Nate",
+      "player": "Nate Nichols",
+      "position": "OF 5'10\"",
+      "year": "Sr.",
       "AVG": ".148",
       "R": "2",
       "H": "4",
@@ -1054,7 +1225,9 @@
     },
     "5": {
       "number": "5",
-      "player": "Coil, Owen",
+      "player": "Owen Coil",
+      "position": "INF OF 5'9\"",
+      "year": "Jr.",
       "AVG": ".111",
       "R": "0",
       "H": "1",
@@ -1067,7 +1240,9 @@
     },
     "4": {
       "number": "4",
-      "player": "McMurray, Tanner",
+      "player": "Tanner McMurray",
+      "position": "INF/C INF/C 5'9\"",
+      "year": "R-So.",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -1080,7 +1255,9 @@
     },
     "30": {
       "number": "30",
-      "player": "Hill, Louis",
+      "player": "Louis Hill",
+      "position": "",
+      "year": "",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -1095,7 +1272,9 @@
   "pitching_by_number": {
     "44": {
       "number": "44",
-      "player": "Teel, Easton",
+      "player": "Easton Teel",
+      "position": "RHP RHP 6'3\"",
+      "year": "Jr.",
       "ERA": "3.26",
       "WHIP": "1.23",
       "W-L": "4-3",
@@ -1104,7 +1283,9 @@
     },
     "26": {
       "number": "26",
-      "player": "Love, Nathan",
+      "player": "Nathan Love",
+      "position": "OF OF 5'9\"",
+      "year": "Gr.",
       "ERA": "4.34",
       "WHIP": "1.33",
       "W-L": "4-2",
@@ -1113,7 +1294,9 @@
     },
     "47": {
       "number": "47",
-      "player": "Martin, Trent",
+      "player": "Trent Martin",
+      "position": "",
+      "year": "",
       "ERA": "0.00",
       "WHIP": ".00",
       "W-L": "0-0",
@@ -1122,7 +1305,9 @@
     },
     "28": {
       "number": "28",
-      "player": "Ferris, Kash",
+      "player": "Kash Ferris",
+      "position": "RHP 6'2\"",
+      "year": "Jr.",
       "ERA": "1.71",
       "WHIP": "1.04",
       "W-L": "2-2",
@@ -1131,7 +1316,9 @@
     },
     "32": {
       "number": "32",
-      "player": "Rouse, Weston",
+      "player": "Weston Rouse",
+      "position": "LHP LHP 6'5\"",
+      "year": "R-Jr.",
       "ERA": "1.85",
       "WHIP": "1.03",
       "W-L": "2-0",
@@ -1140,7 +1327,9 @@
     },
     "31": {
       "number": "31",
-      "player": "Hill, Jack",
+      "player": "Jack Hill",
+      "position": "",
+      "year": "",
       "ERA": "3.21",
       "WHIP": ".97",
       "W-L": "6-1",
@@ -1149,7 +1338,9 @@
     },
     "33": {
       "number": "33",
-      "player": "Farrell, Jackson",
+      "player": "Jackson Farrell",
+      "position": "LHP 6'4\"",
+      "year": "R-So.",
       "ERA": "3.32",
       "WHIP": "1.16",
       "W-L": "4-1",
@@ -1158,7 +1349,9 @@
     },
     "27": {
       "number": "27",
-      "player": "Ruthardt, Keaton",
+      "player": "Keaton Ruthardt",
+      "position": "RHP RHP 6'0\"",
+      "year": "R-Sr.",
       "ERA": "4.56",
       "WHIP": "1.39",
       "W-L": "0-1",
@@ -1167,7 +1360,9 @@
     },
     "45": {
       "number": "45",
-      "player": "Asher, Brenden",
+      "player": "Brenden Asher",
+      "position": "RHP RHP 6'0\"",
+      "year": "Jr.",
       "ERA": "4.62",
       "WHIP": "1.49",
       "W-L": "3-4",
@@ -1176,7 +1371,9 @@
     },
     "17": {
       "number": "17",
-      "player": "Thornton, Maddox",
+      "player": "Maddox Thornton",
+      "position": "RHP RHP 6'5\"",
+      "year": "R-Jr.",
       "ERA": "4.71",
       "WHIP": "1.37",
       "W-L": "1-2",
@@ -1185,7 +1382,9 @@
     },
     "19": {
       "number": "19",
-      "player": "Sanford, Braydon",
+      "player": "Braydon Sanford",
+      "position": "RHP RHP 6'4\"",
+      "year": "Sr.",
       "ERA": "5.28",
       "WHIP": "1.70",
       "W-L": "3-0",
@@ -1194,7 +1393,9 @@
     },
     "18": {
       "number": "18",
-      "player": "Williams, Luke",
+      "player": "Luke Williams",
+      "position": "LHP LHP 6'0\"",
+      "year": "R-So.",
       "ERA": "6.66",
       "WHIP": "1.64",
       "W-L": "3-4",
@@ -1203,7 +1404,9 @@
     },
     "38": {
       "number": "38",
-      "player": "Johnson, Conner",
+      "player": "Conner Johnson",
+      "position": "RHP RHP 6'3\"",
+      "year": "So.",
       "ERA": "6.98",
       "WHIP": "1.76",
       "W-L": "2-2",
@@ -1212,7 +1415,9 @@
     },
     "39": {
       "number": "39",
-      "player": "Christensen, Dylan",
+      "player": "Dylan Christensen",
+      "position": "RHP RHP 6'2\"",
+      "year": "Gr.",
       "ERA": "7.71",
       "WHIP": "2.14",
       "W-L": "0-1",
@@ -1221,7 +1426,9 @@
     },
     "43": {
       "number": "43",
-      "player": "Yeary, Will",
+      "player": "Will Yeary",
+      "position": "RHP 6'2\"",
+      "year": "R-So.",
       "ERA": "12.38",
       "WHIP": "2.25",
       "W-L": "1-0",
@@ -1230,7 +1437,9 @@
     },
     "24": {
       "number": "24",
-      "player": "Moore, Cooper",
+      "player": "Cooper Moore",
+      "position": "RHP RHP 6'2\"",
+      "year": "Jr.",
       "ERA": "20.65",
       "WHIP": "3.00",
       "W-L": "0-1",
@@ -1239,7 +1448,9 @@
     },
     "41": {
       "number": "41",
-      "player": "Puffinbarger, Luke",
+      "player": "Luke Puffinbarger",
+      "position": "",
+      "year": "",
       "ERA": "24.92",
       "WHIP": "3.00",
       "W-L": "0-0",

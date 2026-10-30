@@ -4,12 +4,15 @@
   "sport": "baseball",
   "season": "2026",
   "source": "https://omahamavs.com/sports/baseball/stats/2026",
+  "source_roster": "https://omahamavs.com/sports/baseball/roster",
   "status": "ok",
-  "generated_at": "2026-10-30T02:21:29.341981+00:00",
+  "generated_at": "2026-10-30T02:50:31.292372+00:00",
   "players": [
     {
       "jersey_number": 1,
-      "player_name": "Zipay, Henry",
+      "player_name": "Henry Zipay",
+      "position": "Fr.",
+      "year": "INF",
       "batting_stats": {
         "AVG": ".388",
         "R": "21",
@@ -24,7 +27,9 @@
     },
     {
       "jersey_number": 2,
-      "player_name": "Bishop, Tyler",
+      "player_name": "Tyler Bishop",
+      "position": "Jr.",
+      "year": "INF",
       "batting_stats": {
         "AVG": ".327",
         "R": "22",
@@ -39,7 +44,9 @@
     },
     {
       "jersey_number": 3,
-      "player_name": "Coy, Chris",
+      "player_name": "Chris Coy",
+      "position": "So.",
+      "year": "INF/P",
       "batting_stats": {
         "AVG": ".143",
         "R": "2",
@@ -61,7 +68,9 @@
     },
     {
       "jersey_number": 5,
-      "player_name": "Curtis, Brayden",
+      "player_name": "Brayden Curtis",
+      "position": "Jr.",
+      "year": "INF/OF",
       "pitching_stats": {
         "ERA": "9.56",
         "WHIP": "1.94",
@@ -72,7 +81,9 @@
     },
     {
       "jersey_number": 6,
-      "player_name": "Teinert, Cameron",
+      "player_name": "Cameron Teinert",
+      "position": "Sr.",
+      "year": "OF",
       "pitching_stats": {
         "ERA": "6.59",
         "WHIP": "2.12",
@@ -83,7 +94,9 @@
     },
     {
       "jersey_number": 7,
-      "player_name": "Craig, Joey",
+      "player_name": "Joey Craig",
+      "position": "Gr.",
+      "year": "OF",
       "batting_stats": {
         "AVG": ".000",
         "R": "1",
@@ -98,7 +111,9 @@
     },
     {
       "jersey_number": 8,
-      "player_name": "Diggins, Chase",
+      "player_name": "Chase Diggins",
+      "position": "Fr.",
+      "year": "OF",
       "batting_stats": {
         "AVG": ".300",
         "R": "17",
@@ -113,7 +128,9 @@
     },
     {
       "jersey_number": 10,
-      "player_name": "Hoerner, Eli",
+      "player_name": "Eli Hoerner",
+      "position": "Sr.",
+      "year": "P/INF",
       "batting_stats": {
         "AVG": ".211",
         "R": "8",
@@ -128,7 +145,9 @@
     },
     {
       "jersey_number": 11,
-      "player_name": "Mick, Carter",
+      "player_name": "Carter Mick",
+      "position": "Jr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "4.15",
         "WHIP": "1.15",
@@ -139,7 +158,9 @@
     },
     {
       "jersey_number": 14,
-      "player_name": "Foertsch, Tanner",
+      "player_name": "Tanner Foertsch",
+      "position": "Jr.",
+      "year": "INF",
       "pitching_stats": {
         "ERA": "4.46",
         "WHIP": "1.42",
@@ -150,7 +171,9 @@
     },
     {
       "jersey_number": 15,
-      "player_name": "Cornelli, Edoardo",
+      "player_name": "Edoardo Cornelli",
+      "position": "Sr.",
+      "year": "P",
       "batting_stats": {
         "AVG": ".267",
         "R": "16",
@@ -165,7 +188,9 @@
     },
     {
       "jersey_number": 16,
-      "player_name": "Crittenden, Isaak",
+      "player_name": "Isaak Crittenden",
+      "position": "So.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "4.91",
         "WHIP": "3.82",
@@ -176,7 +201,9 @@
     },
     {
       "jersey_number": 17,
-      "player_name": "Mabee, Oliver",
+      "player_name": "Oliver Mabee",
+      "position": "Fr.",
+      "year": "OF",
       "pitching_stats": {
         "ERA": "3.00",
         "WHIP": "1.33",
@@ -187,7 +214,9 @@
     },
     {
       "jersey_number": 18,
-      "player_name": "Sexton, Brody",
+      "player_name": "Brody Sexton",
+      "position": "Fr.",
+      "year": "C",
       "batting_stats": {
         "AVG": ".125",
         "R": "6",
@@ -202,7 +231,9 @@
     },
     {
       "jersey_number": 19,
-      "player_name": "Dick, Cardel",
+      "player_name": "Cardel Dick",
+      "position": "Sr.",
+      "year": "C",
       "batting_stats": {
         "AVG": ".300",
         "R": "17",
@@ -217,7 +248,9 @@
     },
     {
       "jersey_number": 20,
-      "player_name": "Trout, Jackson",
+      "player_name": "Jackson Trout",
+      "position": "Fr.",
+      "year": "INF",
       "batting_stats": {
         "AVG": ".348",
         "R": "25",
@@ -232,7 +265,9 @@
     },
     {
       "jersey_number": 21,
-      "player_name": "Beck, Sam",
+      "player_name": "Sam Beck",
+      "position": "Jr.",
+      "year": "OF",
       "batting_stats": {
         "AVG": ".256",
         "R": "8",
@@ -254,7 +289,9 @@
     },
     {
       "jersey_number": 22,
-      "player_name": "Gaines, Mason",
+      "player_name": "Mason Gaines",
+      "position": "Jr.",
+      "year": "OF/P",
       "batting_stats": {
         "AVG": ".224",
         "R": "1",
@@ -269,7 +306,9 @@
     },
     {
       "jersey_number": 23,
-      "player_name": "Moquin, Nate",
+      "player_name": "Nate Moquin",
+      "position": "Gr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "6.52",
         "WHIP": "1.55",
@@ -280,7 +319,9 @@
     },
     {
       "jersey_number": 24,
-      "player_name": "Borner, Drew",
+      "player_name": "Drew Borner",
+      "position": "Jr.",
+      "year": "INF",
       "batting_stats": {
         "AVG": ".205",
         "R": "4",
@@ -295,7 +336,9 @@
     },
     {
       "jersey_number": 25,
-      "player_name": "Vaughn, Jackson",
+      "player_name": "Jackson Vaughn",
+      "position": "Jr.",
+      "year": "UTL",
       "batting_stats": {
         "AVG": ".000",
         "R": "1",
@@ -310,7 +353,9 @@
     },
     {
       "jersey_number": 27,
-      "player_name": "Hosick, Tanner",
+      "player_name": "Tanner Hosick",
+      "position": "Jr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "6.55",
         "WHIP": "2.00",
@@ -321,7 +366,9 @@
     },
     {
       "jersey_number": 28,
-      "player_name": "Meyer, Maddox",
+      "player_name": "Maddox Meyer",
+      "position": "Sr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "4.89",
         "WHIP": "1.41",
@@ -332,7 +379,9 @@
     },
     {
       "jersey_number": 30,
-      "player_name": "Sall, Michael",
+      "player_name": "Michael Sall",
+      "position": "Jr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "7.71",
         "WHIP": "2.14",
@@ -343,7 +392,9 @@
     },
     {
       "jersey_number": 31,
-      "player_name": "Kenyon, Cole",
+      "player_name": "Cole Kenyon",
+      "position": "Jr.",
+      "year": "C",
       "pitching_stats": {
         "ERA": "6.43",
         "WHIP": "2.14",
@@ -354,7 +405,9 @@
     },
     {
       "jersey_number": 32,
-      "player_name": "Riggs, Nick",
+      "player_name": "Nick Riggs",
+      "position": "Jr.",
+      "year": "OF/P",
       "batting_stats": {
         "AVG": ".207",
         "R": "14",
@@ -376,7 +429,9 @@
     },
     {
       "jersey_number": 34,
-      "player_name": "Lewis, Hayden",
+      "player_name": "Hayden Lewis",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".333",
         "R": "17",
@@ -391,7 +446,9 @@
     },
     {
       "jersey_number": 35,
-      "player_name": "Iverson, Drew",
+      "player_name": "Drew Iverson",
+      "position": "Sr.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "10.80",
         "WHIP": "1.80",
@@ -402,7 +459,9 @@
     },
     {
       "jersey_number": 37,
-      "player_name": "Boos, Carter",
+      "player_name": "Carter Boos",
+      "position": "So.",
+      "year": "P",
       "pitching_stats": {
         "ERA": "20.25",
         "WHIP": "2.25",
@@ -413,7 +472,9 @@
     },
     {
       "jersey_number": 43,
-      "player_name": "Cooper, Cal",
+      "player_name": "Cal Cooper",
+      "position": "",
+      "year": "",
       "pitching_stats": {
         "ERA": "9.00",
         "WHIP": "2.00",
@@ -424,7 +485,9 @@
     },
     {
       "jersey_number": 45,
-      "player_name": "Laurence, Alexandre",
+      "player_name": "Alexandre Laurence",
+      "position": "",
+      "year": "",
       "batting_stats": {
         "AVG": ".222",
         "R": "1",
@@ -441,7 +504,9 @@
   "hitting": [
     {
       "number": "1",
-      "player": "Zipay, Henry",
+      "player": "Henry Zipay",
+      "position": "Fr.",
+      "year": "INF",
       "AVG": ".350",
       "R": "33",
       "H": "63",
@@ -454,7 +519,9 @@
     },
     {
       "number": "2",
-      "player": "Bishop, Tyler",
+      "player": "Tyler Bishop",
+      "position": "Jr.",
+      "year": "INF",
       "AVG": ".299",
       "R": "29",
       "H": "52",
@@ -467,7 +534,9 @@
     },
     {
       "number": "3",
-      "player": "Coy, Chris",
+      "player": "Chris Coy",
+      "position": "So.",
+      "year": "INF/P",
       "AVG": ".143",
       "R": "2",
       "H": "1",
@@ -480,7 +549,9 @@
     },
     {
       "number": "7",
-      "player": "Craig, Joey",
+      "player": "Joey Craig",
+      "position": "Gr.",
+      "year": "OF",
       "AVG": ".000",
       "R": "1",
       "H": "0",
@@ -493,7 +564,9 @@
     },
     {
       "number": "8",
-      "player": "Diggins, Chase",
+      "player": "Chase Diggins",
+      "position": "Fr.",
+      "year": "OF",
       "AVG": ".289",
       "R": "29",
       "H": "43",
@@ -506,7 +579,9 @@
     },
     {
       "number": "10",
-      "player": "Hoerner, Eli",
+      "player": "Eli Hoerner",
+      "position": "Sr.",
+      "year": "P/INF",
       "AVG": ".183",
       "R": "15",
       "H": "13",
@@ -519,7 +594,9 @@
     },
     {
       "number": "15",
-      "player": "Cornelli, Edoardo",
+      "player": "Edoardo Cornelli",
+      "position": "Sr.",
+      "year": "P",
       "AVG": ".246",
       "R": "23",
       "H": "32",
@@ -532,7 +609,9 @@
     },
     {
       "number": "18",
-      "player": "Sexton, Brody",
+      "player": "Brody Sexton",
+      "position": "Fr.",
+      "year": "C",
       "AVG": ".159",
       "R": "7",
       "H": "11",
@@ -545,7 +624,9 @@
     },
     {
       "number": "19",
-      "player": "Dick, Cardel",
+      "player": "Cardel Dick",
+      "position": "Sr.",
+      "year": "C",
       "AVG": ".282",
       "R": "27",
       "H": "37",
@@ -558,7 +639,9 @@
     },
     {
       "number": "20",
-      "player": "Trout, Jackson",
+      "player": "Jackson Trout",
+      "position": "Fr.",
+      "year": "INF",
       "AVG": ".376",
       "R": "40",
       "H": "73",
@@ -571,7 +654,9 @@
     },
     {
       "number": "21",
-      "player": "Beck, Sam",
+      "player": "Sam Beck",
+      "position": "Jr.",
+      "year": "OF",
       "AVG": ".275",
       "R": "10",
       "H": "14",
@@ -584,7 +669,9 @@
     },
     {
       "number": "22",
-      "player": "Gaines, Mason",
+      "player": "Mason Gaines",
+      "position": "Jr.",
+      "year": "OF/P",
       "AVG": ".209",
       "R": "7",
       "H": "18",
@@ -597,7 +684,9 @@
     },
     {
       "number": "24",
-      "player": "Borner, Drew",
+      "player": "Drew Borner",
+      "position": "Jr.",
+      "year": "INF",
       "AVG": ".216",
       "R": "11",
       "H": "19",
@@ -610,7 +699,9 @@
     },
     {
       "number": "25",
-      "player": "Vaughn, Jackson",
+      "player": "Jackson Vaughn",
+      "position": "Jr.",
+      "year": "UTL",
       "AVG": ".000",
       "R": "1",
       "H": "0",
@@ -623,7 +714,9 @@
     },
     {
       "number": "32",
-      "player": "Riggs, Nick",
+      "player": "Nick Riggs",
+      "position": "Jr.",
+      "year": "OF/P",
       "AVG": ".239",
       "R": "21",
       "H": "22",
@@ -636,7 +729,9 @@
     },
     {
       "number": "34",
-      "player": "Lewis, Hayden",
+      "player": "Hayden Lewis",
+      "position": "",
+      "year": "",
       "AVG": ".287",
       "R": "25",
       "H": "51",
@@ -649,7 +744,9 @@
     },
     {
       "number": "45",
-      "player": "Laurence, Alexandre",
+      "player": "Alexandre Laurence",
+      "position": "",
+      "year": "",
       "AVG": ".200",
       "R": "1",
       "H": "2",
@@ -664,7 +761,9 @@
   "pitching": [
     {
       "number": "3",
-      "player": "Coy, Chris",
+      "player": "Chris Coy",
+      "position": "So.",
+      "year": "INF/P",
       "ERA": "2.70",
       "WHIP": "2.40",
       "W-L": "0-1",
@@ -673,7 +772,9 @@
     },
     {
       "number": "5",
-      "player": "Curtis, Brayden",
+      "player": "Brayden Curtis",
+      "position": "Jr.",
+      "year": "INF/OF",
       "ERA": "8.22",
       "WHIP": "1.79",
       "W-L": "3-3",
@@ -682,7 +783,9 @@
     },
     {
       "number": "6",
-      "player": "Teinert, Cameron",
+      "player": "Cameron Teinert",
+      "position": "Sr.",
+      "year": "OF",
       "ERA": "8.10",
       "WHIP": "2.35",
       "W-L": "2-0",
@@ -691,7 +794,9 @@
     },
     {
       "number": "11",
-      "player": "Mick, Carter",
+      "player": "Carter Mick",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "4.15",
       "WHIP": "1.15",
       "W-L": "0-1",
@@ -700,7 +805,9 @@
     },
     {
       "number": "14",
-      "player": "Foertsch, Tanner",
+      "player": "Tanner Foertsch",
+      "position": "Jr.",
+      "year": "INF",
       "ERA": "5.29",
       "WHIP": "1.58",
       "W-L": "3-5",
@@ -709,7 +816,9 @@
     },
     {
       "number": "16",
-      "player": "Crittenden, Isaak",
+      "player": "Isaak Crittenden",
+      "position": "So.",
+      "year": "P",
       "ERA": "6.59",
       "WHIP": "2.27",
       "W-L": "1-0",
@@ -718,7 +827,9 @@
     },
     {
       "number": "17",
-      "player": "Mabee, Oliver",
+      "player": "Oliver Mabee",
+      "position": "Fr.",
+      "year": "OF",
       "ERA": "3.07",
       "WHIP": "1.50",
       "W-L": "0-2",
@@ -727,7 +838,9 @@
     },
     {
       "number": "21",
-      "player": "Beck, Sam",
+      "player": "Sam Beck",
+      "position": "Jr.",
+      "year": "OF",
       "ERA": "4.32",
       "WHIP": "1.32",
       "W-L": "2-1",
@@ -736,7 +849,9 @@
     },
     {
       "number": "23",
-      "player": "Moquin, Nate",
+      "player": "Nate Moquin",
+      "position": "Gr.",
+      "year": "P",
       "ERA": "4.88",
       "WHIP": "1.63",
       "W-L": "1-2",
@@ -745,7 +860,9 @@
     },
     {
       "number": "27",
-      "player": "Hosick, Tanner",
+      "player": "Tanner Hosick",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "7.97",
       "WHIP": "1.82",
       "W-L": "1-1",
@@ -754,7 +871,9 @@
     },
     {
       "number": "28",
-      "player": "Meyer, Maddox",
+      "player": "Maddox Meyer",
+      "position": "Sr.",
+      "year": "P",
       "ERA": "4.98",
       "WHIP": "1.41",
       "W-L": "5-5",
@@ -763,7 +882,9 @@
     },
     {
       "number": "30",
-      "player": "Sall, Michael",
+      "player": "Michael Sall",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "9.38",
       "WHIP": "2.08",
       "W-L": "0-1",
@@ -772,7 +893,9 @@
     },
     {
       "number": "31",
-      "player": "Kenyon, Cole",
+      "player": "Cole Kenyon",
+      "position": "Jr.",
+      "year": "C",
       "ERA": "7.62",
       "WHIP": "2.31",
       "W-L": "0-0",
@@ -781,7 +904,9 @@
     },
     {
       "number": "32",
-      "player": "Riggs, Nick",
+      "player": "Nick Riggs",
+      "position": "Jr.",
+      "year": "OF/P",
       "ERA": "6.23",
       "WHIP": "1.54",
       "W-L": "2-3",
@@ -790,7 +915,9 @@
     },
     {
       "number": "35",
-      "player": "Iverson, Drew",
+      "player": "Drew Iverson",
+      "position": "Sr.",
+      "year": "P",
       "ERA": "12.10",
       "WHIP": "1.91",
       "W-L": "1-1",
@@ -799,7 +926,9 @@
     },
     {
       "number": "37",
-      "player": "Boos, Carter",
+      "player": "Carter Boos",
+      "position": "So.",
+      "year": "P",
       "ERA": "8.10",
       "WHIP": "1.20",
       "W-L": "0-0",
@@ -808,7 +937,9 @@
     },
     {
       "number": "43",
-      "player": "Cooper, Cal",
+      "player": "Cal Cooper",
+      "position": "",
+      "year": "",
       "ERA": "6.00",
       "WHIP": "2.33",
       "W-L": "0-0",
@@ -819,7 +950,9 @@
   "hitting_by_number": {
     "20": {
       "number": "20",
-      "player": "Trout, Jackson",
+      "player": "Jackson Trout",
+      "position": "Fr.",
+      "year": "INF",
       "AVG": ".376",
       "R": "40",
       "H": "73",
@@ -832,7 +965,9 @@
     },
     "1": {
       "number": "1",
-      "player": "Zipay, Henry",
+      "player": "Henry Zipay",
+      "position": "Fr.",
+      "year": "INF",
       "AVG": ".350",
       "R": "33",
       "H": "63",
@@ -845,7 +980,9 @@
     },
     "2": {
       "number": "2",
-      "player": "Bishop, Tyler",
+      "player": "Tyler Bishop",
+      "position": "Jr.",
+      "year": "INF",
       "AVG": ".299",
       "R": "29",
       "H": "52",
@@ -858,7 +995,9 @@
     },
     "8": {
       "number": "8",
-      "player": "Diggins, Chase",
+      "player": "Chase Diggins",
+      "position": "Fr.",
+      "year": "OF",
       "AVG": ".289",
       "R": "29",
       "H": "43",
@@ -871,7 +1010,9 @@
     },
     "34": {
       "number": "34",
-      "player": "Lewis, Hayden",
+      "player": "Hayden Lewis",
+      "position": "",
+      "year": "",
       "AVG": ".287",
       "R": "25",
       "H": "51",
@@ -884,7 +1025,9 @@
     },
     "15": {
       "number": "15",
-      "player": "Cornelli, Edoardo",
+      "player": "Edoardo Cornelli",
+      "position": "Sr.",
+      "year": "P",
       "AVG": ".246",
       "R": "23",
       "H": "32",
@@ -897,7 +1040,9 @@
     },
     "32": {
       "number": "32",
-      "player": "Riggs, Nick",
+      "player": "Nick Riggs",
+      "position": "Jr.",
+      "year": "OF/P",
       "AVG": ".239",
       "R": "21",
       "H": "22",
@@ -910,7 +1055,9 @@
     },
     "19": {
       "number": "19",
-      "player": "Dick, Cardel",
+      "player": "Cardel Dick",
+      "position": "Sr.",
+      "year": "C",
       "AVG": ".282",
       "R": "27",
       "H": "37",
@@ -923,7 +1070,9 @@
     },
     "21": {
       "number": "21",
-      "player": "Beck, Sam",
+      "player": "Sam Beck",
+      "position": "Jr.",
+      "year": "OF",
       "AVG": ".275",
       "R": "10",
       "H": "14",
@@ -936,7 +1085,9 @@
     },
     "24": {
       "number": "24",
-      "player": "Borner, Drew",
+      "player": "Drew Borner",
+      "position": "Jr.",
+      "year": "INF",
       "AVG": ".216",
       "R": "11",
       "H": "19",
@@ -949,7 +1100,9 @@
     },
     "22": {
       "number": "22",
-      "player": "Gaines, Mason",
+      "player": "Mason Gaines",
+      "position": "Jr.",
+      "year": "OF/P",
       "AVG": ".209",
       "R": "7",
       "H": "18",
@@ -962,7 +1115,9 @@
     },
     "45": {
       "number": "45",
-      "player": "Laurence, Alexandre",
+      "player": "Alexandre Laurence",
+      "position": "",
+      "year": "",
       "AVG": ".200",
       "R": "1",
       "H": "2",
@@ -975,7 +1130,9 @@
     },
     "10": {
       "number": "10",
-      "player": "Hoerner, Eli",
+      "player": "Eli Hoerner",
+      "position": "Sr.",
+      "year": "P/INF",
       "AVG": ".183",
       "R": "15",
       "H": "13",
@@ -988,7 +1145,9 @@
     },
     "18": {
       "number": "18",
-      "player": "Sexton, Brody",
+      "player": "Brody Sexton",
+      "position": "Fr.",
+      "year": "C",
       "AVG": ".159",
       "R": "7",
       "H": "11",
@@ -1001,7 +1160,9 @@
     },
     "3": {
       "number": "3",
-      "player": "Coy, Chris",
+      "player": "Chris Coy",
+      "position": "So.",
+      "year": "INF/P",
       "AVG": ".143",
       "R": "2",
       "H": "1",
@@ -1014,7 +1175,9 @@
     },
     "25": {
       "number": "25",
-      "player": "Vaughn, Jackson",
+      "player": "Jackson Vaughn",
+      "position": "Jr.",
+      "year": "UTL",
       "AVG": ".000",
       "R": "1",
       "H": "0",
@@ -1027,7 +1190,9 @@
     },
     "7": {
       "number": "7",
-      "player": "Craig, Joey",
+      "player": "Joey Craig",
+      "position": "Gr.",
+      "year": "OF",
       "AVG": ".000",
       "R": "1",
       "H": "0",
@@ -1042,7 +1207,9 @@
   "pitching_by_number": {
     "28": {
       "number": "28",
-      "player": "Meyer, Maddox",
+      "player": "Maddox Meyer",
+      "position": "Sr.",
+      "year": "P",
       "ERA": "4.98",
       "WHIP": "1.41",
       "W-L": "5-5",
@@ -1051,7 +1218,9 @@
     },
     "14": {
       "number": "14",
-      "player": "Foertsch, Tanner",
+      "player": "Tanner Foertsch",
+      "position": "Jr.",
+      "year": "INF",
       "ERA": "5.29",
       "WHIP": "1.58",
       "W-L": "3-5",
@@ -1060,7 +1229,9 @@
     },
     "3": {
       "number": "3",
-      "player": "Coy, Chris",
+      "player": "Chris Coy",
+      "position": "So.",
+      "year": "INF/P",
       "ERA": "2.70",
       "WHIP": "2.40",
       "W-L": "0-1",
@@ -1069,7 +1240,9 @@
     },
     "17": {
       "number": "17",
-      "player": "Mabee, Oliver",
+      "player": "Oliver Mabee",
+      "position": "Fr.",
+      "year": "OF",
       "ERA": "3.07",
       "WHIP": "1.50",
       "W-L": "0-2",
@@ -1078,7 +1251,9 @@
     },
     "11": {
       "number": "11",
-      "player": "Mick, Carter",
+      "player": "Carter Mick",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "4.15",
       "WHIP": "1.15",
       "W-L": "0-1",
@@ -1087,7 +1262,9 @@
     },
     "21": {
       "number": "21",
-      "player": "Beck, Sam",
+      "player": "Sam Beck",
+      "position": "Jr.",
+      "year": "OF",
       "ERA": "4.32",
       "WHIP": "1.32",
       "W-L": "2-1",
@@ -1096,7 +1273,9 @@
     },
     "23": {
       "number": "23",
-      "player": "Moquin, Nate",
+      "player": "Nate Moquin",
+      "position": "Gr.",
+      "year": "P",
       "ERA": "4.88",
       "WHIP": "1.63",
       "W-L": "1-2",
@@ -1105,7 +1284,9 @@
     },
     "43": {
       "number": "43",
-      "player": "Cooper, Cal",
+      "player": "Cal Cooper",
+      "position": "",
+      "year": "",
       "ERA": "6.00",
       "WHIP": "2.33",
       "W-L": "0-0",
@@ -1114,7 +1295,9 @@
     },
     "32": {
       "number": "32",
-      "player": "Riggs, Nick",
+      "player": "Nick Riggs",
+      "position": "Jr.",
+      "year": "OF/P",
       "ERA": "6.23",
       "WHIP": "1.54",
       "W-L": "2-3",
@@ -1123,7 +1306,9 @@
     },
     "16": {
       "number": "16",
-      "player": "Crittenden, Isaak",
+      "player": "Isaak Crittenden",
+      "position": "So.",
+      "year": "P",
       "ERA": "6.59",
       "WHIP": "2.27",
       "W-L": "1-0",
@@ -1132,7 +1317,9 @@
     },
     "31": {
       "number": "31",
-      "player": "Kenyon, Cole",
+      "player": "Cole Kenyon",
+      "position": "Jr.",
+      "year": "C",
       "ERA": "7.62",
       "WHIP": "2.31",
       "W-L": "0-0",
@@ -1141,7 +1328,9 @@
     },
     "27": {
       "number": "27",
-      "player": "Hosick, Tanner",
+      "player": "Tanner Hosick",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "7.97",
       "WHIP": "1.82",
       "W-L": "1-1",
@@ -1150,7 +1339,9 @@
     },
     "6": {
       "number": "6",
-      "player": "Teinert, Cameron",
+      "player": "Cameron Teinert",
+      "position": "Sr.",
+      "year": "OF",
       "ERA": "8.10",
       "WHIP": "2.35",
       "W-L": "2-0",
@@ -1159,7 +1350,9 @@
     },
     "37": {
       "number": "37",
-      "player": "Boos, Carter",
+      "player": "Carter Boos",
+      "position": "So.",
+      "year": "P",
       "ERA": "8.10",
       "WHIP": "1.20",
       "W-L": "0-0",
@@ -1168,7 +1361,9 @@
     },
     "5": {
       "number": "5",
-      "player": "Curtis, Brayden",
+      "player": "Brayden Curtis",
+      "position": "Jr.",
+      "year": "INF/OF",
       "ERA": "8.22",
       "WHIP": "1.79",
       "W-L": "3-3",
@@ -1177,7 +1372,9 @@
     },
     "30": {
       "number": "30",
-      "player": "Sall, Michael",
+      "player": "Michael Sall",
+      "position": "Jr.",
+      "year": "P",
       "ERA": "9.38",
       "WHIP": "2.08",
       "W-L": "0-1",
@@ -1186,7 +1383,9 @@
     },
     "35": {
       "number": "35",
-      "player": "Iverson, Drew",
+      "player": "Drew Iverson",
+      "position": "Sr.",
+      "year": "P",
       "ERA": "12.10",
       "WHIP": "1.91",
       "W-L": "1-1",
