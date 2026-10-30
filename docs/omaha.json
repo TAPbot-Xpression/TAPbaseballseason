@@ -1,0 +1,1197 @@
+{
+  "team_id": "omaha",
+  "team": "Omaha Mavericks",
+  "sport": "baseball",
+  "season": "2026",
+  "source": "https://omahamavs.com/sports/baseball/stats/2026",
+  "status": "ok",
+  "generated_at": "2026-10-30T00:42:00.329583+00:00",
+  "players": [
+    {
+      "jersey_number": 1,
+      "player_name": "Zipay, Henry",
+      "batting_stats": {
+        "AVG": ".388",
+        "R": "21",
+        "H": "40",
+        "2B": "9",
+        "3B": "1",
+        "HR": "1",
+        "RBI": "19",
+        "OPS": ".999",
+        "SLG%": ".524"
+      }
+    },
+    {
+      "jersey_number": 2,
+      "player_name": "Bishop, Tyler",
+      "batting_stats": {
+        "AVG": ".327",
+        "R": "22",
+        "H": "34",
+        "2B": "10",
+        "3B": "2",
+        "HR": "6",
+        "RBI": "22",
+        "OPS": "1.052",
+        "SLG%": ".635"
+      }
+    },
+    {
+      "jersey_number": 3,
+      "player_name": "Coy, Chris",
+      "batting_stats": {
+        "AVG": ".143",
+        "R": "2",
+        "H": "1",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "0",
+        "OPS": ".476",
+        "SLG%": ".143"
+      },
+      "pitching_stats": {
+        "ERA": "2.70",
+        "WHIP": "2.40",
+        "W-L": "0-1",
+        "IP": "3.1",
+        "SO": "3"
+      }
+    },
+    {
+      "jersey_number": 5,
+      "player_name": "Curtis, Brayden",
+      "pitching_stats": {
+        "ERA": "9.56",
+        "WHIP": "1.94",
+        "W-L": "1-2",
+        "IP": "16.0",
+        "SO": "18"
+      }
+    },
+    {
+      "jersey_number": 6,
+      "player_name": "Teinert, Cameron",
+      "pitching_stats": {
+        "ERA": "6.59",
+        "WHIP": "2.12",
+        "W-L": "2-0",
+        "IP": "13.2",
+        "SO": "9"
+      }
+    },
+    {
+      "jersey_number": 7,
+      "player_name": "Craig, Joey",
+      "batting_stats": {
+        "AVG": ".000",
+        "R": "1",
+        "H": "0",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "0",
+        "OPS": ".500",
+        "SLG%": ".000"
+      }
+    },
+    {
+      "jersey_number": 8,
+      "player_name": "Diggins, Chase",
+      "batting_stats": {
+        "AVG": ".300",
+        "R": "17",
+        "H": "21",
+        "2B": "2",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "7",
+        "OPS": ".814",
+        "SLG%": ".371"
+      }
+    },
+    {
+      "jersey_number": 10,
+      "player_name": "Hoerner, Eli",
+      "batting_stats": {
+        "AVG": ".211",
+        "R": "8",
+        "H": "8",
+        "2B": "2",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "5",
+        "OPS": ".637",
+        "SLG%": ".342"
+      }
+    },
+    {
+      "jersey_number": 11,
+      "player_name": "Mick, Carter",
+      "pitching_stats": {
+        "ERA": "4.15",
+        "WHIP": "1.15",
+        "W-L": "0-1",
+        "IP": "4.1",
+        "SO": "4"
+      }
+    },
+    {
+      "jersey_number": 14,
+      "player_name": "Foertsch, Tanner",
+      "pitching_stats": {
+        "ERA": "4.46",
+        "WHIP": "1.42",
+        "W-L": "3-1",
+        "IP": "42.1",
+        "SO": "36"
+      }
+    },
+    {
+      "jersey_number": 15,
+      "player_name": "Cornelli, Edoardo",
+      "batting_stats": {
+        "AVG": ".267",
+        "R": "16",
+        "H": "20",
+        "2B": "1",
+        "3B": "2",
+        "HR": "1",
+        "RBI": "11",
+        "OPS": ".726",
+        "SLG%": ".373"
+      }
+    },
+    {
+      "jersey_number": 16,
+      "player_name": "Crittenden, Isaak",
+      "pitching_stats": {
+        "ERA": "4.91",
+        "WHIP": "3.82",
+        "W-L": "1-0",
+        "IP": "3.2",
+        "SO": "4"
+      }
+    },
+    {
+      "jersey_number": 17,
+      "player_name": "Mabee, Oliver",
+      "pitching_stats": {
+        "ERA": "3.00",
+        "WHIP": "1.33",
+        "W-L": "0-0",
+        "IP": "9.0",
+        "SO": "8"
+      }
+    },
+    {
+      "jersey_number": 18,
+      "player_name": "Sexton, Brody",
+      "batting_stats": {
+        "AVG": ".125",
+        "R": "6",
+        "H": "5",
+        "2B": "2",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "7",
+        "OPS": ".505",
+        "SLG%": ".250"
+      }
+    },
+    {
+      "jersey_number": 19,
+      "player_name": "Dick, Cardel",
+      "batting_stats": {
+        "AVG": ".300",
+        "R": "17",
+        "H": "24",
+        "2B": "3",
+        "3B": "0",
+        "HR": "5",
+        "RBI": "17",
+        "OPS": ".936",
+        "SLG%": ".525"
+      }
+    },
+    {
+      "jersey_number": 20,
+      "player_name": "Trout, Jackson",
+      "batting_stats": {
+        "AVG": ".348",
+        "R": "25",
+        "H": "40",
+        "2B": "6",
+        "3B": "2",
+        "HR": "8",
+        "RBI": "31",
+        "OPS": "1.041",
+        "SLG%": ".643"
+      }
+    },
+    {
+      "jersey_number": 21,
+      "player_name": "Beck, Sam",
+      "batting_stats": {
+        "AVG": ".256",
+        "R": "8",
+        "H": "10",
+        "2B": "2",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "6",
+        "OPS": ".741",
+        "SLG%": ".385"
+      },
+      "pitching_stats": {
+        "ERA": "4.63",
+        "WHIP": "1.37",
+        "W-L": "1-1",
+        "IP": "23.1",
+        "SO": "27"
+      }
+    },
+    {
+      "jersey_number": 22,
+      "player_name": "Gaines, Mason",
+      "batting_stats": {
+        "AVG": ".224",
+        "R": "1",
+        "H": "11",
+        "2B": "2",
+        "3B": "1",
+        "HR": "0",
+        "RBI": "8",
+        "OPS": ".587",
+        "SLG%": ".306"
+      }
+    },
+    {
+      "jersey_number": 23,
+      "player_name": "Moquin, Nate",
+      "pitching_stats": {
+        "ERA": "6.52",
+        "WHIP": "1.55",
+        "W-L": "1-1",
+        "IP": "19.1",
+        "SO": "15"
+      }
+    },
+    {
+      "jersey_number": 24,
+      "player_name": "Borner, Drew",
+      "batting_stats": {
+        "AVG": ".205",
+        "R": "4",
+        "H": "9",
+        "2B": "2",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "3",
+        "OPS": ".583",
+        "SLG%": ".318"
+      }
+    },
+    {
+      "jersey_number": 25,
+      "player_name": "Vaughn, Jackson",
+      "batting_stats": {
+        "AVG": ".000",
+        "R": "1",
+        "H": "0",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "1",
+        "OPS": ".222",
+        "SLG%": ".000"
+      }
+    },
+    {
+      "jersey_number": 27,
+      "player_name": "Hosick, Tanner",
+      "pitching_stats": {
+        "ERA": "6.55",
+        "WHIP": "2.00",
+        "W-L": "1-1",
+        "IP": "11.0",
+        "SO": "11"
+      }
+    },
+    {
+      "jersey_number": 28,
+      "player_name": "Meyer, Maddox",
+      "pitching_stats": {
+        "ERA": "4.89",
+        "WHIP": "1.41",
+        "W-L": "4-3",
+        "IP": "49.2",
+        "SO": "38"
+      }
+    },
+    {
+      "jersey_number": 30,
+      "player_name": "Sall, Michael",
+      "pitching_stats": {
+        "ERA": "7.71",
+        "WHIP": "2.14",
+        "W-L": "0-0",
+        "IP": "16.1",
+        "SO": "16"
+      }
+    },
+    {
+      "jersey_number": 31,
+      "player_name": "Kenyon, Cole",
+      "pitching_stats": {
+        "ERA": "6.43",
+        "WHIP": "2.14",
+        "W-L": "0-0",
+        "IP": "7.0",
+        "SO": "2"
+      }
+    },
+    {
+      "jersey_number": 32,
+      "player_name": "Riggs, Nick",
+      "batting_stats": {
+        "AVG": ".207",
+        "R": "14",
+        "H": "12",
+        "2B": "0",
+        "3B": "3",
+        "HR": "2",
+        "RBI": "9",
+        "OPS": ".723",
+        "SLG%": ".414"
+      },
+      "pitching_stats": {
+        "ERA": "5.52",
+        "WHIP": "1.70",
+        "W-L": "1-1",
+        "IP": "14.2",
+        "SO": "6"
+      }
+    },
+    {
+      "jersey_number": 34,
+      "player_name": "Lewis, Hayden",
+      "batting_stats": {
+        "AVG": ".333",
+        "R": "17",
+        "H": "34",
+        "2B": "7",
+        "3B": "0",
+        "HR": "2",
+        "RBI": "21",
+        "OPS": ".866",
+        "SLG%": ".461"
+      }
+    },
+    {
+      "jersey_number": 35,
+      "player_name": "Iverson, Drew",
+      "pitching_stats": {
+        "ERA": "10.80",
+        "WHIP": "1.80",
+        "W-L": "1-0",
+        "IP": "8.1",
+        "SO": "11"
+      }
+    },
+    {
+      "jersey_number": 37,
+      "player_name": "Boos, Carter",
+      "pitching_stats": {
+        "ERA": "20.25",
+        "WHIP": "2.25",
+        "W-L": "0-0",
+        "IP": "1.1",
+        "SO": "3"
+      }
+    },
+    {
+      "jersey_number": 43,
+      "player_name": "Cooper, Cal",
+      "pitching_stats": {
+        "ERA": "9.00",
+        "WHIP": "2.00",
+        "W-L": "0-0",
+        "IP": "2.0",
+        "SO": "2"
+      }
+    },
+    {
+      "jersey_number": 45,
+      "player_name": "Laurence, Alexandre",
+      "batting_stats": {
+        "AVG": ".222",
+        "R": "1",
+        "H": "2",
+        "2B": "1",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "1",
+        "OPS": ".555",
+        "SLG%": ".333"
+      }
+    }
+  ],
+  "hitting": [
+    {
+      "number": "1",
+      "player": "Zipay, Henry",
+      "AVG": ".350",
+      "R": "33",
+      "H": "63",
+      "2B": "11",
+      "3B": "1",
+      "HR": "1",
+      "RBI": "27",
+      "OPS": ".887",
+      "SLG%": ".439"
+    },
+    {
+      "number": "2",
+      "player": "Bishop, Tyler",
+      "AVG": ".299",
+      "R": "29",
+      "H": "52",
+      "2B": "15",
+      "3B": "4",
+      "HR": "7",
+      "RBI": "35",
+      "OPS": ".943",
+      "SLG%": ".552"
+    },
+    {
+      "number": "3",
+      "player": "Coy, Chris",
+      "AVG": ".143",
+      "R": "2",
+      "H": "1",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".476",
+      "SLG%": ".143"
+    },
+    {
+      "number": "7",
+      "player": "Craig, Joey",
+      "AVG": ".000",
+      "R": "1",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".500",
+      "SLG%": ".000"
+    },
+    {
+      "number": "8",
+      "player": "Diggins, Chase",
+      "AVG": ".289",
+      "R": "29",
+      "H": "43",
+      "2B": "6",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "19",
+      "OPS": ".742",
+      "SLG%": ".349"
+    },
+    {
+      "number": "10",
+      "player": "Hoerner, Eli",
+      "AVG": ".183",
+      "R": "15",
+      "H": "13",
+      "2B": "3",
+      "3B": "1",
+      "HR": "1",
+      "RBI": "7",
+      "OPS": ".585",
+      "SLG%": ".296"
+    },
+    {
+      "number": "15",
+      "player": "Cornelli, Edoardo",
+      "AVG": ".246",
+      "R": "23",
+      "H": "32",
+      "2B": "5",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "16",
+      "OPS": ".697",
+      "SLG%": ".338"
+    },
+    {
+      "number": "18",
+      "player": "Sexton, Brody",
+      "AVG": ".159",
+      "R": "7",
+      "H": "11",
+      "2B": "2",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "11",
+      "OPS": ".541",
+      "SLG%": ".275"
+    },
+    {
+      "number": "19",
+      "player": "Dick, Cardel",
+      "AVG": ".282",
+      "R": "27",
+      "H": "37",
+      "2B": "5",
+      "3B": "1",
+      "HR": "8",
+      "RBI": "27",
+      "OPS": ".896",
+      "SLG%": ".519"
+    },
+    {
+      "number": "20",
+      "player": "Trout, Jackson",
+      "AVG": ".376",
+      "R": "40",
+      "H": "73",
+      "2B": "15",
+      "3B": "2",
+      "HR": "9",
+      "RBI": "46",
+      "OPS": "1.049",
+      "SLG%": ".613"
+    },
+    {
+      "number": "21",
+      "player": "Beck, Sam",
+      "AVG": ".275",
+      "R": "10",
+      "H": "14",
+      "2B": "3",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "7",
+      "OPS": ".775",
+      "SLG%": ".392"
+    },
+    {
+      "number": "22",
+      "player": "Gaines, Mason",
+      "AVG": ".209",
+      "R": "7",
+      "H": "18",
+      "2B": "4",
+      "3B": "2",
+      "HR": "0",
+      "RBI": "14",
+      "OPS": ".599",
+      "SLG%": ".302"
+    },
+    {
+      "number": "24",
+      "player": "Borner, Drew",
+      "AVG": ".216",
+      "R": "11",
+      "H": "19",
+      "2B": "5",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "9",
+      "OPS": ".618",
+      "SLG%": ".307"
+    },
+    {
+      "number": "25",
+      "player": "Vaughn, Jackson",
+      "AVG": ".000",
+      "R": "1",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".182",
+      "SLG%": ".000"
+    },
+    {
+      "number": "32",
+      "player": "Riggs, Nick",
+      "AVG": ".239",
+      "R": "21",
+      "H": "22",
+      "2B": "0",
+      "3B": "3",
+      "HR": "4",
+      "RBI": "18",
+      "OPS": ".784",
+      "SLG%": ".435"
+    },
+    {
+      "number": "34",
+      "player": "Lewis, Hayden",
+      "AVG": ".287",
+      "R": "25",
+      "H": "51",
+      "2B": "9",
+      "3B": "0",
+      "HR": "4",
+      "RBI": "30",
+      "OPS": ".765",
+      "SLG%": ".404"
+    },
+    {
+      "number": "45",
+      "player": "Laurence, Alexandre",
+      "AVG": ".200",
+      "R": "1",
+      "H": "2",
+      "2B": "1",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".500",
+      "SLG%": ".300"
+    }
+  ],
+  "pitching": [
+    {
+      "number": "3",
+      "player": "Coy, Chris",
+      "ERA": "2.70",
+      "WHIP": "2.40",
+      "W-L": "0-1",
+      "IP": "3.1",
+      "SO": "3"
+    },
+    {
+      "number": "5",
+      "player": "Curtis, Brayden",
+      "ERA": "8.22",
+      "WHIP": "1.79",
+      "W-L": "3-3",
+      "IP": "30.2",
+      "SO": "32"
+    },
+    {
+      "number": "6",
+      "player": "Teinert, Cameron",
+      "ERA": "8.10",
+      "WHIP": "2.35",
+      "W-L": "2-0",
+      "IP": "20.0",
+      "SO": "13"
+    },
+    {
+      "number": "11",
+      "player": "Mick, Carter",
+      "ERA": "4.15",
+      "WHIP": "1.15",
+      "W-L": "0-1",
+      "IP": "4.1",
+      "SO": "4"
+    },
+    {
+      "number": "14",
+      "player": "Foertsch, Tanner",
+      "ERA": "5.29",
+      "WHIP": "1.58",
+      "W-L": "3-5",
+      "IP": "64.2",
+      "SO": "55"
+    },
+    {
+      "number": "16",
+      "player": "Crittenden, Isaak",
+      "ERA": "6.59",
+      "WHIP": "2.27",
+      "W-L": "1-0",
+      "IP": "13.2",
+      "SO": "6"
+    },
+    {
+      "number": "17",
+      "player": "Mabee, Oliver",
+      "ERA": "3.07",
+      "WHIP": "1.50",
+      "W-L": "0-2",
+      "IP": "14.2",
+      "SO": "14"
+    },
+    {
+      "number": "21",
+      "player": "Beck, Sam",
+      "ERA": "4.32",
+      "WHIP": "1.32",
+      "W-L": "2-1",
+      "IP": "41.2",
+      "SO": "41"
+    },
+    {
+      "number": "23",
+      "player": "Moquin, Nate",
+      "ERA": "4.88",
+      "WHIP": "1.63",
+      "W-L": "1-2",
+      "IP": "31.1",
+      "SO": "23"
+    },
+    {
+      "number": "27",
+      "player": "Hosick, Tanner",
+      "ERA": "7.97",
+      "WHIP": "1.82",
+      "W-L": "1-1",
+      "IP": "20.1",
+      "SO": "18"
+    },
+    {
+      "number": "28",
+      "player": "Meyer, Maddox",
+      "ERA": "4.98",
+      "WHIP": "1.41",
+      "W-L": "5-5",
+      "IP": "68.2",
+      "SO": "58"
+    },
+    {
+      "number": "30",
+      "player": "Sall, Michael",
+      "ERA": "9.38",
+      "WHIP": "2.08",
+      "W-L": "0-1",
+      "IP": "31.2",
+      "SO": "35"
+    },
+    {
+      "number": "31",
+      "player": "Kenyon, Cole",
+      "ERA": "7.62",
+      "WHIP": "2.31",
+      "W-L": "0-0",
+      "IP": "13.0",
+      "SO": "11"
+    },
+    {
+      "number": "32",
+      "player": "Riggs, Nick",
+      "ERA": "6.23",
+      "WHIP": "1.54",
+      "W-L": "2-3",
+      "IP": "26.0",
+      "SO": "13"
+    },
+    {
+      "number": "35",
+      "player": "Iverson, Drew",
+      "ERA": "12.10",
+      "WHIP": "1.91",
+      "W-L": "1-1",
+      "IP": "19.1",
+      "SO": "15"
+    },
+    {
+      "number": "37",
+      "player": "Boos, Carter",
+      "ERA": "8.10",
+      "WHIP": "1.20",
+      "W-L": "0-0",
+      "IP": "3.1",
+      "SO": "5"
+    },
+    {
+      "number": "43",
+      "player": "Cooper, Cal",
+      "ERA": "6.00",
+      "WHIP": "2.33",
+      "W-L": "0-0",
+      "IP": "3.0",
+      "SO": "3"
+    }
+  ],
+  "hitting_by_number": {
+    "20": {
+      "number": "20",
+      "player": "Trout, Jackson",
+      "AVG": ".376",
+      "R": "40",
+      "H": "73",
+      "2B": "15",
+      "3B": "2",
+      "HR": "9",
+      "RBI": "46",
+      "OPS": "1.049",
+      "SLG%": ".613"
+    },
+    "1": {
+      "number": "1",
+      "player": "Zipay, Henry",
+      "AVG": ".350",
+      "R": "33",
+      "H": "63",
+      "2B": "11",
+      "3B": "1",
+      "HR": "1",
+      "RBI": "27",
+      "OPS": ".887",
+      "SLG%": ".439"
+    },
+    "2": {
+      "number": "2",
+      "player": "Bishop, Tyler",
+      "AVG": ".299",
+      "R": "29",
+      "H": "52",
+      "2B": "15",
+      "3B": "4",
+      "HR": "7",
+      "RBI": "35",
+      "OPS": ".943",
+      "SLG%": ".552"
+    },
+    "8": {
+      "number": "8",
+      "player": "Diggins, Chase",
+      "AVG": ".289",
+      "R": "29",
+      "H": "43",
+      "2B": "6",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "19",
+      "OPS": ".742",
+      "SLG%": ".349"
+    },
+    "34": {
+      "number": "34",
+      "player": "Lewis, Hayden",
+      "AVG": ".287",
+      "R": "25",
+      "H": "51",
+      "2B": "9",
+      "3B": "0",
+      "HR": "4",
+      "RBI": "30",
+      "OPS": ".765",
+      "SLG%": ".404"
+    },
+    "15": {
+      "number": "15",
+      "player": "Cornelli, Edoardo",
+      "AVG": ".246",
+      "R": "23",
+      "H": "32",
+      "2B": "5",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "16",
+      "OPS": ".697",
+      "SLG%": ".338"
+    },
+    "32": {
+      "number": "32",
+      "player": "Riggs, Nick",
+      "AVG": ".239",
+      "R": "21",
+      "H": "22",
+      "2B": "0",
+      "3B": "3",
+      "HR": "4",
+      "RBI": "18",
+      "OPS": ".784",
+      "SLG%": ".435"
+    },
+    "19": {
+      "number": "19",
+      "player": "Dick, Cardel",
+      "AVG": ".282",
+      "R": "27",
+      "H": "37",
+      "2B": "5",
+      "3B": "1",
+      "HR": "8",
+      "RBI": "27",
+      "OPS": ".896",
+      "SLG%": ".519"
+    },
+    "21": {
+      "number": "21",
+      "player": "Beck, Sam",
+      "AVG": ".275",
+      "R": "10",
+      "H": "14",
+      "2B": "3",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "7",
+      "OPS": ".775",
+      "SLG%": ".392"
+    },
+    "24": {
+      "number": "24",
+      "player": "Borner, Drew",
+      "AVG": ".216",
+      "R": "11",
+      "H": "19",
+      "2B": "5",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "9",
+      "OPS": ".618",
+      "SLG%": ".307"
+    },
+    "22": {
+      "number": "22",
+      "player": "Gaines, Mason",
+      "AVG": ".209",
+      "R": "7",
+      "H": "18",
+      "2B": "4",
+      "3B": "2",
+      "HR": "0",
+      "RBI": "14",
+      "OPS": ".599",
+      "SLG%": ".302"
+    },
+    "45": {
+      "number": "45",
+      "player": "Laurence, Alexandre",
+      "AVG": ".200",
+      "R": "1",
+      "H": "2",
+      "2B": "1",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".500",
+      "SLG%": ".300"
+    },
+    "10": {
+      "number": "10",
+      "player": "Hoerner, Eli",
+      "AVG": ".183",
+      "R": "15",
+      "H": "13",
+      "2B": "3",
+      "3B": "1",
+      "HR": "1",
+      "RBI": "7",
+      "OPS": ".585",
+      "SLG%": ".296"
+    },
+    "18": {
+      "number": "18",
+      "player": "Sexton, Brody",
+      "AVG": ".159",
+      "R": "7",
+      "H": "11",
+      "2B": "2",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "11",
+      "OPS": ".541",
+      "SLG%": ".275"
+    },
+    "3": {
+      "number": "3",
+      "player": "Coy, Chris",
+      "AVG": ".143",
+      "R": "2",
+      "H": "1",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".476",
+      "SLG%": ".143"
+    },
+    "25": {
+      "number": "25",
+      "player": "Vaughn, Jackson",
+      "AVG": ".000",
+      "R": "1",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".182",
+      "SLG%": ".000"
+    },
+    "7": {
+      "number": "7",
+      "player": "Craig, Joey",
+      "AVG": ".000",
+      "R": "1",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".500",
+      "SLG%": ".000"
+    }
+  },
+  "pitching_by_number": {
+    "28": {
+      "number": "28",
+      "player": "Meyer, Maddox",
+      "ERA": "4.98",
+      "WHIP": "1.41",
+      "W-L": "5-5",
+      "IP": "68.2",
+      "SO": "58"
+    },
+    "14": {
+      "number": "14",
+      "player": "Foertsch, Tanner",
+      "ERA": "5.29",
+      "WHIP": "1.58",
+      "W-L": "3-5",
+      "IP": "64.2",
+      "SO": "55"
+    },
+    "3": {
+      "number": "3",
+      "player": "Coy, Chris",
+      "ERA": "2.70",
+      "WHIP": "2.40",
+      "W-L": "0-1",
+      "IP": "3.1",
+      "SO": "3"
+    },
+    "17": {
+      "number": "17",
+      "player": "Mabee, Oliver",
+      "ERA": "3.07",
+      "WHIP": "1.50",
+      "W-L": "0-2",
+      "IP": "14.2",
+      "SO": "14"
+    },
+    "11": {
+      "number": "11",
+      "player": "Mick, Carter",
+      "ERA": "4.15",
+      "WHIP": "1.15",
+      "W-L": "0-1",
+      "IP": "4.1",
+      "SO": "4"
+    },
+    "21": {
+      "number": "21",
+      "player": "Beck, Sam",
+      "ERA": "4.32",
+      "WHIP": "1.32",
+      "W-L": "2-1",
+      "IP": "41.2",
+      "SO": "41"
+    },
+    "23": {
+      "number": "23",
+      "player": "Moquin, Nate",
+      "ERA": "4.88",
+      "WHIP": "1.63",
+      "W-L": "1-2",
+      "IP": "31.1",
+      "SO": "23"
+    },
+    "43": {
+      "number": "43",
+      "player": "Cooper, Cal",
+      "ERA": "6.00",
+      "WHIP": "2.33",
+      "W-L": "0-0",
+      "IP": "3.0",
+      "SO": "3"
+    },
+    "32": {
+      "number": "32",
+      "player": "Riggs, Nick",
+      "ERA": "6.23",
+      "WHIP": "1.54",
+      "W-L": "2-3",
+      "IP": "26.0",
+      "SO": "13"
+    },
+    "16": {
+      "number": "16",
+      "player": "Crittenden, Isaak",
+      "ERA": "6.59",
+      "WHIP": "2.27",
+      "W-L": "1-0",
+      "IP": "13.2",
+      "SO": "6"
+    },
+    "31": {
+      "number": "31",
+      "player": "Kenyon, Cole",
+      "ERA": "7.62",
+      "WHIP": "2.31",
+      "W-L": "0-0",
+      "IP": "13.0",
+      "SO": "11"
+    },
+    "27": {
+      "number": "27",
+      "player": "Hosick, Tanner",
+      "ERA": "7.97",
+      "WHIP": "1.82",
+      "W-L": "1-1",
+      "IP": "20.1",
+      "SO": "18"
+    },
+    "6": {
+      "number": "6",
+      "player": "Teinert, Cameron",
+      "ERA": "8.10",
+      "WHIP": "2.35",
+      "W-L": "2-0",
+      "IP": "20.0",
+      "SO": "13"
+    },
+    "37": {
+      "number": "37",
+      "player": "Boos, Carter",
+      "ERA": "8.10",
+      "WHIP": "1.20",
+      "W-L": "0-0",
+      "IP": "3.1",
+      "SO": "5"
+    },
+    "5": {
+      "number": "5",
+      "player": "Curtis, Brayden",
+      "ERA": "8.22",
+      "WHIP": "1.79",
+      "W-L": "3-3",
+      "IP": "30.2",
+      "SO": "32"
+    },
+    "30": {
+      "number": "30",
+      "player": "Sall, Michael",
+      "ERA": "9.38",
+      "WHIP": "2.08",
+      "W-L": "0-1",
+      "IP": "31.2",
+      "SO": "35"
+    },
+    "35": {
+      "number": "35",
+      "player": "Iverson, Drew",
+      "ERA": "12.10",
+      "WHIP": "1.91",
+      "W-L": "1-1",
+      "IP": "19.1",
+      "SO": "15"
+    }
+  }
+}

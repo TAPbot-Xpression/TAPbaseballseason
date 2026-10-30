@@ -1,0 +1,1226 @@
+{
+  "team_id": "uncbears",
+  "team": "Northern Colorado Bears",
+  "sport": "baseball",
+  "season": "2026",
+  "source": "https://uncbears.com/sports/baseball/stats/2026",
+  "status": "ok",
+  "generated_at": "2026-10-30T00:40:54.751495+00:00",
+  "players": [
+    {
+      "jersey_number": 1,
+      "player_name": "Pruski, Logan",
+      "batting_stats": {
+        "AVG": ".303",
+        "R": "14",
+        "H": "33",
+        "2B": "8",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "16",
+        "OPS": ".819",
+        "SLG%": ".404"
+      }
+    },
+    {
+      "jersey_number": 2,
+      "player_name": "Sanchez, Brandon",
+      "batting_stats": {
+        "AVG": ".324",
+        "R": "25",
+        "H": "34",
+        "2B": "7",
+        "3B": "1",
+        "HR": "5",
+        "RBI": "26",
+        "OPS": ".959",
+        "SLG%": ".552"
+      }
+    },
+    {
+      "jersey_number": 3,
+      "player_name": "Kenny, Brien",
+      "batting_stats": {
+        "AVG": ".000",
+        "R": "0",
+        "H": "0",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "1",
+        "OPS": ".429",
+        "SLG%": ".000"
+      }
+    },
+    {
+      "jersey_number": 4,
+      "player_name": "Griffin, Mason",
+      "batting_stats": {
+        "AVG": ".305",
+        "R": "21",
+        "H": "32",
+        "2B": "7",
+        "3B": "2",
+        "HR": "3",
+        "RBI": "20",
+        "OPS": ".882",
+        "SLG%": ".495"
+      }
+    },
+    {
+      "jersey_number": 5,
+      "player_name": "Barber, Brett",
+      "batting_stats": {
+        "AVG": ".240",
+        "R": "15",
+        "H": "25",
+        "2B": "3",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "4",
+        "OPS": ".594",
+        "SLG%": ".269"
+      }
+    },
+    {
+      "jersey_number": 6,
+      "player_name": "Bullard, Jake",
+      "batting_stats": {
+        "AVG": ".179",
+        "R": "16",
+        "H": "19",
+        "2B": "3",
+        "3B": "0",
+        "HR": "1",
+        "RBI": "14",
+        "OPS": ".526",
+        "SLG%": ".236"
+      }
+    },
+    {
+      "jersey_number": 7,
+      "player_name": "Sanchez, Ethan",
+      "batting_stats": {
+        "AVG": ".306",
+        "R": "6",
+        "H": "11",
+        "2B": "1",
+        "3B": "0",
+        "HR": "2",
+        "RBI": "9",
+        "OPS": ".824",
+        "SLG%": ".500"
+      }
+    },
+    {
+      "jersey_number": 8,
+      "player_name": "Fillinger, Ethan",
+      "batting_stats": {
+        "AVG": ".182",
+        "R": "1",
+        "H": "4",
+        "2B": "1",
+        "3B": "2",
+        "HR": "0",
+        "RBI": "6",
+        "OPS": ".583",
+        "SLG%": ".409"
+      }
+    },
+    {
+      "jersey_number": 9,
+      "player_name": "Bryant, Easton",
+      "batting_stats": {
+        "AVG": ".278",
+        "R": "6",
+        "H": "10",
+        "2B": "2",
+        "3B": "1",
+        "HR": "1",
+        "RBI": "9",
+        "OPS": ".822",
+        "SLG%": ".472"
+      }
+    },
+    {
+      "jersey_number": 10,
+      "player_name": "Hudson, Brady",
+      "pitching_stats": {
+        "ERA": "6.35",
+        "WHIP": "1.50",
+        "W-L": "3-2",
+        "IP": "11.1",
+        "SO": "16"
+      }
+    },
+    {
+      "jersey_number": 11,
+      "player_name": "Stone, Lucas",
+      "pitching_stats": {
+        "ERA": "6.26",
+        "WHIP": "1.61",
+        "W-L": "2-2",
+        "IP": "23.0",
+        "SO": "16"
+      }
+    },
+    {
+      "jersey_number": 12,
+      "player_name": "Clark, Asher",
+      "pitching_stats": {
+        "ERA": "19.89",
+        "WHIP": "3.63",
+        "W-L": "0-0",
+        "IP": "6.1",
+        "SO": "7"
+      }
+    },
+    {
+      "jersey_number": 13,
+      "player_name": "Minic, Zeke",
+      "batting_stats": {
+        "AVG": ".163",
+        "R": "7",
+        "H": "7",
+        "2B": "1",
+        "3B": "0",
+        "HR": "2",
+        "RBI": "4",
+        "OPS": ".601",
+        "SLG%": ".326"
+      }
+    },
+    {
+      "jersey_number": 14,
+      "player_name": "Pfister, Jax",
+      "pitching_stats": {
+        "ERA": "13.50",
+        "WHIP": "2.55",
+        "W-L": "0-0",
+        "IP": "6.2",
+        "SO": "5"
+      }
+    },
+    {
+      "jersey_number": 15,
+      "player_name": "Kieffer, Wilson",
+      "batting_stats": {
+        "AVG": ".297",
+        "R": "11",
+        "H": "11",
+        "2B": "1",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "5",
+        "OPS": ".771",
+        "SLG%": ".324"
+      }
+    },
+    {
+      "jersey_number": 16,
+      "player_name": "Meredith, Kaveh",
+      "pitching_stats": {
+        "ERA": "0.00",
+        "WHIP": ".00",
+        "W-L": "0-0",
+        "IP": "1.0",
+        "SO": "1"
+      }
+    },
+    {
+      "jersey_number": 17,
+      "player_name": "Mooser, Ethan",
+      "batting_stats": {
+        "AVG": ".338",
+        "R": "17",
+        "H": "25",
+        "2B": "2",
+        "3B": "2",
+        "HR": "3",
+        "RBI": "11",
+        "OPS": ".934",
+        "SLG%": ".541"
+      }
+    },
+    {
+      "jersey_number": 18,
+      "player_name": "Moser, Logan",
+      "pitching_stats": {
+        "ERA": "99.00",
+        "WHIP": ".00",
+        "W-L": "0-0",
+        "IP": "0.0",
+        "SO": "0"
+      }
+    },
+    {
+      "jersey_number": 19,
+      "player_name": "Pease, Sam",
+      "batting_stats": {
+        "AVG": ".379",
+        "R": "17",
+        "H": "25",
+        "2B": "3",
+        "3B": "1",
+        "HR": "3",
+        "RBI": "20",
+        "OPS": "1.072",
+        "SLG%": ".591"
+      }
+    },
+    {
+      "jersey_number": 21,
+      "player_name": "Storey, Jake",
+      "pitching_stats": {
+        "ERA": "6.75",
+        "WHIP": "1.66",
+        "W-L": "1-3",
+        "IP": "38.2",
+        "SO": "32"
+      }
+    },
+    {
+      "jersey_number": 22,
+      "player_name": "Borboa, Logan",
+      "pitching_stats": {
+        "ERA": "5.52",
+        "WHIP": "1.57",
+        "W-L": "1-1",
+        "IP": "14.2",
+        "SO": "17"
+      }
+    },
+    {
+      "jersey_number": 23,
+      "player_name": "Wagner, Reece",
+      "pitching_stats": {
+        "ERA": "3.93",
+        "WHIP": "1.51",
+        "W-L": "4-0",
+        "IP": "55.0",
+        "SO": "49"
+      }
+    },
+    {
+      "jersey_number": 25,
+      "player_name": "Stone, Jaden",
+      "batting_stats": {
+        "AVG": ".368",
+        "R": "20",
+        "H": "39",
+        "2B": "4",
+        "3B": "2",
+        "HR": "0",
+        "RBI": "15",
+        "OPS": ".898",
+        "SLG%": ".443"
+      }
+    },
+    {
+      "jersey_number": 26,
+      "player_name": "Paczkowski, Jake",
+      "batting_stats": {
+        "AVG": ".000",
+        "R": "0",
+        "H": "0",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "0",
+        "OPS": ".000",
+        "SLG%": ".000"
+      }
+    },
+    {
+      "jersey_number": 27,
+      "player_name": "Haythorn, Mitch",
+      "pitching_stats": {
+        "ERA": "3.65",
+        "WHIP": "1.62",
+        "W-L": "1-0",
+        "IP": "12.1",
+        "SO": "13"
+      }
+    },
+    {
+      "jersey_number": 28,
+      "player_name": "Guest, Luke",
+      "pitching_stats": {
+        "ERA": "0.00",
+        "WHIP": "3.00",
+        "W-L": "0-0",
+        "IP": "0.1",
+        "SO": "0"
+      }
+    },
+    {
+      "jersey_number": 29,
+      "player_name": "Landen, Trevor",
+      "pitching_stats": {
+        "ERA": "7.44",
+        "WHIP": "1.81",
+        "W-L": "0-4",
+        "IP": "32.2",
+        "SO": "23"
+      }
+    },
+    {
+      "jersey_number": 31,
+      "player_name": "Kunz, Cade",
+      "pitching_stats": {
+        "ERA": "40.50",
+        "WHIP": "4.50",
+        "W-L": "0-0",
+        "IP": "0.2",
+        "SO": "0"
+      }
+    },
+    {
+      "jersey_number": 32,
+      "player_name": "Smith, Tate",
+      "pitching_stats": {
+        "ERA": "99.00",
+        "WHIP": ".00",
+        "W-L": "0-0",
+        "IP": "0.0",
+        "SO": "0"
+      }
+    },
+    {
+      "jersey_number": 33,
+      "player_name": "Louthan, Ethan",
+      "pitching_stats": {
+        "ERA": "9.47",
+        "WHIP": "1.79",
+        "W-L": "0-2",
+        "IP": "19.0",
+        "SO": "10"
+      }
+    },
+    {
+      "jersey_number": 35,
+      "player_name": "Bright, Mason",
+      "pitching_stats": {
+        "ERA": "12.86",
+        "WHIP": "2.86",
+        "W-L": "0-0",
+        "IP": "7.0",
+        "SO": "4"
+      }
+    },
+    {
+      "jersey_number": 36,
+      "player_name": "Benedict, Brek",
+      "pitching_stats": {
+        "ERA": "4.50",
+        "WHIP": "1.00",
+        "W-L": "0-0",
+        "IP": "2.0",
+        "SO": "1"
+      }
+    },
+    {
+      "jersey_number": 39,
+      "player_name": "Allred, Gus",
+      "pitching_stats": {
+        "ERA": "6.52",
+        "WHIP": "1.76",
+        "W-L": "0-0",
+        "IP": "19.1",
+        "SO": "17"
+      }
+    },
+    {
+      "jersey_number": 40,
+      "player_name": "Hibben, Mac",
+      "pitching_stats": {
+        "ERA": "27.00",
+        "WHIP": "2.00",
+        "W-L": "0-0",
+        "IP": "1.0",
+        "SO": "1"
+      }
+    },
+    {
+      "jersey_number": 41,
+      "player_name": "Dawsey, Mac",
+      "batting_stats": {
+        "AVG": ".000",
+        "R": "0",
+        "H": "0",
+        "2B": "0",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "0",
+        "OPS": ".143",
+        "SLG%": ".000"
+      }
+    }
+  ],
+  "hitting": [
+    {
+      "number": "1",
+      "player": "Pruski, Logan",
+      "AVG": ".294",
+      "R": "29",
+      "H": "62",
+      "2B": "11",
+      "3B": "0",
+      "HR": "3",
+      "RBI": "31",
+      "OPS": ".787",
+      "SLG%": ".389"
+    },
+    {
+      "number": "2",
+      "player": "Sanchez, Brandon",
+      "AVG": ".295",
+      "R": "40",
+      "H": "52",
+      "2B": "9",
+      "3B": "1",
+      "HR": "7",
+      "RBI": "38",
+      "OPS": ".879",
+      "SLG%": ".477"
+    },
+    {
+      "number": "3",
+      "player": "Kenny, Brien",
+      "AVG": ".167",
+      "R": "2",
+      "H": "4",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "2",
+      "OPS": ".522",
+      "SLG%": ".167"
+    },
+    {
+      "number": "4",
+      "player": "Griffin, Mason",
+      "AVG": ".267",
+      "R": "33",
+      "H": "52",
+      "2B": "8",
+      "3B": "2",
+      "HR": "5",
+      "RBI": "29",
+      "OPS": ".775",
+      "SLG%": ".405"
+    },
+    {
+      "number": "5",
+      "player": "Barber, Brett",
+      "AVG": ".260",
+      "R": "28",
+      "H": "45",
+      "2B": "7",
+      "3B": "1",
+      "HR": "0",
+      "RBI": "13",
+      "OPS": ".647",
+      "SLG%": ".312"
+    },
+    {
+      "number": "6",
+      "player": "Bullard, Jake",
+      "AVG": ".225",
+      "R": "28",
+      "H": "46",
+      "2B": "11",
+      "3B": "0",
+      "HR": "4",
+      "RBI": "23",
+      "OPS": ".681",
+      "SLG%": ".338"
+    },
+    {
+      "number": "7",
+      "player": "Sanchez, Ethan",
+      "AVG": ".216",
+      "R": "11",
+      "H": "16",
+      "2B": "1",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "12",
+      "OPS": ".567",
+      "SLG%": ".311"
+    },
+    {
+      "number": "8",
+      "player": "Fillinger, Ethan",
+      "AVG": ".197",
+      "R": "5",
+      "H": "13",
+      "2B": "2",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "13",
+      "OPS": ".555",
+      "SLG%": ".333"
+    },
+    {
+      "number": "9",
+      "player": "Bryant, Easton",
+      "AVG": ".258",
+      "R": "13",
+      "H": "25",
+      "2B": "4",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "20",
+      "OPS": ".728",
+      "SLG%": ".371"
+    },
+    {
+      "number": "13",
+      "player": "Minic, Zeke",
+      "AVG": ".262",
+      "R": "16",
+      "H": "27",
+      "2B": "5",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "11",
+      "OPS": ".716",
+      "SLG%": ".369"
+    },
+    {
+      "number": "15",
+      "player": "Kieffer, Wilson",
+      "AVG": ".304",
+      "R": "17",
+      "H": "21",
+      "2B": "2",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "10",
+      "OPS": ".781",
+      "SLG%": ".333"
+    },
+    {
+      "number": "17",
+      "player": "Mooser, Ethan",
+      "AVG": ".276",
+      "R": "28",
+      "H": "45",
+      "2B": "7",
+      "3B": "2",
+      "HR": "4",
+      "RBI": "30",
+      "OPS": ".750",
+      "SLG%": ".417"
+    },
+    {
+      "number": "19",
+      "player": "Pease, Sam",
+      "AVG": ".319",
+      "R": "27",
+      "H": "36",
+      "2B": "3",
+      "3B": "1",
+      "HR": "3",
+      "RBI": "25",
+      "OPS": ".854",
+      "SLG%": ".442"
+    },
+    {
+      "number": "25",
+      "player": "Stone, Jaden",
+      "AVG": ".340",
+      "R": "38",
+      "H": "69",
+      "2B": "8",
+      "3B": "2",
+      "HR": "0",
+      "RBI": "30",
+      "OPS": ".831",
+      "SLG%": ".399"
+    },
+    {
+      "number": "26",
+      "player": "Paczkowski, Jake",
+      "AVG": ".000",
+      "R": "0",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".000",
+      "SLG%": ".000"
+    },
+    {
+      "number": "41",
+      "player": "Dawsey, Mac",
+      "AVG": ".083",
+      "R": "1",
+      "H": "1",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".237",
+      "SLG%": ".083"
+    }
+  ],
+  "pitching": [
+    {
+      "number": "10",
+      "player": "Hudson, Brady",
+      "ERA": "9.00",
+      "WHIP": "1.73",
+      "W-L": "4-4",
+      "IP": "26.0",
+      "SO": "29"
+    },
+    {
+      "number": "11",
+      "player": "Stone, Lucas",
+      "ERA": "7.15",
+      "WHIP": "1.82",
+      "W-L": "2-4",
+      "IP": "39.0",
+      "SO": "29"
+    },
+    {
+      "number": "12",
+      "player": "Clark, Asher",
+      "ERA": "19.89",
+      "WHIP": "3.63",
+      "W-L": "0-0",
+      "IP": "6.1",
+      "SO": "7"
+    },
+    {
+      "number": "14",
+      "player": "Pfister, Jax",
+      "ERA": "11.65",
+      "WHIP": "2.35",
+      "W-L": "0-1",
+      "IP": "17.0",
+      "SO": "14"
+    },
+    {
+      "number": "16",
+      "player": "Meredith, Kaveh",
+      "ERA": "27.00",
+      "WHIP": "4.20",
+      "W-L": "0-0",
+      "IP": "1.2",
+      "SO": "1"
+    },
+    {
+      "number": "18",
+      "player": "Moser, Logan",
+      "ERA": "20.25",
+      "WHIP": "3.64",
+      "W-L": "0-2",
+      "IP": "9.1",
+      "SO": "10"
+    },
+    {
+      "number": "21",
+      "player": "Storey, Jake",
+      "ERA": "6.12",
+      "WHIP": "1.64",
+      "W-L": "2-7",
+      "IP": "67.2",
+      "SO": "58"
+    },
+    {
+      "number": "22",
+      "player": "Borboa, Logan",
+      "ERA": "5.82",
+      "WHIP": "1.56",
+      "W-L": "1-3",
+      "IP": "34.0",
+      "SO": "37"
+    },
+    {
+      "number": "23",
+      "player": "Wagner, Reece",
+      "ERA": "5.61",
+      "WHIP": "1.65",
+      "W-L": "5-3",
+      "IP": "78.2",
+      "SO": "69"
+    },
+    {
+      "number": "27",
+      "player": "Haythorn, Mitch",
+      "ERA": "9.24",
+      "WHIP": "2.17",
+      "W-L": "1-2",
+      "IP": "25.1",
+      "SO": "25"
+    },
+    {
+      "number": "28",
+      "player": "Guest, Luke",
+      "ERA": "0.00",
+      "WHIP": "3.00",
+      "W-L": "0-0",
+      "IP": "0.1",
+      "SO": "0"
+    },
+    {
+      "number": "29",
+      "player": "Landen, Trevor",
+      "ERA": "7.46",
+      "WHIP": "1.80",
+      "W-L": "0-7",
+      "IP": "56.2",
+      "SO": "37"
+    },
+    {
+      "number": "31",
+      "player": "Kunz, Cade",
+      "ERA": "18.56",
+      "WHIP": "3.19",
+      "W-L": "0-0",
+      "IP": "5.1",
+      "SO": "6"
+    },
+    {
+      "number": "32",
+      "player": "Smith, Tate",
+      "ERA": "27.00",
+      "WHIP": "4.07",
+      "W-L": "0-0",
+      "IP": "4.2",
+      "SO": "5"
+    },
+    {
+      "number": "33",
+      "player": "Louthan, Ethan",
+      "ERA": "7.59",
+      "WHIP": "1.56",
+      "W-L": "0-3",
+      "IP": "32.0",
+      "SO": "16"
+    },
+    {
+      "number": "35",
+      "player": "Bright, Mason",
+      "ERA": "9.55",
+      "WHIP": "2.26",
+      "W-L": "1-1",
+      "IP": "21.2",
+      "SO": "15"
+    },
+    {
+      "number": "36",
+      "player": "Benedict, Brek",
+      "ERA": "4.50",
+      "WHIP": "1.00",
+      "W-L": "0-0",
+      "IP": "2.0",
+      "SO": "1"
+    },
+    {
+      "number": "39",
+      "player": "Allred, Gus",
+      "ERA": "7.39",
+      "WHIP": "1.86",
+      "W-L": "1-1",
+      "IP": "31.2",
+      "SO": "29"
+    },
+    {
+      "number": "40",
+      "player": "Hibben, Mac",
+      "ERA": "11.81",
+      "WHIP": "2.63",
+      "W-L": "0-0",
+      "IP": "5.1",
+      "SO": "2"
+    }
+  ],
+  "hitting_by_number": {
+    "25": {
+      "number": "25",
+      "player": "Stone, Jaden",
+      "AVG": ".340",
+      "R": "38",
+      "H": "69",
+      "2B": "8",
+      "3B": "2",
+      "HR": "0",
+      "RBI": "30",
+      "OPS": ".831",
+      "SLG%": ".399"
+    },
+    "2": {
+      "number": "2",
+      "player": "Sanchez, Brandon",
+      "AVG": ".295",
+      "R": "40",
+      "H": "52",
+      "2B": "9",
+      "3B": "1",
+      "HR": "7",
+      "RBI": "38",
+      "OPS": ".879",
+      "SLG%": ".477"
+    },
+    "1": {
+      "number": "1",
+      "player": "Pruski, Logan",
+      "AVG": ".294",
+      "R": "29",
+      "H": "62",
+      "2B": "11",
+      "3B": "0",
+      "HR": "3",
+      "RBI": "31",
+      "OPS": ".787",
+      "SLG%": ".389"
+    },
+    "17": {
+      "number": "17",
+      "player": "Mooser, Ethan",
+      "AVG": ".276",
+      "R": "28",
+      "H": "45",
+      "2B": "7",
+      "3B": "2",
+      "HR": "4",
+      "RBI": "30",
+      "OPS": ".750",
+      "SLG%": ".417"
+    },
+    "4": {
+      "number": "4",
+      "player": "Griffin, Mason",
+      "AVG": ".267",
+      "R": "33",
+      "H": "52",
+      "2B": "8",
+      "3B": "2",
+      "HR": "5",
+      "RBI": "29",
+      "OPS": ".775",
+      "SLG%": ".405"
+    },
+    "5": {
+      "number": "5",
+      "player": "Barber, Brett",
+      "AVG": ".260",
+      "R": "28",
+      "H": "45",
+      "2B": "7",
+      "3B": "1",
+      "HR": "0",
+      "RBI": "13",
+      "OPS": ".647",
+      "SLG%": ".312"
+    },
+    "6": {
+      "number": "6",
+      "player": "Bullard, Jake",
+      "AVG": ".225",
+      "R": "28",
+      "H": "46",
+      "2B": "11",
+      "3B": "0",
+      "HR": "4",
+      "RBI": "23",
+      "OPS": ".681",
+      "SLG%": ".338"
+    },
+    "19": {
+      "number": "19",
+      "player": "Pease, Sam",
+      "AVG": ".319",
+      "R": "27",
+      "H": "36",
+      "2B": "3",
+      "3B": "1",
+      "HR": "3",
+      "RBI": "25",
+      "OPS": ".854",
+      "SLG%": ".442"
+    },
+    "15": {
+      "number": "15",
+      "player": "Kieffer, Wilson",
+      "AVG": ".304",
+      "R": "17",
+      "H": "21",
+      "2B": "2",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "10",
+      "OPS": ".781",
+      "SLG%": ".333"
+    },
+    "13": {
+      "number": "13",
+      "player": "Minic, Zeke",
+      "AVG": ".262",
+      "R": "16",
+      "H": "27",
+      "2B": "5",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "11",
+      "OPS": ".716",
+      "SLG%": ".369"
+    },
+    "9": {
+      "number": "9",
+      "player": "Bryant, Easton",
+      "AVG": ".258",
+      "R": "13",
+      "H": "25",
+      "2B": "4",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "20",
+      "OPS": ".728",
+      "SLG%": ".371"
+    },
+    "7": {
+      "number": "7",
+      "player": "Sanchez, Ethan",
+      "AVG": ".216",
+      "R": "11",
+      "H": "16",
+      "2B": "1",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "12",
+      "OPS": ".567",
+      "SLG%": ".311"
+    },
+    "8": {
+      "number": "8",
+      "player": "Fillinger, Ethan",
+      "AVG": ".197",
+      "R": "5",
+      "H": "13",
+      "2B": "2",
+      "3B": "2",
+      "HR": "1",
+      "RBI": "13",
+      "OPS": ".555",
+      "SLG%": ".333"
+    },
+    "3": {
+      "number": "3",
+      "player": "Kenny, Brien",
+      "AVG": ".167",
+      "R": "2",
+      "H": "4",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "2",
+      "OPS": ".522",
+      "SLG%": ".167"
+    },
+    "41": {
+      "number": "41",
+      "player": "Dawsey, Mac",
+      "AVG": ".083",
+      "R": "1",
+      "H": "1",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "1",
+      "OPS": ".237",
+      "SLG%": ".083"
+    },
+    "26": {
+      "number": "26",
+      "player": "Paczkowski, Jake",
+      "AVG": ".000",
+      "R": "0",
+      "H": "0",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "0",
+      "OPS": ".000",
+      "SLG%": ".000"
+    }
+  },
+  "pitching_by_number": {
+    "23": {
+      "number": "23",
+      "player": "Wagner, Reece",
+      "ERA": "5.61",
+      "WHIP": "1.65",
+      "W-L": "5-3",
+      "IP": "78.2",
+      "SO": "69"
+    },
+    "21": {
+      "number": "21",
+      "player": "Storey, Jake",
+      "ERA": "6.12",
+      "WHIP": "1.64",
+      "W-L": "2-7",
+      "IP": "67.2",
+      "SO": "58"
+    },
+    "29": {
+      "number": "29",
+      "player": "Landen, Trevor",
+      "ERA": "7.46",
+      "WHIP": "1.80",
+      "W-L": "0-7",
+      "IP": "56.2",
+      "SO": "37"
+    },
+    "28": {
+      "number": "28",
+      "player": "Guest, Luke",
+      "ERA": "0.00",
+      "WHIP": "3.00",
+      "W-L": "0-0",
+      "IP": "0.1",
+      "SO": "0"
+    },
+    "36": {
+      "number": "36",
+      "player": "Benedict, Brek",
+      "ERA": "4.50",
+      "WHIP": "1.00",
+      "W-L": "0-0",
+      "IP": "2.0",
+      "SO": "1"
+    },
+    "22": {
+      "number": "22",
+      "player": "Borboa, Logan",
+      "ERA": "5.82",
+      "WHIP": "1.56",
+      "W-L": "1-3",
+      "IP": "34.0",
+      "SO": "37"
+    },
+    "11": {
+      "number": "11",
+      "player": "Stone, Lucas",
+      "ERA": "7.15",
+      "WHIP": "1.82",
+      "W-L": "2-4",
+      "IP": "39.0",
+      "SO": "29"
+    },
+    "39": {
+      "number": "39",
+      "player": "Allred, Gus",
+      "ERA": "7.39",
+      "WHIP": "1.86",
+      "W-L": "1-1",
+      "IP": "31.2",
+      "SO": "29"
+    },
+    "33": {
+      "number": "33",
+      "player": "Louthan, Ethan",
+      "ERA": "7.59",
+      "WHIP": "1.56",
+      "W-L": "0-3",
+      "IP": "32.0",
+      "SO": "16"
+    },
+    "10": {
+      "number": "10",
+      "player": "Hudson, Brady",
+      "ERA": "9.00",
+      "WHIP": "1.73",
+      "W-L": "4-4",
+      "IP": "26.0",
+      "SO": "29"
+    },
+    "27": {
+      "number": "27",
+      "player": "Haythorn, Mitch",
+      "ERA": "9.24",
+      "WHIP": "2.17",
+      "W-L": "1-2",
+      "IP": "25.1",
+      "SO": "25"
+    },
+    "35": {
+      "number": "35",
+      "player": "Bright, Mason",
+      "ERA": "9.55",
+      "WHIP": "2.26",
+      "W-L": "1-1",
+      "IP": "21.2",
+      "SO": "15"
+    },
+    "14": {
+      "number": "14",
+      "player": "Pfister, Jax",
+      "ERA": "11.65",
+      "WHIP": "2.35",
+      "W-L": "0-1",
+      "IP": "17.0",
+      "SO": "14"
+    },
+    "40": {
+      "number": "40",
+      "player": "Hibben, Mac",
+      "ERA": "11.81",
+      "WHIP": "2.63",
+      "W-L": "0-0",
+      "IP": "5.1",
+      "SO": "2"
+    },
+    "31": {
+      "number": "31",
+      "player": "Kunz, Cade",
+      "ERA": "18.56",
+      "WHIP": "3.19",
+      "W-L": "0-0",
+      "IP": "5.1",
+      "SO": "6"
+    },
+    "12": {
+      "number": "12",
+      "player": "Clark, Asher",
+      "ERA": "19.89",
+      "WHIP": "3.63",
+      "W-L": "0-0",
+      "IP": "6.1",
+      "SO": "7"
+    },
+    "18": {
+      "number": "18",
+      "player": "Moser, Logan",
+      "ERA": "20.25",
+      "WHIP": "3.64",
+      "W-L": "0-2",
+      "IP": "9.1",
+      "SO": "10"
+    },
+    "16": {
+      "number": "16",
+      "player": "Meredith, Kaveh",
+      "ERA": "27.00",
+      "WHIP": "4.20",
+      "W-L": "0-0",
+      "IP": "1.2",
+      "SO": "1"
+    },
+    "32": {
+      "number": "32",
+      "player": "Smith, Tate",
+      "ERA": "27.00",
+      "WHIP": "4.07",
+      "W-L": "0-0",
+      "IP": "4.2",
+      "SO": "5"
+    }
+  }
+}
