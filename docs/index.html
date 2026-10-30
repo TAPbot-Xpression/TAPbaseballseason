@@ -84,6 +84,14 @@
       --team-gradient:  linear-gradient(135deg, #fee2e2 0%, #f87171 45%, #991b1b 100%);
     }
 
+    [data-theme="ndsu"] {
+      --team-primary:   #005643;
+      --team-accent:    #ffd100;
+      --team-glow:      rgba(255, 209, 0, 0.28);
+      --team-light:     #fef08a;
+      --team-gradient:  linear-gradient(135deg, #fef9c3 0%, #ffd100 45%, #005643 100%);
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -567,6 +575,9 @@
       <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
         <span class="team-pill-dot" style="color:#ffd100"></span> South Dakota State
       </button>
+      <button class="team-pill" data-team="ndsu" onclick="selectTeam('ndsu', this)">
+        <span class="team-pill-dot" style="color:#ffd100"></span> North Dakota State
+      </button>
       <button class="team-pill" data-team="uncbears" onclick="selectTeam('uncbears', this)">
         <span class="team-pill-dot" style="color:#e5a823"></span> Northern Colorado
       </button>
@@ -662,36 +673,37 @@
       name: 'University of St. Thomas Tommies',
       shortName: 'St. Thomas',
       file: 'baseball_stats.json',
-      altFile: 'stthomas.json',
-      badgeColor: '#000'
+      altFile: 'stthomas.json'
     },
     sdstate: {
       id: 'sdstate',
       name: 'South Dakota State Jackrabbits',
       shortName: 'South Dakota State',
-      file: 'sdstate.json',
-      badgeColor: '#000'
+      file: 'sdstate.json'
+    },
+    ndsu: {
+      id: 'ndsu',
+      name: 'North Dakota State Bison',
+      shortName: 'North Dakota State',
+      file: 'ndsu.json'
     },
     uncbears: {
       id: 'uncbears',
       name: 'Northern Colorado Bears',
       shortName: 'Northern Colorado',
-      file: 'uncbears.json',
-      badgeColor: '#000'
+      file: 'uncbears.json'
     },
     oru: {
       id: 'oru',
       name: 'Oral Roberts Golden Eagles',
       shortName: 'Oral Roberts',
-      file: 'oru.json',
-      badgeColor: '#000'
+      file: 'oru.json'
     },
     omaha: {
       id: 'omaha',
       name: 'Omaha Mavericks',
       shortName: 'Omaha',
-      file: 'omaha.json',
-      badgeColor: '#fff'
+      file: 'omaha.json'
     }
   };
 
@@ -793,7 +805,7 @@
       document.getElementById('tableBody').innerHTML =
         `<tr><td colspan="15" class="empty" style="color:#f87171">
           Failed to load stats for ${team.name} (${team.file}).<br>
-          <small style="color:var(--text-muted)">Ensure multi-school scraper has run and generated this file.</small>
+          <small style="color:var(--text-muted)">Ensure scraper has run and generated this file.</small>
         </td></tr>`;
       document.getElementById('metaBar').textContent = `Error loading ${team.file}`;
     }
