@@ -46,16 +46,21 @@ jobs:
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
-      # 5. Run the baseball stats scraper
-      - name: Scrape Tommie Baseball Stats
-        env:
-          STATS_URL: "https://tommiesports.com/sports/baseball/stats/2026"
+      # 5. Run the multi-school Sidearm scraper (all 5 schools)
+      - name: Scrape Sidearm Schools Baseball Stats
         run: |
           python scraper/scrape_baseball.py \
-            --out docs/baseball_stats.json \
+            --docs-dir docs \
             --year 2026
 
-      # 5b. Upload debug screenshots if they exist
+      # 6. Run the NDSU StatBroadcast scraper
+      - name: Scrape NDSU Baseball Stats
+        run: |
+          python scraper/scrape_ndsu.py \
+            --out docs/ndsu.json \
+            --year 2026
+
+      # 6b. Upload debug screenshots if they exist
       - name: Upload debug screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,7 +71,7 @@ jobs:
             debug_dropdown.png
           if-no-files-found: ignore
 
-      # 6. Commit updated baseball_stats.json back to main (only if changed)
+      # 7. Commit all updated JSON files back to main (only if changed)
       - name: Commit updated stats
         run: |
           git config user.name  "TAPbot"
@@ -83,13 +88,13 @@ jobs:
             done
           fi
 
-      # 7. Upload docs/ folder as a GitHub Pages artifact
+      # 8. Upload docs/ folder as a GitHub Pages artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
-      # 8. Deploy to GitHub Pages via Actions source
+      # 9. Deploy to GitHub Pages via Actions source
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
