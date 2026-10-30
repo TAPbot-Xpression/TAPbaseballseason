@@ -46,21 +46,14 @@ jobs:
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
-      # 5. Run the multi-school Sidearm scraper (all 5 schools)
-      - name: Scrape Sidearm Schools Baseball Stats
+      # 5. Run unified scraper — all 6 schools (5 Sidearm + NDSU StatBroadcast)
+      - name: Scrape All Schools Baseball Stats
         run: |
           python scraper/scrape_baseball.py \
             --docs-dir docs \
             --year 2026
 
-      # 6. Run the NDSU StatBroadcast scraper
-      - name: Scrape NDSU Baseball Stats
-        run: |
-          python scraper/scrape_ndsu.py \
-            --out docs/ndsu.json \
-            --year 2026
-
-      # 6b. Upload debug screenshots if they exist
+      # 5b. Upload debug screenshots if they exist
       - name: Upload debug screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -71,7 +64,7 @@ jobs:
             debug_dropdown.png
           if-no-files-found: ignore
 
-      # 7. Commit all updated JSON files back to main (only if changed)
+      # 6. Commit all updated JSON files back to main (only if changed)
       - name: Commit updated stats
         run: |
           git config user.name  "TAPbot"
@@ -88,13 +81,13 @@ jobs:
             done
           fi
 
-      # 8. Upload docs/ folder as a GitHub Pages artifact
+      # 7. Upload docs/ folder as a GitHub Pages artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
-      # 9. Deploy to GitHub Pages via Actions source
+      # 8. Deploy to GitHub Pages via Actions source
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
