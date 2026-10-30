@@ -13,7 +13,6 @@ Usage:
 import argparse
 import json
 import os
-import re
 import urllib.request
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
@@ -42,15 +41,15 @@ def fetch_html(url):
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 def clean(val, default="0"):
-    """Strip and return a cell value, falling back to default."""
     if val is None:
         return default
-    s = str(val).strip().replace("\xa0", "").replace("-", "0")
-    return s if s else default
+    s = str(val).strip().replace("\xa0", "")
+    if s in ("", "-", "--"):
+        return default
+    return s
 
 
 def clean_avg(val, default=".000"):
-    """Clean a batting average / ERA style decimal string."""
     if val is None:
         return default
     s = str(val).strip().replace("\xa0", "")
@@ -66,16 +65,21 @@ def parse_float(val):
         return 0.0
 
 
-def compute_ops(obp_str, slg_str):
-    """Compute OPS from OBP + SLG strings."""
+def parse_ip(ip_str):
+    """
+    StatBroadcast stores IP as innings.outs (e.g. 42.1 = 42 and 1/3 innings).
+    Returns decimal value for ERA/WHIP math.
+    """
     try:
-        return f"{parse_float(obp_str) + parse_float(slg_str):.3f}"
+        parts = str(ip_str).split(".")
+        full = int(parts[0])
+        outs = int(parts[1]) if len(parts) > 1 else 0
+        return full + outs / 3
     except Exception:
-        return ".000"
+        return 0.0
 
 
 def compute_slg(h, d2, d3, hr, ab):
-    """Compute SLG% from raw counting stats."""
     try:
         ab_f = parse_float(ab)
         if ab_f == 0:
@@ -87,7 +91,6 @@ def compute_slg(h, d2, d3, hr, ab):
 
 
 def compute_obp(h, bb, hbp, ab, sf):
-    """Compute OBP from raw counting stats."""
     try:
         num = parse_float(h) + parse_float(bb) + parse_float(hbp)
         den = parse_float(ab) + parse_float(bb) + parse_float(hbp) + parse_float(sf)
@@ -98,63 +101,33 @@ def compute_obp(h, bb, hbp, ab, sf):
         return ".000"
 
 
-def compute_whip(bb, h, ip):
-    """Compute WHIP from BB, H allowed, and IP."""
+def compute_ops(obp_str, slg_str):
     try:
-        ip_f = parse_float(ip)
-        if ip_f == 0:
+        return f"{parse_float(obp_str) + parse_float(slg_str):.3f}"
+    except Exception:
+        return ".000"
+
+
+def compute_era(er, ip_dec):
+    try:
+        if ip_dec == 0:
             return "-"
-        return f"{(parse_float(bb) + parse_float(h)) / ip_f:.2f}"
+        return f"{(parse_float(er) * 9) / ip_dec:.2f}"
     except Exception:
         return "-"
 
 
-def compute_era(er, ip):
-    """Compute ERA from ER and IP."""
+def compute_whip(bb, h, ip_dec):
     try:
-        ip_f = parse_float(ip)
-        if ip_f == 0:
+        if ip_dec == 0:
             return "-"
-        return f"{(parse_float(er) * 9) / ip_f:.2f}"
+        return f"{(parse_float(bb) + parse_float(h)) / ip_dec:.2f}"
     except Exception:
         return "-"
 
 
-def parse_ip(ip_str):
-    """
-    StatBroadcast stores IP as full innings + partial outs (e.g. '42.1' = 42 1/3 innings).
-    Returns the decimal IP value for ERA/WHIP calculations.
-    """
-    try:
-        parts = str(ip_str).split(".")
-        full = int(parts
-[0])
-        outs = int(parts
-[1]) if len(parts) > 1 else 0
-        return full + outs / 3
-    except Exception:
-        return 0.0
-
-
-# ── Table Parser ───────────────────────────────────────────────────────────────
-def find_stat_table(soup, header_keywords):
-    """
-    StatBroadcast wraps each section in a <table> preceded by a header row
-    containing the section name. Find the table whose header row contains
-    any of the given keywords (case-insensitive).
-    """
-    for table in soup.find_all("table"):
-        text = table.get_text(" ", strip=True).lower()
-        if any(kw.lower() in text for kw in header_keywords):
-            return table
-    return None
-
-
+# ── Table Utilities ────────────────────────────────────────────────────────────
 def get_col_index(headers, *candidates):
-    """
-    Given a list of header strings, return the index of the first candidate
-    that matches (case-insensitive). Returns None if not found.
-    """
     for candidate in candidates:
         for i, h in enumerate(headers):
             if h.strip().lower() == candidate.lower():
@@ -163,33 +136,31 @@ def get_col_index(headers, *candidates):
 
 
 def parse_rows(table):
-    """
-    Extract all <tr> rows from a table, returning a list of lists of cell text.
-    Skips rows that are purely empty.
-    """
-    rows = 
-[]
+    rows = []
     for tr in table.find_all("tr"):
-        cells = 
-[td.get_text(" ", strip=True) for td in tr.find_all(
-["td", "th"])]
+        cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
         if any(c.strip() for c in cells):
             rows.append(cells)
     return rows
 
 
+def find_stat_table(soup, keywords):
+    """
+    Find the table whose text contains any of the given keywords.
+    StatBroadcast wraps batting and pitching in separate tables.
+    """
+    for table in soup.find_all("table"):
+        text = table.get_text(" ", strip=True).lower()
+        if any(kw.lower() in text for kw in keywords):
+            return table
+    return None
+
+
 # ── Batting Parser ─────────────────────────────────────────────────────────────
 def parse_batting(soup):
-    """
-    StatBroadcast teamcume.htm batting table columns (typical):
-    ##  Player  GP  GS  AB  R  H  RBI  2B  3B  HR  BB  IBB  SB  CS  HBP  SAC  SF  GDP  K  PO  A  E  AVG
-    """
-    batting_players = 
-[]
+    batting_players = []
 
-    # Find the batting section — StatBroadcast labels it "Batting" or "Individual Batting"
-    table = find_stat_table(soup, 
-["batting", "individual batting", "hitting"])
+    table = find_stat_table(soup, ["batting", "individual batting", "hitting"])
     if not table:
         print("  WARNING: Could not find batting table.")
         return batting_players
@@ -198,12 +169,11 @@ def parse_batting(soup):
     if len(rows) < 2:
         return batting_players
 
-    # Identify header row (contains 'avg' or 'ab')
+    # Find header row
     header_row = None
     header_idx = 0
     for i, row in enumerate(rows):
-        row_lower = 
-[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "avg" in row_lower or "ab" in row_lower:
             header_row = row_lower
             header_idx = i
@@ -213,7 +183,6 @@ def parse_batting(soup):
         print("  WARNING: Could not identify batting header row.")
         return batting_players
 
-    # Map column names to indices
     col = {
         "num":    get_col_index(header_row, "##", "#", "no", "num"),
         "player": get_col_index(header_row, "player", "name"),
@@ -237,27 +206,23 @@ def parse_batting(soup):
         idx = col.get(key)
         if idx is None or idx >= len(row):
             return default
-        return row
-[idx].strip()
+        return row[idx].strip()
 
-    for row in rows
-[header_idx + 1:]:
+    for row in rows[header_idx + 1:]:
         if not row or len(row) < 3:
             continue
 
-        # Skip totals / footer rows
         player_name = cell(row, "player", "").strip()
         if not player_name or player_name.lower() in ("totals", "total", "opponents", "opp"):
             continue
 
-        # Skip rows with no AB
         ab = clean(cell(row, "ab"))
-        if parse_float(ab) == 0 and clean(cell(row, "h")) == "0":
+        h  = clean(cell(row, "h"))
+        if parse_float(ab) == 0 and parse_float(h) == 0:
             continue
 
         num = clean(cell(row, "num"), "0")
         r   = clean(cell(row, "r"))
-        h   = clean(cell(row, "h"))
         d2  = clean(cell(row, "2b"))
         d3  = clean(cell(row, "3b"))
         hr  = clean(cell(row, "hr"))
@@ -267,7 +232,6 @@ def parse_batting(soup):
         sf  = clean(cell(row, "sf"))
         avg = clean_avg(cell(row, "avg"))
 
-        # Compute SLG, OBP, OPS if not directly in table
         slg = clean_avg(cell(row, "slg")) if col.get("slg") else compute_slg(h, d2, d3, hr, ab)
         obp = clean_avg(cell(row, "obp")) if col.get("obp") else compute_obp(h, bb, hbp, ab, sf)
         ops = clean_avg(cell(row, "ops")) if col.get("ops") else compute_ops(obp, slg)
@@ -292,15 +256,9 @@ def parse_batting(soup):
 
 # ── Pitching Parser ────────────────────────────────────────────────────────────
 def parse_pitching(soup):
-    """
-    StatBroadcast teamcume.htm pitching table columns (typical):
-    ##  Player  APP  GS  W  L  SV  IP  H  R  ER  BB  SO  HR  HBP  WP  BK  ERA
-    """
-    pitching_players = 
-[]
+    pitching_players = []
 
-    table = find_stat_table(soup, 
-["pitching", "individual pitching"])
+    table = find_stat_table(soup, ["pitching", "individual pitching"])
     if not table:
         print("  WARNING: Could not find pitching table.")
         return pitching_players
@@ -309,12 +267,11 @@ def parse_pitching(soup):
     if len(rows) < 2:
         return pitching_players
 
-    # Identify header row
+    # Find header row
     header_row = None
     header_idx = 0
     for i, row in enumerate(rows):
-        row_lower = 
-[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "era" in row_lower or "ip" in row_lower:
             header_row = row_lower
             header_idx = i
@@ -332,7 +289,6 @@ def parse_pitching(soup):
         "era":    get_col_index(header_row, "era"),
         "ip":     get_col_index(header_row, "ip"),
         "h":      get_col_index(header_row, "h"),
-        "r":      get_col_index(header_row, "r"),
         "er":     get_col_index(header_row, "er"),
         "bb":     get_col_index(header_row, "bb"),
         "so":     get_col_index(header_row, "so", "k"),
@@ -343,11 +299,9 @@ def parse_pitching(soup):
         idx = col.get(key)
         if idx is None or idx >= len(row):
             return default
-        return row
-[idx].strip()
+        return row[idx].strip()
 
-    for row in rows
-[header_idx + 1:]:
+    for row in rows[header_idx + 1:]:
         if not row or len(row) < 3:
             continue
 
@@ -369,9 +323,8 @@ def parse_pitching(soup):
         so   = clean(cell(row, "so"))
         wl   = f"{wins}-{loss}"
 
-        # Use table ERA/WHIP if available, otherwise compute
-        era  = clean_avg(cell(row, "era")) if col.get("era") else compute_era(er, str(ip_dec))
-        whip = clean_avg(cell(row, "whip")) if col.get("whip") else compute_whip(bb, h, str(ip_dec))
+        era  = clean_avg(cell(row, "era")) if col.get("era") else compute_era(er, ip_dec)
+        whip = clean_avg(cell(row, "whip")) if col.get("whip") else compute_whip(bb, h, ip_dec)
 
         pitching_players.append({
             "number": num,
@@ -393,71 +346,47 @@ def build_players(hitting, pitching):
 
     for entry in hitting:
         try:
-            jersey_int = int(entry
-["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
 
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry
-["player"]
+            "player_name":   entry["player"]
         })
-        p
-["batting_stats"] = {
-            "AVG":  entry
-["AVG"],
-            "R":    entry
-["R"],
-            "H":    entry
-["H"],
-            "2B":   entry
-["2B"],
-            "3B":   entry
-["3B"],
-            "HR":   entry
-["HR"],
-            "RBI":  entry
-["RBI"],
-            "OPS":  entry
-["OPS"],
-            "SLG%": entry
-["SLG%"],
+        p["batting_stats"] = {
+            "AVG":  entry["AVG"],
+            "R":    entry["R"],
+            "H":    entry["H"],
+            "2B":   entry["2B"],
+            "3B":   entry["3B"],
+            "HR":   entry["HR"],
+            "RBI":  entry["RBI"],
+            "OPS":  entry["OPS"],
+            "SLG%": entry["SLG%"],
         }
-        players_map
-[jersey_int] = p
+        players_map[jersey_int] = p
 
     for entry in pitching:
         try:
-            jersey_int = int(entry
-["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
 
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry
-["player"]
+            "player_name":   entry["player"]
         })
-        p
-["pitching_stats"] = {
-            "ERA":  entry
-["ERA"],
-            "WHIP": entry
-["WHIP"],
-            "W-L":  entry
-["W-L"],
-            "IP":   entry
-["IP"],
-            "SO":   entry
-["SO"],
+        p["pitching_stats"] = {
+            "ERA":  entry["ERA"],
+            "WHIP": entry["WHIP"],
+            "W-L":  entry["W-L"],
+            "IP":   entry["IP"],
+            "SO":   entry["SO"],
         }
-        players_map
-[jersey_int] = p
+        players_map[jersey_int] = p
 
-    return 
-[players_map
-[k] for k in sorted(players_map.keys())]
+    return [players_map[k] for k in sorted(players_map.keys())]
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
@@ -485,24 +414,22 @@ def main():
     print("Parsing pitching table...")
     pitching = parse_pitching(soup)
 
-    hitting_by_num  = {p
-["number"]: p for p in hitting}
-    pitching_by_num = {p
-["number"]: p for p in pitching}
+    hitting_by_num  = {p["number"]: p for p in hitting}
+    pitching_by_num = {p["number"]: p for p in pitching}
     players_sorted  = build_players(hitting, pitching)
 
     result = {
-        "team_id":           "ndsu",
-        "team":              "North Dakota State Bison",
-        "sport":             "baseball",
-        "season":            args.year,
-        "source":            url,
-        "status":            "ok",
-        "generated_at":      datetime.now(timezone.utc).isoformat(),
-        "players":           players_sorted,
-        "hitting":           hitting,
-        "pitching":          pitching,
-        "hitting_by_number": hitting_by_num,
+        "team_id":            "ndsu",
+        "team":               "North Dakota State Bison",
+        "sport":              "baseball",
+        "season":             args.year,
+        "source":             url,
+        "status":             "ok",
+        "generated_at":       datetime.now(timezone.utc).isoformat(),
+        "players":            players_sorted,
+        "hitting":            hitting,
+        "pitching":           pitching,
+        "hitting_by_number":  hitting_by_num,
         "pitching_by_number": pitching_by_num,
     }
 
