@@ -5,10 +5,434 @@
   "season": "2026",
   "source": "https://stats.gobison.com/custompages/bsb/2026/teamcume.htm",
   "status": "ok",
-  "generated_at": "2026-10-30T01:12:01.032873+00:00",
-  "players": [],
-  "hitting": [],
-  "pitching": [],
-  "hitting_by_number": {},
-  "pitching_by_number": {}
+  "generated_at": "2026-10-30T01:23:49.463660+00:00",
+  "players": [
+    {
+      "jersey_number": 999,
+      "player_name": "Kyle Law",
+      "batting_stats": {
+        "AVG": ".143",
+        "R": "3",
+        "H": "4",
+        "2B": "1",
+        "3B": "0",
+        "HR": "0",
+        "RBI": "2",
+        "OPS": "0.421",
+        "SLG%": ".179"
+      },
+      "pitching_stats": {
+        "ERA": "54.00",
+        "WHIP": "9.00",
+        "W-L": "0-0",
+        "IP": "1.0",
+        "SO": "1"
+      }
+    }
+  ],
+  "hitting": [
+    {
+      "number": "999",
+      "player": "Kyle Law",
+      "AVG": ".303",
+      "R": "24",
+      "H": "30",
+      "2B": "4",
+      "3B": "2",
+      "HR": "6",
+      "RBI": "23",
+      "OPS": "0.964",
+      "SLG%": ".566"
+    },
+    {
+      "number": "999",
+      "player": "Chase Womack",
+      "AVG": ".289",
+      "R": "17",
+      "H": "28",
+      "2B": "5",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "15",
+      "OPS": "0.793",
+      "SLG%": ".402"
+    },
+    {
+      "number": "999",
+      "player": "Diego Trujillo",
+      "AVG": ".266",
+      "R": "23",
+      "H": "34",
+      "2B": "9",
+      "3B": "1",
+      "HR": "2",
+      "RBI": "22",
+      "OPS": "0.731",
+      "SLG%": ".398"
+    },
+    {
+      "number": "999",
+      "player": "Dante Smith",
+      "AVG": ".259",
+      "R": "26",
+      "H": "43",
+      "2B": "6",
+      "3B": "2",
+      "HR": "3",
+      "RBI": "26",
+      "OPS": "0.695",
+      "SLG%": ".373"
+    },
+    {
+      "number": "999",
+      "player": "Colten Becker",
+      "AVG": ".245",
+      "R": "28",
+      "H": "40",
+      "2B": "5",
+      "3B": "0",
+      "HR": "7",
+      "RBI": "22",
+      "OPS": "0.777",
+      "SLG%": ".405"
+    },
+    {
+      "number": "999",
+      "player": "Caleb Corbin",
+      "AVG": ".242",
+      "R": "22",
+      "H": "39",
+      "2B": "7",
+      "3B": "1",
+      "HR": "3",
+      "RBI": "18",
+      "OPS": "0.719",
+      "SLG%": ".354"
+    },
+    {
+      "number": "999",
+      "player": "Bennett Freiter",
+      "AVG": ".227",
+      "R": "16",
+      "H": "22",
+      "2B": "4",
+      "3B": "0",
+      "HR": "2",
+      "RBI": "20",
+      "OPS": "0.686",
+      "SLG%": ".330"
+    },
+    {
+      "number": "999",
+      "player": "Evan Gustafson",
+      "AVG": ".193",
+      "R": "17",
+      "H": "21",
+      "2B": "3",
+      "3B": "0",
+      "HR": "7",
+      "RBI": "17",
+      "OPS": "0.686",
+      "SLG%": ".413"
+    },
+    {
+      "number": "999",
+      "player": "Noah Gordon",
+      "AVG": ".313",
+      "R": "3",
+      "H": "10",
+      "2B": "3",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "2",
+      "OPS": "0.759",
+      "SLG%": ".406"
+    },
+    {
+      "number": "999",
+      "player": "Kaden Connor",
+      "AVG": ".212",
+      "R": "14",
+      "H": "18",
+      "2B": "1",
+      "3B": "1",
+      "HR": "1",
+      "RBI": "8",
+      "OPS": "0.656",
+      "SLG%": ".282"
+    },
+    {
+      "number": "999",
+      "player": "Blake Timmons",
+      "AVG": ".205",
+      "R": "11",
+      "H": "16",
+      "2B": "3",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "6",
+      "OPS": "0.668",
+      "SLG%": ".282"
+    },
+    {
+      "number": "999",
+      "player": "Tommy Simon",
+      "AVG": ".188",
+      "R": "7",
+      "H": "15",
+      "2B": "6",
+      "3B": "0",
+      "HR": "1",
+      "RBI": "16",
+      "OPS": "0.574",
+      "SLG%": ".300"
+    },
+    {
+      "number": "999",
+      "player": "Tyman Long",
+      "AVG": ".160",
+      "R": "9",
+      "H": "13",
+      "2B": "6",
+      "3B": "0",
+      "HR": "3",
+      "RBI": "17",
+      "OPS": "0.615",
+      "SLG%": ".346"
+    },
+    {
+      "number": "999",
+      "player": "Cal Jones",
+      "AVG": ".145",
+      "R": "9",
+      "H": "8",
+      "2B": "0",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "4",
+      "OPS": "0.478",
+      "SLG%": ".145"
+    },
+    {
+      "number": "999",
+      "player": "Aiden Schenk",
+      "AVG": ".143",
+      "R": "3",
+      "H": "4",
+      "2B": "1",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "2",
+      "OPS": "0.421",
+      "SLG%": ".179"
+    }
+  ],
+  "pitching": [
+    {
+      "number": "999",
+      "player": "Sheamus Ryan",
+      "ERA": "2.44",
+      "WHIP": "1.35",
+      "W-L": "1-2",
+      "IP": "48.0",
+      "SO": "28"
+    },
+    {
+      "number": "999",
+      "player": "Jonah Walker",
+      "ERA": "5.47",
+      "WHIP": "1.61",
+      "W-L": "3-5",
+      "IP": "52.2",
+      "SO": "40"
+    },
+    {
+      "number": "999",
+      "player": "Connor McCaleb",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "4.0",
+      "SO": "1"
+    },
+    {
+      "number": "999",
+      "player": "Jack Surdey",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "2.2",
+      "SO": "0"
+    },
+    {
+      "number": "999",
+      "player": "Braden Gluth",
+      "ERA": "3.99",
+      "WHIP": "1.60",
+      "W-L": "0-1",
+      "IP": "29.1",
+      "SO": "21"
+    },
+    {
+      "number": "999",
+      "player": "Parker Puetz",
+      "ERA": "5.73",
+      "WHIP": "1.59",
+      "W-L": "1-4",
+      "IP": "44.0",
+      "SO": "45"
+    },
+    {
+      "number": "999",
+      "player": "Zak Szabo",
+      "ERA": "6.10",
+      "WHIP": "1.68",
+      "W-L": "3-3",
+      "IP": "31.0",
+      "SO": "32"
+    },
+    {
+      "number": "999",
+      "player": "Garrett Shupe",
+      "ERA": "6.25",
+      "WHIP": "1.80",
+      "W-L": "2-2",
+      "IP": "31.2",
+      "SO": "21"
+    },
+    {
+      "number": "999",
+      "player": "Hudson Hart",
+      "ERA": "6.41",
+      "WHIP": "1.78",
+      "W-L": "0-2",
+      "IP": "19.2",
+      "SO": "13"
+    },
+    {
+      "number": "999",
+      "player": "Brayden Marks",
+      "ERA": "7.75",
+      "WHIP": "1.97",
+      "W-L": "3-4",
+      "IP": "40.2",
+      "SO": "18"
+    },
+    {
+      "number": "999",
+      "player": "Luke Agnew",
+      "ERA": "9.00",
+      "WHIP": "5.50",
+      "W-L": "0-0",
+      "IP": "2.0",
+      "SO": "0"
+    },
+    {
+      "number": "999",
+      "player": "Ethan Swaby",
+      "ERA": "9.31",
+      "WHIP": "2.59",
+      "W-L": "0-1",
+      "IP": "9.2",
+      "SO": "10"
+    },
+    {
+      "number": "999",
+      "player": "Cade Wiegert",
+      "ERA": "10.34",
+      "WHIP": "1.98",
+      "W-L": "0-1",
+      "IP": "15.2",
+      "SO": "15"
+    },
+    {
+      "number": "999",
+      "player": "AJ Lausten",
+      "ERA": "11.57",
+      "WHIP": "2.14",
+      "W-L": "0-0",
+      "IP": "2.1",
+      "SO": "4"
+    },
+    {
+      "number": "999",
+      "player": "Easton Reimers",
+      "ERA": "14.37",
+      "WHIP": "2.08",
+      "W-L": "0-2",
+      "IP": "20.2",
+      "SO": "11"
+    },
+    {
+      "number": "999",
+      "player": "Matt Sargeant",
+      "ERA": "15.68",
+      "WHIP": "2.90",
+      "W-L": "0-1",
+      "IP": "10.1",
+      "SO": "8"
+    },
+    {
+      "number": "999",
+      "player": "Matthew Totten",
+      "ERA": "18.00",
+      "WHIP": "1.75",
+      "W-L": "0-2",
+      "IP": "4.0",
+      "SO": "2"
+    },
+    {
+      "number": "999",
+      "player": "AJ Doll",
+      "ERA": "20.25",
+      "WHIP": "4.12",
+      "W-L": "0-1",
+      "IP": "2.2",
+      "SO": "5"
+    },
+    {
+      "number": "999",
+      "player": "Anthony Pardo",
+      "ERA": "24.55",
+      "WHIP": "3.55",
+      "W-L": "0-1",
+      "IP": "3.2",
+      "SO": "2"
+    },
+    {
+      "number": "999",
+      "player": "Chris Billings",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    }
+  ],
+  "hitting_by_number": {
+    "999": {
+      "number": "999",
+      "player": "Aiden Schenk",
+      "AVG": ".143",
+      "R": "3",
+      "H": "4",
+      "2B": "1",
+      "3B": "0",
+      "HR": "0",
+      "RBI": "2",
+      "OPS": "0.421",
+      "SLG%": ".179"
+    }
+  },
+  "pitching_by_number": {
+    "999": {
+      "number": "999",
+      "player": "Chris Billings",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    }
+  }
 }
