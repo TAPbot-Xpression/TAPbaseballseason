@@ -91,32 +91,8 @@ Before a game, pull up the stats dashboard, type in a jersey number, and instant
 
 ---
 
-## How Do I Trigger a Manual Update?
-
-If you need fresh stats right before a game and don't want to wait for the morning update:
-
-1. Go to the **Actions** tab in this GitHub repository
-2. Click **"Update Baseball Stats"** in the left sidebar
-3. Click the **"Run workflow"** button → then **"Run workflow"** again to confirm
-4. Wait about 2–3 minutes for it to finish
-5. Your stats files are updated and live
-
-That's it. No technical knowledge required.
-
----
-
-## How Often Does It Update Automatically?
+## How Often Does It Update?
 
 TAPbot runs on a schedule every day at **9:00 AM Central Time**. That means by the time your broadcast team is prepping for an afternoon or evening game, the stats are already current.
 
 ---
-
-## Who Built This?
-
-TAPbot was built specifically for **St. Thomas Athletics** as part of the **TAPbot-Xpression** project — a broadcast automation initiative designed to streamline data workflows for Tommie sports productions.
-
-For questions about the stats pipeline, data feeds, or Xpression integration, reach out to your broadcast or production coordinator.
-
----
-
-*Go Tommies. 🟣⚾*
