@@ -2,8 +2,8 @@
 """
 scraper/scrape_ndsu.py
 Scrapes North Dakota State Bison baseball stats from two sources:
-  1. gobison.com/sports/baseball/roster  (Playwright) → jersey #, position, year
-  2. stats.gobison.com/custompages/bsb/2026/teamcume.htm (urllib) → batting/pitching stats
+  1. gobison.com/sports/baseball/roster  (Playwright) -> jersey #, position, year
+  2. stats.gobison.com/custompages/bsb/2026/teamcume.htm (urllib) -> batting/pitching stats
 
 Merges both by player name and outputs docs/ndsu.json in the standard schema.
 
@@ -51,10 +51,10 @@ def fetch_html_playwright(url):
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(user_agent=FETCH_HEADERS["User-Agent"])
         page = context.new_page()
-        print(f"  ,[Playwright] Navigating to: {url}")
+        print(f"  [Playwright] Navigating to: {url}")
         page.goto(url, wait_until="domcontentloaded", timeout=60000)
         try:
-            page.wait_for_selector("table, .s-table, ,[class*='roster']", timeout=20000)
+            page.wait_for_selector("table, .s-table, [class*='roster']", timeout=20000)
         except Exception:
             page.wait_for_timeout(5000)
         html = page.content()
@@ -92,8 +92,8 @@ def parse_ip(ip_str):
     """StatBroadcast IP format: '42.1' = 42 and 1/3 innings."""
     try:
         parts = str(ip_str).split(".")
-        full = int(parts,[0])
-        outs = int(parts,[1]) if len(parts) > 1 else 0
+        full = int(parts[0])
+        outs = int(parts[1]) if len(parts) > 1 else 0
         return full + outs / 3.0
     except Exception:
         return 0.0
@@ -122,11 +122,10 @@ def normalize_name(name):
     Handles 'Last, First' vs 'First Last' and strips punctuation.
     """
     name = name.strip().lower()
-    name = re.sub(r",[^a-z\s]", "", name)
-    # Convert 'last, first' → 'first last'
+    name = re.sub(r"[^a-z\s]", "", name)
     if "," in name:
         parts = name.split(",", 1)
-        name = f"{parts,[object Object],.strip()} {parts,[0].strip()}"
+        name = parts[1].strip() + " " + parts[0].strip()
     return " ".join(name.split())
 
 
@@ -136,7 +135,6 @@ def name_match(name_a, name_b):
     b = normalize_name(name_b)
     if a == b:
         return True
-    # Check if all tokens of the shorter name appear in the longer
     tokens_a = set(a.split())
     tokens_b = set(b.split())
     if tokens_a and tokens_b:
@@ -157,9 +155,10 @@ def get_col(header_cols, *candidates):
 
 
 def extract_table_rows(table):
-    all_rows = ,[]
+    """Extract all non-empty rows from a BeautifulSoup table as lists of cell text."""
+    all_rows = []
     for tr in table.find_all("tr"):
-        cells = ,[td.get_text(" ", strip=True) for td in tr.find_all(,["td", "th"])]
+        cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
         if any(c.strip() for c in cells):
             all_rows.append(cells)
     return all_rows
@@ -184,12 +183,11 @@ def scrape_roster(roster_url):
         if len(rows) < 2:
             continue
 
-        # Find header row
         header_idx = None
-        header_cols = ,[]
+        header_cols = []
         for idx, row in enumerate(rows):
-            row_lower = ,[c.lower() for c in row]
-            if any(h in row_lower for h in ,["pos", "position", "yr", "year", "cl", "class"]):
+            row_lower = [c.lower() for c in row]
+            if any(h in row_lower for h in ["pos", "position", "yr", "year", "cl", "class"]):
                 header_idx = idx
                 header_cols = row_lower
                 break
@@ -205,14 +203,14 @@ def scrape_roster(roster_url):
         if c_name is None:
             continue
 
-        for row in rows,[header_idx + 1:]:
+        for row in rows[header_idx + 1:]:
             if len(row) < 2:
                 continue
 
             def cell(idx, default=""):
                 if idx is None or idx >= len(row):
                     return default
-                return row,[idx].strip()
+                return row[idx].strip()
 
             name = cell(c_name)
             if not name or name.lower() in ("name", "player", "athlete"):
@@ -224,7 +222,7 @@ def scrape_roster(roster_url):
 
             key = normalize_name(name)
             if key:
-                roster,[key] = {
+                roster[key] = {
                     "number":   num,
                     "position": pos,
                     "year":     year,
@@ -235,14 +233,13 @@ def scrape_roster(roster_url):
             print(f"  Roster table found: {len(roster)} players.")
             return roster
 
-    # Strategy 2: Parse Nuxt JSON payload from gobison.com (same Sidearm platform)
+    # Strategy 2: Parse Nuxt JSON payload from gobison.com
     print("  Table strategy failed — trying Nuxt JSON payload from roster page...")
     tag = soup.find("script", id="__NUXT_DATA__")
     if tag and tag.string:
         try:
             pool = json.loads(tag.string.strip())
-            # Walk the pool looking for jersey number + name + position patterns
-            for i, item in enumerate(pool):
+            for item in pool:
                 if isinstance(item, dict):
                     num  = str(item.get("jerseyNumber", item.get("uniform", ""))).strip()
                     name = str(item.get("name", item.get("playerName", ""))).strip()
@@ -251,7 +248,7 @@ def scrape_roster(roster_url):
                     if name and num and num not in ("", "-1", "None"):
                         key = normalize_name(name)
                         if key:
-                            roster,[key] = {
+                            roster[key] = {
                                 "number":   num,
                                 "position": pos,
                                 "year":     year,
@@ -260,14 +257,12 @@ def scrape_roster(roster_url):
         except Exception as e:
             print(f"  Nuxt JSON parse error: {e}")
 
-    # Strategy 3: Parse raw text from search result structure
-    # gobison.com roster text format: "1 Noah Gordon C ... Jr."
+    # Strategy 3: Regex pattern match from raw page text
     if not roster:
         print("  Trying raw text pattern match from page content...")
         full_text = soup.get_text(" ", strip=True)
-        # Pattern: number name position year (e.g. "32 Dante Smith OF So.")
         pattern = re.finditer(
-            r"\b(\d{1,2})\s+(,[A-Z],[a-z]+(?:\s+,[A-Z],[a-z]+){1,3})\s+(P|C|INF|OF|DH|RHP|LHP|RP|SP|UTL|IF)\s+(?:,[LRS]/,[LRS]\s+)?(?:\d+-\d+\s+)?(?:\d+\s+)?(Fr\.|So\.|Jr\.|Sr\.|Gr\.)",
+            r"\b(\d{1,2})\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\s+(P|C|INF|OF|DH|RHP|LHP|RP|SP|UTL|IF)\s+(?:[LRS]/[LRS]\s+)?(?:\d+-\d+\s+)?(?:\d+\s+)?(Fr\.|So\.|Jr\.|Sr\.|Gr\.)",
             full_text
         )
         for m in pattern:
@@ -277,7 +272,7 @@ def scrape_roster(roster_url):
             year = m.group(4).strip()
             key  = normalize_name(name)
             if key and key not in roster:
-                roster,[key] = {
+                roster[key] = {
                     "number":   num,
                     "position": pos,
                     "year":     year,
@@ -288,9 +283,9 @@ def scrape_roster(roster_url):
     return roster
 
 
-# ── Stats Parsers ──────────────────────────────────────────────────────────────
+# ── Batting Parser ─────────────────────────────────────────────────────────────
 def parse_batting_table(soup):
-    batting_players = ,[]
+    batting_players = []
 
     target_table = None
     for table in soup.find_all("table"):
@@ -308,9 +303,9 @@ def parse_batting_table(soup):
         return batting_players
 
     header_idx = None
-    header_cols = ,[]
+    header_cols = []
     for idx, row in enumerate(rows):
-        row_lower = ,[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "avg" in row_lower and "ab" in row_lower:
             header_idx = idx
             header_cols = row_lower
@@ -338,13 +333,13 @@ def parse_batting_table(soup):
     def cell(row, idx, default="0"):
         if idx is None or idx >= len(row):
             return default
-        return row,[idx].strip()
+        return row[idx].strip()
 
-    for row in rows,[header_idx + 1:]:
+    for row in rows[header_idx + 1:]:
         if len(row) <= 2:
             continue
 
-        raw_player = cell(row, c_player, "").strip() if c_player is not None else row,[0].strip()
+        raw_player = cell(row, c_player, "").strip() if c_player is not None else row[0].strip()
         if not raw_player:
             continue
 
@@ -385,8 +380,9 @@ def parse_batting_table(soup):
     return batting_players
 
 
+# ── Pitching Parser ────────────────────────────────────────────────────────────
 def parse_pitching_table(soup):
-    pitching_players = ,[]
+    pitching_players = []
 
     target_table = None
     for table in soup.find_all("table"):
@@ -404,9 +400,9 @@ def parse_pitching_table(soup):
         return pitching_players
 
     header_idx = None
-    header_cols = ,[]
+    header_cols = []
     for idx, row in enumerate(rows):
-        row_lower = ,[c.lower() for c in row]
+        row_lower = [c.lower() for c in row]
         if "era" in row_lower and "ip" in row_lower and "w-l" in row_lower:
             header_idx = idx
             header_cols = row_lower
@@ -430,13 +426,13 @@ def parse_pitching_table(soup):
     def cell(row, idx, default="0"):
         if idx is None or idx >= len(row):
             return default
-        return row,[idx].strip()
+        return row[idx].strip()
 
-    for row in rows,[header_idx + 1:]:
+    for row in rows[header_idx + 1:]:
         if len(row) <= 2:
             continue
 
-        raw_player = cell(row, c_player, "").strip() if c_player is not None else row,[0].strip()
+        raw_player = cell(row, c_player, "").strip() if c_player is not None else row[0].strip()
         if not raw_player:
             continue
 
@@ -474,18 +470,15 @@ def parse_pitching_table(soup):
 
 # ── Merge Roster into Stats ────────────────────────────────────────────────────
 def merge_roster(players, roster):
-    """
-    Match each stat entry to a roster entry by name and inject
-    jersey number, position, and year.
-    """
+    """Match each stat entry to a roster entry by name and inject number, position, year."""
     matched = 0
     for p in players:
         raw = p.get("raw_name", p.get("player", ""))
         for roster_key, roster_data in roster.items():
-            if name_match(raw, roster_data,["raw_name"]):
-                p,["number"]   = roster_data,["number"]
-                p,["position"] = roster_data,["position"]
-                p,["year"]     = roster_data,["year"]
+            if name_match(raw, roster_data["raw_name"]):
+                p["number"]   = roster_data["number"]
+                p["position"] = roster_data["position"]
+                p["year"]     = roster_data["year"]
                 matched += 1
                 break
     print(f"  Roster merge: {matched}/{len(players)} players matched.")
@@ -498,54 +491,53 @@ def build_players(hitting, pitching):
 
     for entry in hitting:
         try:
-            jersey_int = int(entry,["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
 
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry,["player"],
+            "player_name":   entry["player"],
             "position":      entry.get("position", ""),
             "year":          entry.get("year", ""),
         })
-        p,["batting_stats"] = {
-            "AVG":  entry,["AVG"],
-            "R":    entry,["R"],
-            "H":    entry,["H"],
-            "2B":   entry,["2B"],
-            "3B":   entry,["3B"],
-            "HR":   entry,["HR"],
-            "RBI":  entry,["RBI"],
-            "OPS":  entry,["OPS"],
-            "SLG%": entry,["SLG%"],
+        p["batting_stats"] = {
+            "AVG":  entry["AVG"],
+            "R":    entry["R"],
+            "H":    entry["H"],
+            "2B":   entry["2B"],
+            "3B":   entry["3B"],
+            "HR":   entry["HR"],
+            "RBI":  entry["RBI"],
+            "OPS":  entry["OPS"],
+            "SLG%": entry["SLG%"],
         }
-        players_map,[jersey_int] = p
+        players_map[jersey_int] = p
 
     for entry in pitching:
         try:
-            jersey_int = int(entry,["number"])
+            jersey_int = int(entry["number"])
         except ValueError:
             jersey_int = 999
 
         p = players_map.get(jersey_int, {
             "jersey_number": jersey_int,
-            "player_name":   entry,["player"],
+            "player_name":   entry["player"],
             "position":      entry.get("position", ""),
             "year":          entry.get("year", ""),
         })
-        p,["pitching_stats"] = {
-            "ERA":  entry,["ERA"],
-            "WHIP": entry,["WHIP"],
-            "W-L":  entry,["W-L"],
-            "IP":   entry,["IP"],
-            "SO":   entry,["SO"],
+        p["pitching_stats"] = {
+            "ERA":  entry["ERA"],
+            "WHIP": entry["WHIP"],
+            "W-L":  entry["W-L"],
+            "IP":   entry["IP"],
+            "SO":   entry["SO"],
         }
-        players_map,[jersey_int] = p
+        players_map[jersey_int] = p
 
-    return ,[players_map,[k] for k in sorted(players_map.keys())]
+    return [players_map[k] for k in sorted(players_map.keys())]
 
 
-# ── Clean up output lists ──────────────────────────────────────────────────────
 def finalize(players):
     """Remove internal raw_name key before output."""
     for p in players:
@@ -564,11 +556,11 @@ def main():
 
     stats_url = args.stats_url.replace("2026", args.year) if args.year != "2026" else args.stats_url
 
-    # 1. Fetch roster (jersey #, position, year)
+    # Step 1: Fetch roster (jersey #, position, year)
     print("Step 1: Scraping NDSU roster...")
     roster = scrape_roster(args.roster_url)
 
-    # 2. Fetch stats page (static HTML)
+    # Step 2: Fetch stats page (static HTML)
     print(f"\nStep 2: Fetching NDSU stats page: {stats_url}")
     try:
         html = fetch_html_static(stats_url)
@@ -578,7 +570,7 @@ def main():
 
     soup = BeautifulSoup(html, "html.parser")
 
-    # 3. Parse batting and pitching tables
+    # Step 3: Parse batting and pitching tables
     print("\nStep 3: Parsing batting table...")
     hitting = parse_batting_table(soup)
     print(f"  Found {len(hitting)} batters.")
@@ -587,17 +579,17 @@ def main():
     pitching = parse_pitching_table(soup)
     print(f"  Found {len(pitching)} pitchers.")
 
-    # 4. Merge roster data into stats
+    # Step 4: Merge roster data into stats
     print("\nStep 5: Merging roster data into stats...")
     hitting  = merge_roster(hitting, roster)
     pitching = merge_roster(pitching, roster)
 
-    # 5. Finalize and sort
-    hitting  = sorted(finalize(hitting),  key=lambda x: int(x,["number"]) if x,["number"].isdigit() else 999)
-    pitching = sorted(finalize(pitching), key=lambda x: int(x,["number"]) if x,["number"].isdigit() else 999)
+    # Step 5: Finalize and sort by jersey number
+    hitting  = sorted(finalize(hitting),  key=lambda x: int(x["number"]) if x["number"].isdigit() else 999)
+    pitching = sorted(finalize(pitching), key=lambda x: int(x["number"]) if x["number"].isdigit() else 999)
 
-    hitting_by_num  = {p,["number"]: p for p in hitting}
-    pitching_by_num = {p,["number"]: p for p in pitching}
+    hitting_by_num  = {p["number"]: p for p in hitting}
+    pitching_by_num = {p["number"]: p for p in pitching}
     players_sorted  = build_players(hitting, pitching)
 
     result = {
@@ -620,7 +612,7 @@ def main():
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
 
-    print(f"\nDone — {len(hitting)} batters, {len(pitching)} pitchers → {args.out}")
+    print(f"\nDone — {len(hitting)} batters, {len(pitching)} pitchers -> {args.out}")
 
 
 if __name__ == "__main__":
