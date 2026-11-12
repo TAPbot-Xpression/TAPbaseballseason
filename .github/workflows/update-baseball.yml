@@ -25,7 +25,7 @@ on:
         required: false
         default: ""
 
-  # ── Scheduled: every morning at 9:00 AM CDT (14:00 UTC) ──────────────────
+  # ── Scheduled: every morning at 9:00 AM CT (14:00 UTC) ───────────────────
   schedule:
     - cron: "0 14 * * *"
 
@@ -43,15 +43,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEASON_YEAR: "2026"   # change to "2027" once the schools post 2027 stats
+  SEASON_YEAR: "2026"   # change to "2027" once schools post 2027 stats
 
 jobs:
-  scrape-and-deploy:
+  scrape-and-build:
     runs-on: ubuntu-latest
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       # 1. Check out the repo
@@ -70,7 +66,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 4. Install Playwright browser (fast, with automatic fallback)
+      # 4. Install Playwright browser
       - name: Install Playwright browser
         run: |
           playwright install chromium-headless-shell
@@ -140,7 +136,13 @@ jobs:
         with:
           path: docs
 
-      # 9. Deploy to GitHub Pages
+  deploy:
+    needs: scrape-and-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
