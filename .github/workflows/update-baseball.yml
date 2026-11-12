@@ -1,12 +1,37 @@
 name: Update Baseball Stats
 
 on:
-  # ── Manual trigger from the Actions tab ──────────────────────────────────
+  # ── Manual trigger from the Actions tab (with Non-Conf inputs) ───────────
   workflow_dispatch:
+    inputs:
+      non_conf_stats_url:
+        description: "Non-Conf opponent STATS page link (blank = keep current opponent)"
+        required: false
+        default: ""
+      non_conf_roster_url:
+        description: "Non-Conf roster link (optional - auto-detected if blank)"
+        required: false
+        default: ""
+      non_conf_name:
+        description: "Non-Conf opponent name (optional - auto-detected if blank)"
+        required: false
+        default: ""
+      clear_non_conf:
+        description: "Clear the Non-Conf slot (no opponent)"
+        type: boolean
+        default: false
+      season_year:
+        description: "Season year override (blank = SEASON_YEAR set in this file)"
+        required: false
+        default: ""
 
-  # ── Scheduled: every morning at 9:00 AM CT (14:00 UTC) ───────────────────
+  # ── Scheduled: every morning at 9:00 AM CDT (14:00 UTC) ──────────────────
   schedule:
     - cron: "0 14 * * *"
+
+  # ── Redeploy when you edit the scraper, page, or Non-Conf config ─────────
+  push:
+    branches: [main]
 
 permissions:
   contents: write
@@ -16,6 +41,9 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: false
+
+env:
+  SEASON_YEAR: "2026"   # change to "2027" once the schools post 2027 stats
 
 jobs:
   scrape-and-deploy:
@@ -42,52 +70,77 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 4. Install Playwright's headless Chromium browser
-      - name: Install Playwright Chromium
-        run: playwright install --with-deps chromium
-
-      # 5. Run unified scraper — all 6 schools (5 Sidearm + NDSU StatBroadcast)
-      - name: Scrape All Schools Baseball Stats
+      # 4. Install Playwright browser (fast, with automatic fallback)
+      - name: Install Playwright browser
         run: |
-          python scraper/scrape_baseball.py \
-            --docs-dir docs \
-            --year 2026
+          playwright install chromium-headless-shell
+          python -c "from playwright.sync_api import sync_playwright; p = sync_playwright().start(); b = p.chromium.launch(); b.close(); p.stop()" \
+            || playwright install --with-deps chromium-headless-shell
 
-      # 5b. Upload debug screenshots if they exist
-      - name: Upload debug screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-screenshots
-          path: |
-            debug_before_click.png
-            debug_dropdown.png
-          if-no-files-found: ignore
+      # 5. Save the Non-Conf link from the Run workflow form (manual runs only)
+      - name: Save Non-Conf opponent link
+        if: github.event_name == 'workflow_dispatch' && (inputs.non_conf_stats_url != '' || inputs.clear_non_conf)
+        env:
+          NC_STATS: ${{ inputs.non_conf_stats_url }}
+          NC_ROSTER: ${{ inputs.non_conf_roster_url }}
+          NC_NAME: ${{ inputs.non_conf_name }}
+          NC_CLEAR: ${{ inputs.clear_non_conf }}
+        run: |
+          python - <<'PY'
+          import json, os
+          cfg = {"name": "", "stats_url": "", "roster_url": ""}
+          if os.environ.get("NC_CLEAR", "false") != "true":
+              cfg = {
+                  "name": os.environ.get("NC_NAME", "").strip(),
+                  "stats_url": os.environ.get("NC_STATS", "").strip(),
+                  "roster_url": os.environ.get("NC_ROSTER", "").strip(),
+              }
+          with open("non_conf_config.json", "w", encoding="utf-8") as f:
+              json.dump(cfg, f, indent=2)
+          print(json.dumps(cfg, indent=2))
+          PY
 
-      # 6. Commit all updated JSON files back to main (only if changed)
+      # 6. Run the unified baseball scraper (6 Summit League teams + Non-Conf)
+      - name: Scrape baseball stats
+        env:
+          YEAR_OVERRIDE: ${{ inputs.season_year }}
+        run: |
+          YEAR="${YEAR_OVERRIDE:-$SEASON_YEAR}"
+          python scraper/scrape_baseball.py --docs-dir docs --year "$YEAR"
+
+      # 7. Commit updated JSON + Non-Conf config back to main (only if changed)
       - name: Commit updated stats
         run: |
           git config user.name  "TAPbot"
           git config user.email "tapbot@users.noreply.github.com"
           git add docs/*.json
+          if [ -f non_conf_config.json ]; then git add non_conf_config.json; fi
           if git diff --cached --quiet; then
             echo "No changes to commit — stats are up to date."
           else
             git commit -m "Update baseball stats [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+            pushed=false
             for attempt in 1 2 3 4 5; do
-              git pull --rebase -X theirs origin main && git push && break
+              if git pull --rebase -X theirs origin main && git push; then
+                pushed=true
+                break
+              fi
               echo "Push failed (attempt $attempt), retrying..."
               sleep $((attempt * 5))
             done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::Could not push updated stats after 5 attempts"
+              exit 1
+            fi
           fi
 
-      # 7. Upload docs/ folder as a GitHub Pages artifact
+      # 8. Upload docs/ folder as a GitHub Pages artifact
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
-      # 8. Deploy to GitHub Pages via Actions source
+      # 9. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
