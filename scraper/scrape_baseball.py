@@ -4,10 +4,12 @@ scraper/scrape_baseball.py
 Unified multi-school scraper for Summit League baseball stats & rosters.
 
 Fixes applied:
-  1. Fixes Name <-> Position column swap on print-roster parsing.
-  2. Filters out sub-split duplicate rows (preventing the 120+ duplicate batter/pitcher issue).
-  3. Corrects Oral Roberts HTML table parsing & player identification.
-  4. Supports St. Thomas, SDSU, Northern Colorado, Omaha, Oral Roberts, NDSU, and Non-Conf.
+  1. Fixes missing Position and Year on St. Thomas and Nuxt-style schools (removes broken table filter and adds full text-line fallback).
+  2. Strips leading jersey numbers from player names (e.g. '8 Brennan McLaughlin' -> 'Brennan McLaughlin').
+  3. Formats player academic years without periods: 'FR', 'SO', 'JR', 'SR', 'GR', 'R-FR', 'R-SO', 'R-JR', 'R-SR'.
+  4. Preserves detailed pitching positions from roster ('RHP', 'LHP', 'LHP/OF', etc.) instead of generic 'P'.
+  5. Multi-URL roster candidate search (tries both current and season-specific roster URLs for optimal 2026/2027 matching).
+  6. Filters sub-split duplicates (prevents 120+ duplicate rows) and cleans Oral Roberts HTML tables.
 """
 
 from __future__ import annotations
@@ -39,7 +41,6 @@ NON_CONF_ID = "non_conf"
 NON_CONF_FILE = "non_conf.json"
 CONCURRENCY_LIMIT = 4
 
-# Stat field keys
 BATTING_FIELDS = ["AVG", "R", "H", "2B", "3B", "HR", "RBI", "OPS", "SLG%"]
 PITCHING_FIELDS = ["ERA", "WHIP", "W-L", "IP", "SO"]
 
@@ -50,7 +51,12 @@ TEAMS = [
         "name": "St. Thomas Tommies",
         "type": "sidearm",
         "stats_url": "https://tommiesports.com/sports/baseball/stats/{year}",
-        "roster_url": "https://tommiesports.com/sports/baseball/roster/print",
+        "roster_candidates": [
+            "https://tommiesports.com/sports/baseball/roster/print",
+            "https://tommiesports.com/sports/baseball/roster/print/{year}",
+            "https://tommiesports.com/sports/baseball/roster/{year}?print=true",
+            "https://tommiesports.com/sports/baseball/roster"
+        ],
         "out_file": "stthomas.json",
         "alias_file": "baseball_stats.json"
     },
@@ -59,7 +65,12 @@ TEAMS = [
         "name": "South Dakota State Jackrabbits",
         "type": "sidearm",
         "stats_url": "https://gojacks.com/sports/baseball/stats/{year}",
-        "roster_url": "https://gojacks.com/sports/baseball/roster/print",
+        "roster_candidates": [
+            "https://gojacks.com/sports/baseball/roster/print",
+            "https://gojacks.com/sports/baseball/roster/print/{year}",
+            "https://gojacks.com/sports/baseball/roster/{year}?print=true",
+            "https://gojacks.com/sports/baseball/roster"
+        ],
         "out_file": "sdstate.json"
     },
     {
@@ -67,7 +78,12 @@ TEAMS = [
         "name": "Northern Colorado Bears",
         "type": "sidearm",
         "stats_url": "https://uncbears.com/sports/baseball/stats/{year}",
-        "roster_url": "https://uncbears.com/sports/baseball/roster/print",
+        "roster_candidates": [
+            "https://uncbears.com/sports/baseball/roster/print",
+            "https://uncbears.com/sports/baseball/roster/print/{year}",
+            "https://uncbears.com/sports/baseball/roster/{year}?print=true",
+            "https://uncbears.com/sports/baseball/roster"
+        ],
         "out_file": "uncbears.json"
     },
     {
@@ -75,7 +91,12 @@ TEAMS = [
         "name": "Omaha Mavericks",
         "type": "sidearm",
         "stats_url": "https://omahamavs.com/sports/baseball/stats/{year}",
-        "roster_url": "https://omahamavs.com/sports/baseball/roster/print",
+        "roster_candidates": [
+            "https://omahamavs.com/sports/baseball/roster/print",
+            "https://omahamavs.com/sports/baseball/roster/print/{year}",
+            "https://omahamavs.com/sports/baseball/roster/{year}?print=true",
+            "https://omahamavs.com/sports/baseball/roster"
+        ],
         "out_file": "omaha.json"
     },
     {
@@ -83,7 +104,12 @@ TEAMS = [
         "name": "Oral Roberts Golden Eagles",
         "type": "sidearm",
         "stats_url": "https://oruathletics.com/sports/baseball/stats/{year}",
-        "roster_url": "https://oruathletics.com/sports/baseball/roster?print=true",
+        "roster_candidates": [
+            "https://oruathletics.com/sports/baseball/roster?print=true",
+            "https://oruathletics.com/sports/baseball/roster/{year}?print=true",
+            "https://oruathletics.com/sports/baseball/roster/print/{year}",
+            "https://oruathletics.com/sports/baseball/roster"
+        ],
         "out_file": "oru.json"
     },
     {
@@ -92,7 +118,12 @@ TEAMS = [
         "type": "statbroadcast",
         "stats_url": "https://stats.gobison.com/custompages/bsb/{year}/teamcume.htm",
         "fallback_stats_url": "https://gobison.com/sports/baseball/stats/{year}",
-        "roster_url": "https://gobison.com/sports/baseball/roster/print",
+        "roster_candidates": [
+            "https://gobison.com/sports/baseball/roster/print",
+            "https://gobison.com/sports/baseball/roster/print/{year}",
+            "https://gobison.com/sports/baseball/roster/{year}?print=true",
+            "https://gobison.com/sports/baseball/roster"
+        ],
         "out_file": "ndsu.json"
     }
 ]
@@ -193,17 +224,18 @@ _POS_WORDS = {
     "THIRDBASE": "3B", "SHORTSTOP": "SS",
 }
 
+# Standardized without periods: FR, SO, JR, SR, GR
 _CLASS_BASE = {
-    "FR": "Fr.", "FRESH": "Fr.", "FRESHMAN": "Fr.", "FIRSTYEAR": "Fr.", "1ST": "Fr.", "1STYEAR": "Fr.", "1": "Fr.",
-    "SO": "So.", "SOPH": "So.", "SOPHOMORE": "So.", "SECONDYEAR": "So.", "2ND": "So.", "2NDYEAR": "So.", "2": "So.",
-    "JR": "Jr.", "JUNIOR": "Jr.", "THIRDYEAR": "Jr.", "3RD": "Jr.", "3RDYEAR": "Jr.", "3": "Jr.",
-    "SR": "Sr.", "SENIOR": "Sr.", "FOURTHYEAR": "Sr.", "4TH": "Sr.", "4THYEAR": "Sr.", "4": "Sr.",
-    "GR": "Gr.", "GRAD": "Gr.", "GRADUATE": "Gr.", "GRADSTUDENT": "Gr.", "GRADUATESTUDENT": "Gr.",
-    "5TH": "Gr.", "5THYEAR": "Gr.", "FIFTHYEAR": "Gr.", "5": "Gr.", "6TH": "Gr.",
+    "FR": "FR", "FRESH": "FR", "FRESHMAN": "FR", "FIRSTYEAR": "FR", "1ST": "FR", "1STYEAR": "FR", "1": "FR", "FY": "FR",
+    "SO": "SO", "SOPH": "SO", "SOPHOMORE": "SO", "SECONDYEAR": "SO", "2ND": "SO", "2NDYEAR": "SO", "2": "SO",
+    "JR": "JR", "JUNIOR": "JR", "THIRDYEAR": "JR", "3RD": "JR", "3RDYEAR": "JR", "3": "JR",
+    "SR": "SR", "SENIOR": "SR", "FOURTHYEAR": "SR", "4TH": "SR", "4THYEAR": "SR", "4": "SR",
+    "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADSTUDENT": "GR", "GRADUATESTUDENT": "GR",
+    "5TH": "GR", "5THYEAR": "GR", "FIFTHYEAR": "GR", "5": "GR", "6TH": "GR", "GS": "GR",
 }
 
 def format_player_name(raw: Any) -> str:
-    """Normalizes 'Lastname, Firstname' or 'Firstname Lastname' into clean 'Firstname Lastname'."""
+    """Normalizes 'Lastname, Firstname' or 'Firstname Lastname' into clean 'Firstname Lastname' without numbers."""
     if not raw:
         return ""
     name = _s(raw)
@@ -211,6 +243,9 @@ def format_player_name(raw: Any) -> str:
     name = re.sub(r"\([^)]*\)", " ", name)
     name = name.replace('"', " ").replace("\u201c", " ").replace("\u201d", " ")
     name = re.sub(r"#\s*\d+", " ", name)
+    
+    # Strip any leading uniform numbers that leaked in (e.g. '8 Brennan McLaughlin' -> 'Brennan McLaughlin')
+    name = re.sub(r"^\s*\d{1,2}\s+", "", name)
     name = re.sub(r"\s+", " ", name).strip()
     if not name or "@" in name or "//" in name:
         return ""
@@ -282,7 +317,7 @@ def normalize_year(s: Any) -> str:
         if y.startswith(prefix):
             base = _CLASS_BASE.get(y[len(prefix):])
             if base:
-                return base if base == "Gr." else f"R-{base}"
+                return base if base == "GR" else f"R-{base}"
     return ""
 
 # ── Nuxt 3 Resolver ────────────────────────────────────────────────────────────
@@ -349,6 +384,14 @@ def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[s
     roster_by_num: Dict[str, Dict[str, str]] = {}
     roster_list: List[Dict[str, str]] = []
 
+    # Decompose coaching staff
+    for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
+        staff.decompose()
+    for hdr in soup.find_all(["h2", "h3", "h4"], string=re.compile(r"coaching staff|coaches", re.I)):
+        parent = hdr.find_parent(["section", "div", "table"])
+        if parent:
+            parent.decompose()
+
     def record_player(num: Any, name: Any, pos: Any, yr: Any):
         cleaned_num = re.sub(r"[^\d]", "", _s(num))
         formatted_name = format_player_name(name)
@@ -371,26 +414,24 @@ def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[s
             roster_list.append(item)
             if cleaned_num:
                 roster_by_num[cleaned_num] = item
+            roster_by_num[formatted_name.lower()] = item
 
-    # 1. Check Classic HTML Table rows
+    # 1. Check Table rows (Matches all Sidearm / standard HTML print rosters)
     for tr in soup.find_all("tr"):
         cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
         if len(cells) >= 3:
-            row_str = " ".join(cells).lower()
-            if any(h in row_str for h in ["hometown", "high school", "wt", "ht", "b/t", "player", "pos"]):
-                # Classify cells by actual content type
-                c_num, c_name, c_pos, c_yr = "", "", "", ""
-                for c in cells:
-                    if not c_num and re.fullmatch(r"#?\d{1,2}", c):
-                        c_num = c
-                    elif not c_pos and normalize_position(c):
-                        c_pos = c
-                    elif not c_yr and normalize_year(c):
-                        c_yr = c
-                    elif not c_name and is_valid_player_name(c) and len(c.split()) >= 2:
-                        c_name = c
-                if c_name:
-                    record_player(c_num, c_name, c_pos, c_yr)
+            c_num, c_name, c_pos, c_yr = "", "", "", ""
+            for c in cells:
+                if not c_num and re.fullmatch(r"#?\d{1,2}", c):
+                    c_num = c
+                elif not c_pos and normalize_position(c):
+                    c_pos = c
+                elif not c_yr and normalize_year(c):
+                    c_yr = c
+                elif not c_name and is_valid_player_name(c) and len(c.split()) >= 2:
+                    c_name = c
+            if c_name:
+                record_player(c_num, c_name, c_pos, c_yr)
 
     # 2. Sidearm Roster Player Cards
     if len(roster_list) < 5:
@@ -408,7 +449,35 @@ def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[s
             if name:
                 record_player(num, name, pos, yr)
 
-    # 3. Fallback to Nuxt script tag on roster page
+    # 3. Fallback to raw text line parsing
+    if len(roster_list) < 5:
+        body_text = soup.get_text(separator="\n", strip=True)
+        lines = [line.strip() for line in body_text.split("\n") if line.strip()]
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if re.match(r"^\d{1,2}$", line):
+                p_num = line
+                p_name, p_pos, p_yr = "", "", ""
+                j = i + 1
+                limit = min(len(lines), i + 8)
+                while j < limit:
+                    nxt = lines[j]
+                    if re.match(r"^\d{1,2}$", nxt) and j > i + 1:
+                        break
+                    if not p_pos and normalize_position(nxt):
+                        p_pos = nxt
+                    elif not p_yr and normalize_year(nxt):
+                        p_yr = nxt
+                    elif not p_name and is_valid_player_name(nxt) and len(nxt.split()) >= 2:
+                        p_name = nxt
+                    j += 1
+                if p_name and is_valid_player_name(p_name):
+                    record_player(p_num, p_name, p_pos, p_yr)
+                    i = j - 1
+            i += 1
+
+    # 4. Fallback to Nuxt script tag on roster page
     if len(roster_list) < 5:
         tag = soup.find("script", id="__NUXT_DATA__")
         if tag and tag.string:
@@ -518,7 +587,6 @@ def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_
 
         player_key = f"{jersey_int}_{clean_name.lower()}"
 
-        # Deduplicate and keep maximum volume season total line
         if has_batting:
             cur_bat = hitting_map.get(player_key)
             if cur_bat is None or parse_float(ab) > parse_float(cur_bat.get("AB", 0)):
@@ -546,7 +614,7 @@ def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_
                 pitching_map[player_key] = {
                     "number": str(jersey_int) if jersey_int != 999 else raw_num,
                     "player": clean_name,
-                    "position": pos or "P",
+                    "position": pos or "RHP",
                     "year": yr,
                     "ERA": era,
                     "WHIP": whip,
@@ -625,7 +693,6 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
             if not is_valid_player_name(raw_name):
                 continue
 
-            # Build cell label map
             cell_map = {}
             for idx, c in enumerate(cells):
                 label = (c.get("data-label") or (header_cols[idx] if idx < len(header_cols) else "")).strip().upper()
@@ -665,13 +732,12 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
                 if parse_ip(ip) > 0 or era != "-":
                     rows_data.append({
                         "number": str(jersey_int) if jersey_int != 999 else raw_num,
-                        "player": clean_name, "position": pos or "P", "year": yr,
+                        "player": clean_name, "position": pos or "RHP", "year": yr,
                         "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
                         "_sort": jersey_int
                     })
         return rows_data
 
-    # Find Batting Table
     bat_sec = soup.find(id="individual-overall-batting") or soup.find(id="overall-batting")
     bat_tbl = bat_sec.find("table") if bat_sec else None
     if not bat_tbl:
@@ -682,7 +748,6 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
                 break
     hitting_list = extract_rows(bat_tbl, is_pitching=False)
 
-    # Find Pitching Table
     pit_sec = soup.find(id="individual-overall-pitching") or soup.find(id="overall-pitching")
     pit_tbl = pit_sec.find("table") if pit_sec else None
     if not pit_tbl:
@@ -717,7 +782,6 @@ def parse_statbroadcast(html: str, roster_by_num: Dict[str, Any], roster_list: L
     players_map = {}
 
     for table in soup.find_all("table"):
-        text = table.get_text(" ", strip=True).lower()
         rows = [[c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])] for tr in table.find_all("tr")]
         if not rows:
             continue
@@ -777,7 +841,7 @@ def parse_statbroadcast(html: str, roster_by_num: Dict[str, Any], roster_list: L
     return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
 
 # ── Unified Extractor Router ──────────────────────────────────────────────────
-def extract_stats(stats_html: str, roster_html: str, school_meta: Dict[str, Any], year: str) -> Dict[str, Any]:
+def extract_stats(stats_html: str, roster_html: str, school_meta: Dict[str, Any], year: str, roster_used_url: str = "") -> Dict[str, Any]:
     roster_by_num, roster_list = parse_roster_page(roster_html)
     logger.info("  [%s] Parsed %d roster records (%d mapped with jersey #s)", school_meta["name"], len(roster_list), len(roster_by_num))
 
@@ -806,7 +870,7 @@ def extract_stats(stats_html: str, roster_html: str, school_meta: Dict[str, Any]
         "sport": "baseball",
         "season": year,
         "source": school_meta["stats_url"].format(year=year),
-        "source_roster": school_meta["roster_url"],
+        "source_roster": roster_used_url or (school_meta.get("roster_candidates", [""])[0]),
         "status": "ok" if (hitting_list or pitching_list) else "empty",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "players": players_sorted,
@@ -844,6 +908,24 @@ async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
         if page:
             await page.close()
 
+async def fetch_best_roster(context: BrowserContext, candidates: List[str], year: str) -> Tuple[str, str]:
+    best_html = ""
+    best_url = ""
+    max_count = 0
+    for cand in candidates:
+        url = cand.format(year=year)
+        html = await fetch_page_html(context, url)
+        if not html:
+            continue
+        _, r_list = parse_roster_page(html)
+        if len(r_list) > max_count:
+            max_count = len(r_list)
+            best_html = html
+            best_url = url
+        if max_count >= 15:
+            break
+    return best_html, best_url
+
 # ── Main Async Runner ──────────────────────────────────────────────────────────
 async def run(args: argparse.Namespace) -> None:
     year = str(args.year or "2026")
@@ -863,7 +945,7 @@ async def run(args: argparse.Namespace) -> None:
 
         for school in schools_to_scrape:
             stats_url = school["stats_url"].format(year=year)
-            roster_url = school["roster_url"]
+            candidates = school.get("roster_candidates", [])
 
             logger.info("Processing Baseball: %s...", school["name"])
             try:
@@ -876,11 +958,11 @@ async def run(args: argparse.Namespace) -> None:
                 else:
                     stats_html = await fetch_page_html(context, stats_url)
 
-                # 2. Fetch Roster
-                roster_html = await fetch_page_html(context, roster_url)
+                # 2. Fetch Roster with fallback candidates
+                roster_html, roster_used_url = await fetch_best_roster(context, candidates, year)
 
                 # 3. Extract & Save
-                stats_payload = extract_stats(stats_html or "", roster_html or "", school, year)
+                stats_payload = extract_stats(stats_html or "", roster_html or "", school, year, roster_used_url)
 
                 out_path = os.path.join(docs_dir, school["out_file"])
                 with open(out_path, "w", encoding="utf-8") as f:
