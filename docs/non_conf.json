@@ -1,0 +1,14 @@
+{
+  "team_id": "non_conf",
+  "team": "Non-Conf",
+  "display_name": "Non-Conf",
+  "sport": "baseball",
+  "season": "2026",
+  "status": "empty",
+  "is_non_conf": true,
+  "message": "No Non-Conf opponent loaded. Configure non_conf_config.json or pass via workflow.",
+  "generated_at": "2026-11-12T04:39:25.586716+00:00",
+  "players": [],
+  "hitting": [],
+  "pitching": []
+}
