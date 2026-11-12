@@ -6,13 +6,13 @@
   "source": "https://tommiesports.com/sports/baseball/stats/2026",
   "source_roster": "https://tommiesports.com/sports/baseball/roster/print",
   "status": "ok",
-  "generated_at": "2026-11-12T05:09:38.888036+00:00",
+  "generated_at": "2026-11-12T05:24:23.761820+00:00",
   "players": [
     {
       "jersey_number": 1,
       "player_name": "Sean Marlow",
-      "position": "",
-      "year": "",
+      "position": "C/UTIL",
+      "year": "R-SO",
       "batting_stats": {
         "AVG": ".143",
         "R": "1",
@@ -45,8 +45,8 @@
     {
       "jersey_number": 3,
       "player_name": "Zan Von Schlegell",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "batting_stats": {
         "AVG": ".243",
         "R": "26",
@@ -62,8 +62,8 @@
     {
       "jersey_number": 4,
       "player_name": "Easton Fritcher",
-      "position": "",
-      "year": "",
+      "position": "LHP/OF",
+      "year": "R-JR",
       "batting_stats": {
         "AVG": ".268",
         "R": "27",
@@ -96,8 +96,8 @@
     {
       "jersey_number": 6,
       "player_name": "Nolan Welke",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "batting_stats": {
         "AVG": ".294",
         "R": "8",
@@ -113,8 +113,8 @@
     {
       "jersey_number": 7,
       "player_name": "Matthew Maulik",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "batting_stats": {
         "AVG": ".273",
         "R": "25",
@@ -143,8 +143,8 @@
     {
       "jersey_number": 9,
       "player_name": "Adam Puder",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "batting_stats": {
         "AVG": ".297",
         "R": "35",
@@ -160,8 +160,8 @@
     {
       "jersey_number": 12,
       "player_name": "Easton Bobb",
-      "position": "",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "pitching_stats": {
         "ERA": "12.00",
         "WHIP": "2.11",
@@ -173,8 +173,8 @@
     {
       "jersey_number": 14,
       "player_name": "Brayden Olson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "pitching_stats": {
         "ERA": "5.91",
         "WHIP": "1.67",
@@ -197,8 +197,8 @@
     {
       "jersey_number": 15,
       "player_name": "Evan Raabe",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "batting_stats": {
         "AVG": ".269",
         "R": "3",
@@ -214,8 +214,8 @@
     {
       "jersey_number": 16,
       "player_name": "Joe Roder",
-      "position": "",
-      "year": "",
+      "position": "1B/RF",
+      "year": "SR",
       "batting_stats": {
         "AVG": ".266",
         "R": "33",
@@ -231,8 +231,8 @@
     {
       "jersey_number": 19,
       "player_name": "Max Berrisford",
-      "position": "",
-      "year": "",
+      "position": "C/INF",
+      "year": "FR",
       "batting_stats": {
         "AVG": ".239",
         "R": "18",
@@ -248,8 +248,8 @@
     {
       "jersey_number": 21,
       "player_name": "Lucas McNellis",
-      "position": "",
-      "year": "",
+      "position": "C",
+      "year": "SO",
       "batting_stats": {
         "AVG": ".246",
         "R": "8",
@@ -265,8 +265,8 @@
     {
       "jersey_number": 22,
       "player_name": "Evan Esch",
-      "position": "",
-      "year": "",
+      "position": "LHP",
+      "year": "GR",
       "pitching_stats": {
         "ERA": "7.50",
         "WHIP": "1.83",
@@ -278,8 +278,8 @@
     {
       "jersey_number": 23,
       "player_name": "Chris Knowles",
-      "position": "",
-      "year": "",
+      "position": "UT",
+      "year": "GR",
       "batting_stats": {
         "AVG": ".259",
         "R": "13",
@@ -295,8 +295,8 @@
     {
       "jersey_number": 24,
       "player_name": "Max Skilbeck",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "pitching_stats": {
         "ERA": "10.03",
         "WHIP": "2.10",
@@ -308,8 +308,8 @@
     {
       "jersey_number": 25,
       "player_name": "Colin Lewandowski",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "batting_stats": {
         "AVG": ".167",
         "R": "3",
@@ -325,8 +325,8 @@
     {
       "jersey_number": 27,
       "player_name": "Landon Majerus",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "pitching_stats": {
         "ERA": "20.25",
         "WHIP": "3.25",
@@ -338,8 +338,8 @@
     {
       "jersey_number": 28,
       "player_name": "Nelson Koenig",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "pitching_stats": {
         "ERA": "27.00",
         "WHIP": "2.40",
@@ -362,8 +362,8 @@
     {
       "jersey_number": 29,
       "player_name": "AJ Rasmussen",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "R-SO",
       "pitching_stats": {
         "ERA": "11.91",
         "WHIP": "2.56",
@@ -375,8 +375,8 @@
     {
       "jersey_number": 30,
       "player_name": "Chris Petersen",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "pitching_stats": {
         "ERA": "11.51",
         "WHIP": "2.21",
@@ -388,8 +388,8 @@
     {
       "jersey_number": 34,
       "player_name": "Zak Endres",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "pitching_stats": {
         "ERA": "4.05",
         "WHIP": "1.35",
@@ -401,8 +401,8 @@
     {
       "jersey_number": 36,
       "player_name": "Sam Stockman",
-      "position": "",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "pitching_stats": {
         "ERA": "5.71",
         "WHIP": "1.60",
@@ -414,8 +414,8 @@
     {
       "jersey_number": 37,
       "player_name": "Warren Bowe",
-      "position": "",
-      "year": "",
+      "position": "LHP",
+      "year": "FR",
       "pitching_stats": {
         "ERA": "20.25",
         "WHIP": "4.29",
@@ -427,8 +427,8 @@
     {
       "jersey_number": 38,
       "player_name": "Max Nelson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "R-FR",
       "pitching_stats": {
         "ERA": "18.00",
         "WHIP": "4.00",
@@ -453,8 +453,8 @@
     {
       "jersey_number": 44,
       "player_name": "Nolan Phillips",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "pitching_stats": {
         "ERA": "16.88",
         "WHIP": "3.94",
@@ -483,8 +483,8 @@
     {
       "jersey_number": 46,
       "player_name": "Nolan Kemp",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "pitching_stats": {
         "ERA": "9.42",
         "WHIP": "2.06",
@@ -496,8 +496,8 @@
     {
       "jersey_number": 47,
       "player_name": "Jack Scanlon",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "pitching_stats": {
         "ERA": "8.10",
         "WHIP": "2.10",
@@ -509,8 +509,8 @@
     {
       "jersey_number": 48,
       "player_name": "Ben Moser",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "pitching_stats": {
         "ERA": "11.57",
         "WHIP": "2.23",
@@ -524,8 +524,8 @@
     {
       "number": "1",
       "player": "Sean Marlow",
-      "position": "",
-      "year": "",
+      "position": "C/UTIL",
+      "year": "R-SO",
       "AVG": ".143",
       "R": "1",
       "H": "1",
@@ -554,8 +554,8 @@
     {
       "number": "3",
       "player": "Zan Von Schlegell",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".243",
       "R": "26",
       "H": "34",
@@ -569,8 +569,8 @@
     {
       "number": "4",
       "player": "Easton Fritcher",
-      "position": "",
-      "year": "",
+      "position": "LHP/OF",
+      "year": "R-JR",
       "AVG": ".268",
       "R": "27",
       "H": "41",
@@ -599,8 +599,8 @@
     {
       "number": "6",
       "player": "Nolan Welke",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".294",
       "R": "8",
       "H": "15",
@@ -614,8 +614,8 @@
     {
       "number": "7",
       "player": "Matthew Maulik",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".273",
       "R": "25",
       "H": "45",
@@ -629,8 +629,8 @@
     {
       "number": "9",
       "player": "Adam Puder",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".297",
       "R": "35",
       "H": "58",
@@ -644,8 +644,8 @@
     {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "AVG": "1.000",
       "R": "0",
       "H": "1",
@@ -659,8 +659,8 @@
     {
       "number": "15",
       "player": "Evan Raabe",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".269",
       "R": "3",
       "H": "7",
@@ -674,8 +674,8 @@
     {
       "number": "16",
       "player": "Joe Roder",
-      "position": "",
-      "year": "",
+      "position": "1B/RF",
+      "year": "SR",
       "AVG": ".266",
       "R": "33",
       "H": "49",
@@ -689,8 +689,8 @@
     {
       "number": "19",
       "player": "Max Berrisford",
-      "position": "",
-      "year": "",
+      "position": "C/INF",
+      "year": "FR",
       "AVG": ".239",
       "R": "18",
       "H": "27",
@@ -704,8 +704,8 @@
     {
       "number": "21",
       "player": "Lucas McNellis",
-      "position": "",
-      "year": "",
+      "position": "C",
+      "year": "SO",
       "AVG": ".246",
       "R": "8",
       "H": "29",
@@ -719,8 +719,8 @@
     {
       "number": "23",
       "player": "Chris Knowles",
-      "position": "",
-      "year": "",
+      "position": "UT",
+      "year": "GR",
       "AVG": ".259",
       "R": "13",
       "H": "29",
@@ -734,8 +734,8 @@
     {
       "number": "25",
       "player": "Colin Lewandowski",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".167",
       "R": "3",
       "H": "1",
@@ -749,8 +749,8 @@
     {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -781,7 +781,7 @@
     {
       "number": "8",
       "player": "Owen Marsolek",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "4.83",
       "WHIP": "1.36",
@@ -792,8 +792,8 @@
     {
       "number": "12",
       "player": "Easton Bobb",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "12.00",
       "WHIP": "2.11",
       "W-L": "0-3",
@@ -803,8 +803,8 @@
     {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "5.91",
       "WHIP": "1.67",
       "W-L": "1-7",
@@ -814,8 +814,8 @@
     {
       "number": "22",
       "player": "Evan Esch",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "GR",
       "ERA": "7.50",
       "WHIP": "1.83",
       "W-L": "0-6",
@@ -825,8 +825,8 @@
     {
       "number": "24",
       "player": "Max Skilbeck",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "10.03",
       "WHIP": "2.10",
       "W-L": "0-3",
@@ -836,8 +836,8 @@
     {
       "number": "27",
       "player": "Landon Majerus",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "3.25",
       "W-L": "0-0",
@@ -847,8 +847,8 @@
     {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "27.00",
       "WHIP": "2.40",
       "W-L": "0-0",
@@ -858,8 +858,8 @@
     {
       "number": "29",
       "player": "AJ Rasmussen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-SO",
       "ERA": "11.91",
       "WHIP": "2.56",
       "W-L": "0-0",
@@ -869,8 +869,8 @@
     {
       "number": "30",
       "player": "Chris Petersen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.51",
       "WHIP": "2.21",
       "W-L": "0-3",
@@ -880,8 +880,8 @@
     {
       "number": "34",
       "player": "Zak Endres",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "4.05",
       "WHIP": "1.35",
       "W-L": "0-2",
@@ -891,8 +891,8 @@
     {
       "number": "36",
       "player": "Sam Stockman",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "5.71",
       "WHIP": "1.60",
       "W-L": "2-5",
@@ -902,8 +902,8 @@
     {
       "number": "37",
       "player": "Warren Bowe",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "4.29",
       "W-L": "0-1",
@@ -913,8 +913,8 @@
     {
       "number": "38",
       "player": "Max Nelson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-FR",
       "ERA": "18.00",
       "WHIP": "4.00",
       "W-L": "0-1",
@@ -924,7 +924,7 @@
     {
       "number": "41",
       "player": "William Pierro",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "7.56",
       "WHIP": "1.80",
@@ -935,8 +935,8 @@
     {
       "number": "44",
       "player": "Nolan Phillips",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "16.88",
       "WHIP": "3.94",
       "W-L": "0-0",
@@ -946,8 +946,8 @@
     {
       "number": "46",
       "player": "Nolan Kemp",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "9.42",
       "WHIP": "2.06",
       "W-L": "1-2",
@@ -957,8 +957,8 @@
     {
       "number": "47",
       "player": "Jack Scanlon",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "8.10",
       "WHIP": "2.10",
       "W-L": "1-1",
@@ -968,8 +968,8 @@
     {
       "number": "48",
       "player": "Ben Moser",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.57",
       "WHIP": "2.23",
       "W-L": "0-0",
@@ -981,8 +981,8 @@
     {
       "number": "1",
       "player": "Sean Marlow",
-      "position": "",
-      "year": "",
+      "position": "C/UTIL",
+      "year": "R-SO",
       "AVG": ".143",
       "R": "1",
       "H": "1",
@@ -1011,8 +1011,8 @@
     {
       "number": "3",
       "player": "Zan Von Schlegell",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".243",
       "R": "26",
       "H": "34",
@@ -1026,8 +1026,8 @@
     {
       "number": "4",
       "player": "Easton Fritcher",
-      "position": "",
-      "year": "",
+      "position": "LHP/OF",
+      "year": "R-JR",
       "AVG": ".268",
       "R": "27",
       "H": "41",
@@ -1056,8 +1056,8 @@
     {
       "number": "6",
       "player": "Nolan Welke",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".294",
       "R": "8",
       "H": "15",
@@ -1071,8 +1071,8 @@
     {
       "number": "7",
       "player": "Matthew Maulik",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".273",
       "R": "25",
       "H": "45",
@@ -1086,8 +1086,8 @@
     {
       "number": "9",
       "player": "Adam Puder",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".297",
       "R": "35",
       "H": "58",
@@ -1101,8 +1101,8 @@
     {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "AVG": "1.000",
       "R": "0",
       "H": "1",
@@ -1116,8 +1116,8 @@
     {
       "number": "15",
       "player": "Evan Raabe",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".269",
       "R": "3",
       "H": "7",
@@ -1131,8 +1131,8 @@
     {
       "number": "16",
       "player": "Joe Roder",
-      "position": "",
-      "year": "",
+      "position": "1B/RF",
+      "year": "SR",
       "AVG": ".266",
       "R": "33",
       "H": "49",
@@ -1146,8 +1146,8 @@
     {
       "number": "19",
       "player": "Max Berrisford",
-      "position": "",
-      "year": "",
+      "position": "C/INF",
+      "year": "FR",
       "AVG": ".239",
       "R": "18",
       "H": "27",
@@ -1161,8 +1161,8 @@
     {
       "number": "21",
       "player": "Lucas McNellis",
-      "position": "",
-      "year": "",
+      "position": "C",
+      "year": "SO",
       "AVG": ".246",
       "R": "8",
       "H": "29",
@@ -1176,8 +1176,8 @@
     {
       "number": "23",
       "player": "Chris Knowles",
-      "position": "",
-      "year": "",
+      "position": "UT",
+      "year": "GR",
       "AVG": ".259",
       "R": "13",
       "H": "29",
@@ -1191,8 +1191,8 @@
     {
       "number": "25",
       "player": "Colin Lewandowski",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".167",
       "R": "3",
       "H": "1",
@@ -1206,8 +1206,8 @@
     {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -1238,7 +1238,7 @@
     {
       "number": "8",
       "player": "Owen Marsolek",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "4.83",
       "WHIP": "1.36",
@@ -1249,8 +1249,8 @@
     {
       "number": "12",
       "player": "Easton Bobb",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "12.00",
       "WHIP": "2.11",
       "W-L": "0-3",
@@ -1260,8 +1260,8 @@
     {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "5.91",
       "WHIP": "1.67",
       "W-L": "1-7",
@@ -1271,8 +1271,8 @@
     {
       "number": "22",
       "player": "Evan Esch",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "GR",
       "ERA": "7.50",
       "WHIP": "1.83",
       "W-L": "0-6",
@@ -1282,8 +1282,8 @@
     {
       "number": "24",
       "player": "Max Skilbeck",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "10.03",
       "WHIP": "2.10",
       "W-L": "0-3",
@@ -1293,8 +1293,8 @@
     {
       "number": "27",
       "player": "Landon Majerus",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "3.25",
       "W-L": "0-0",
@@ -1304,8 +1304,8 @@
     {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "27.00",
       "WHIP": "2.40",
       "W-L": "0-0",
@@ -1315,8 +1315,8 @@
     {
       "number": "29",
       "player": "AJ Rasmussen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-SO",
       "ERA": "11.91",
       "WHIP": "2.56",
       "W-L": "0-0",
@@ -1326,8 +1326,8 @@
     {
       "number": "30",
       "player": "Chris Petersen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.51",
       "WHIP": "2.21",
       "W-L": "0-3",
@@ -1337,8 +1337,8 @@
     {
       "number": "34",
       "player": "Zak Endres",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "4.05",
       "WHIP": "1.35",
       "W-L": "0-2",
@@ -1348,8 +1348,8 @@
     {
       "number": "36",
       "player": "Sam Stockman",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "5.71",
       "WHIP": "1.60",
       "W-L": "2-5",
@@ -1359,8 +1359,8 @@
     {
       "number": "37",
       "player": "Warren Bowe",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "4.29",
       "W-L": "0-1",
@@ -1370,8 +1370,8 @@
     {
       "number": "38",
       "player": "Max Nelson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-FR",
       "ERA": "18.00",
       "WHIP": "4.00",
       "W-L": "0-1",
@@ -1381,7 +1381,7 @@
     {
       "number": "41",
       "player": "William Pierro",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "7.56",
       "WHIP": "1.80",
@@ -1392,8 +1392,8 @@
     {
       "number": "44",
       "player": "Nolan Phillips",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "16.88",
       "WHIP": "3.94",
       "W-L": "0-0",
@@ -1403,8 +1403,8 @@
     {
       "number": "46",
       "player": "Nolan Kemp",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "9.42",
       "WHIP": "2.06",
       "W-L": "1-2",
@@ -1414,8 +1414,8 @@
     {
       "number": "47",
       "player": "Jack Scanlon",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "8.10",
       "WHIP": "2.10",
       "W-L": "1-1",
@@ -1425,8 +1425,8 @@
     {
       "number": "48",
       "player": "Ben Moser",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.57",
       "WHIP": "2.23",
       "W-L": "0-0",
@@ -1453,8 +1453,8 @@
     "1": {
       "number": "1",
       "player": "Sean Marlow",
-      "position": "",
-      "year": "",
+      "position": "C/UTIL",
+      "year": "R-SO",
       "AVG": ".143",
       "R": "1",
       "H": "1",
@@ -1468,8 +1468,8 @@
     "21": {
       "number": "21",
       "player": "Lucas McNellis",
-      "position": "",
-      "year": "",
+      "position": "C",
+      "year": "SO",
       "AVG": ".246",
       "R": "8",
       "H": "29",
@@ -1483,8 +1483,8 @@
     "23": {
       "number": "23",
       "player": "Chris Knowles",
-      "position": "",
-      "year": "",
+      "position": "UT",
+      "year": "GR",
       "AVG": ".259",
       "R": "13",
       "H": "29",
@@ -1498,8 +1498,8 @@
     "25": {
       "number": "25",
       "player": "Colin Lewandowski",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".167",
       "R": "3",
       "H": "1",
@@ -1513,8 +1513,8 @@
     "15": {
       "number": "15",
       "player": "Evan Raabe",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".269",
       "R": "3",
       "H": "7",
@@ -1528,8 +1528,8 @@
     "6": {
       "number": "6",
       "player": "Nolan Welke",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".294",
       "R": "8",
       "H": "15",
@@ -1543,8 +1543,8 @@
     "19": {
       "number": "19",
       "player": "Max Berrisford",
-      "position": "",
-      "year": "",
+      "position": "C/INF",
+      "year": "FR",
       "AVG": ".239",
       "R": "18",
       "H": "27",
@@ -1558,8 +1558,8 @@
     "7": {
       "number": "7",
       "player": "Matthew Maulik",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".273",
       "R": "25",
       "H": "45",
@@ -1588,8 +1588,8 @@
     "16": {
       "number": "16",
       "player": "Joe Roder",
-      "position": "",
-      "year": "",
+      "position": "1B/RF",
+      "year": "SR",
       "AVG": ".266",
       "R": "33",
       "H": "49",
@@ -1603,8 +1603,8 @@
     "9": {
       "number": "9",
       "player": "Adam Puder",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".297",
       "R": "35",
       "H": "58",
@@ -1618,8 +1618,8 @@
     "4": {
       "number": "4",
       "player": "Easton Fritcher",
-      "position": "",
-      "year": "",
+      "position": "LHP/OF",
+      "year": "R-JR",
       "AVG": ".268",
       "R": "27",
       "H": "41",
@@ -1633,8 +1633,8 @@
     "3": {
       "number": "3",
       "player": "Zan Von Schlegell",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".243",
       "R": "26",
       "H": "34",
@@ -1663,8 +1663,8 @@
     "28": {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -1678,8 +1678,8 @@
     "14": {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "AVG": "1.000",
       "R": "0",
       "H": "1",
@@ -1695,8 +1695,8 @@
     "47": {
       "number": "47",
       "player": "Jack Scanlon",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "8.10",
       "WHIP": "2.10",
       "W-L": "1-1",
@@ -1706,8 +1706,8 @@
     "29": {
       "number": "29",
       "player": "AJ Rasmussen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-SO",
       "ERA": "11.91",
       "WHIP": "2.56",
       "W-L": "0-0",
@@ -1717,8 +1717,8 @@
     "24": {
       "number": "24",
       "player": "Max Skilbeck",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "10.03",
       "WHIP": "2.10",
       "W-L": "0-3",
@@ -1728,8 +1728,8 @@
     "30": {
       "number": "30",
       "player": "Chris Petersen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.51",
       "WHIP": "2.21",
       "W-L": "0-3",
@@ -1739,8 +1739,8 @@
     "46": {
       "number": "46",
       "player": "Nolan Kemp",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "9.42",
       "WHIP": "2.06",
       "W-L": "1-2",
@@ -1750,7 +1750,7 @@
     "41": {
       "number": "41",
       "player": "William Pierro",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "7.56",
       "WHIP": "1.80",
@@ -1761,8 +1761,8 @@
     "22": {
       "number": "22",
       "player": "Evan Esch",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "GR",
       "ERA": "7.50",
       "WHIP": "1.83",
       "W-L": "0-6",
@@ -1772,8 +1772,8 @@
     "34": {
       "number": "34",
       "player": "Zak Endres",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "4.05",
       "WHIP": "1.35",
       "W-L": "0-2",
@@ -1783,8 +1783,8 @@
     "48": {
       "number": "48",
       "player": "Ben Moser",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.57",
       "WHIP": "2.23",
       "W-L": "0-0",
@@ -1794,8 +1794,8 @@
     "14": {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "5.91",
       "WHIP": "1.67",
       "W-L": "1-7",
@@ -1805,7 +1805,7 @@
     "8": {
       "number": "8",
       "player": "Owen Marsolek",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "4.83",
       "WHIP": "1.36",
@@ -1816,8 +1816,8 @@
     "36": {
       "number": "36",
       "player": "Sam Stockman",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "5.71",
       "WHIP": "1.60",
       "W-L": "2-5",
@@ -1827,8 +1827,8 @@
     "28": {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "27.00",
       "WHIP": "2.40",
       "W-L": "0-0",
@@ -1838,8 +1838,8 @@
     "27": {
       "number": "27",
       "player": "Landon Majerus",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "3.25",
       "W-L": "0-0",
@@ -1849,8 +1849,8 @@
     "37": {
       "number": "37",
       "player": "Warren Bowe",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "4.29",
       "W-L": "0-1",
@@ -1860,8 +1860,8 @@
     "38": {
       "number": "38",
       "player": "Max Nelson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-FR",
       "ERA": "18.00",
       "WHIP": "4.00",
       "W-L": "0-1",
@@ -1871,8 +1871,8 @@
     "44": {
       "number": "44",
       "player": "Nolan Phillips",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "16.88",
       "WHIP": "3.94",
       "W-L": "0-0",
@@ -1882,8 +1882,8 @@
     "12": {
       "number": "12",
       "player": "Easton Bobb",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "12.00",
       "WHIP": "2.11",
       "W-L": "0-3",
@@ -1910,8 +1910,8 @@
     "1": {
       "number": "1",
       "player": "Sean Marlow",
-      "position": "",
-      "year": "",
+      "position": "C/UTIL",
+      "year": "R-SO",
       "AVG": ".143",
       "R": "1",
       "H": "1",
@@ -1925,8 +1925,8 @@
     "21": {
       "number": "21",
       "player": "Lucas McNellis",
-      "position": "",
-      "year": "",
+      "position": "C",
+      "year": "SO",
       "AVG": ".246",
       "R": "8",
       "H": "29",
@@ -1940,8 +1940,8 @@
     "23": {
       "number": "23",
       "player": "Chris Knowles",
-      "position": "",
-      "year": "",
+      "position": "UT",
+      "year": "GR",
       "AVG": ".259",
       "R": "13",
       "H": "29",
@@ -1955,8 +1955,8 @@
     "25": {
       "number": "25",
       "player": "Colin Lewandowski",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".167",
       "R": "3",
       "H": "1",
@@ -1970,8 +1970,8 @@
     "15": {
       "number": "15",
       "player": "Evan Raabe",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".269",
       "R": "3",
       "H": "7",
@@ -1985,8 +1985,8 @@
     "6": {
       "number": "6",
       "player": "Nolan Welke",
-      "position": "",
-      "year": "",
+      "position": "OF",
+      "year": "FR",
       "AVG": ".294",
       "R": "8",
       "H": "15",
@@ -2000,8 +2000,8 @@
     "19": {
       "number": "19",
       "player": "Max Berrisford",
-      "position": "",
-      "year": "",
+      "position": "C/INF",
+      "year": "FR",
       "AVG": ".239",
       "R": "18",
       "H": "27",
@@ -2015,8 +2015,8 @@
     "7": {
       "number": "7",
       "player": "Matthew Maulik",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".273",
       "R": "25",
       "H": "45",
@@ -2045,8 +2045,8 @@
     "16": {
       "number": "16",
       "player": "Joe Roder",
-      "position": "",
-      "year": "",
+      "position": "1B/RF",
+      "year": "SR",
       "AVG": ".266",
       "R": "33",
       "H": "49",
@@ -2060,8 +2060,8 @@
     "9": {
       "number": "9",
       "player": "Adam Puder",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "R-SO",
       "AVG": ".297",
       "R": "35",
       "H": "58",
@@ -2075,8 +2075,8 @@
     "4": {
       "number": "4",
       "player": "Easton Fritcher",
-      "position": "",
-      "year": "",
+      "position": "LHP/OF",
+      "year": "R-JR",
       "AVG": ".268",
       "R": "27",
       "H": "41",
@@ -2090,8 +2090,8 @@
     "3": {
       "number": "3",
       "player": "Zan Von Schlegell",
-      "position": "",
-      "year": "",
+      "position": "INF",
+      "year": "JR",
       "AVG": ".243",
       "R": "26",
       "H": "34",
@@ -2120,8 +2120,8 @@
     "28": {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "AVG": ".000",
       "R": "0",
       "H": "0",
@@ -2135,8 +2135,8 @@
     "14": {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "AVG": "1.000",
       "R": "0",
       "H": "1",
@@ -2152,8 +2152,8 @@
     "47": {
       "number": "47",
       "player": "Jack Scanlon",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "8.10",
       "WHIP": "2.10",
       "W-L": "1-1",
@@ -2163,8 +2163,8 @@
     "29": {
       "number": "29",
       "player": "AJ Rasmussen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-SO",
       "ERA": "11.91",
       "WHIP": "2.56",
       "W-L": "0-0",
@@ -2174,8 +2174,8 @@
     "24": {
       "number": "24",
       "player": "Max Skilbeck",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "10.03",
       "WHIP": "2.10",
       "W-L": "0-3",
@@ -2185,8 +2185,8 @@
     "30": {
       "number": "30",
       "player": "Chris Petersen",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.51",
       "WHIP": "2.21",
       "W-L": "0-3",
@@ -2196,8 +2196,8 @@
     "46": {
       "number": "46",
       "player": "Nolan Kemp",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "9.42",
       "WHIP": "2.06",
       "W-L": "1-2",
@@ -2207,7 +2207,7 @@
     "41": {
       "number": "41",
       "player": "William Pierro",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "7.56",
       "WHIP": "1.80",
@@ -2218,8 +2218,8 @@
     "22": {
       "number": "22",
       "player": "Evan Esch",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "GR",
       "ERA": "7.50",
       "WHIP": "1.83",
       "W-L": "0-6",
@@ -2229,8 +2229,8 @@
     "34": {
       "number": "34",
       "player": "Zak Endres",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SR",
       "ERA": "4.05",
       "WHIP": "1.35",
       "W-L": "0-2",
@@ -2240,8 +2240,8 @@
     "48": {
       "number": "48",
       "player": "Ben Moser",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "11.57",
       "WHIP": "2.23",
       "W-L": "0-0",
@@ -2251,8 +2251,8 @@
     "14": {
       "number": "14",
       "player": "Brayden Olson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "5.91",
       "WHIP": "1.67",
       "W-L": "1-7",
@@ -2262,7 +2262,7 @@
     "8": {
       "number": "8",
       "player": "Owen Marsolek",
-      "position": "P",
+      "position": "RHP",
       "year": "",
       "ERA": "4.83",
       "WHIP": "1.36",
@@ -2273,8 +2273,8 @@
     "36": {
       "number": "36",
       "player": "Sam Stockman",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "5.71",
       "WHIP": "1.60",
       "W-L": "2-5",
@@ -2284,8 +2284,8 @@
     "28": {
       "number": "28",
       "player": "Nelson Koenig",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "SO",
       "ERA": "27.00",
       "WHIP": "2.40",
       "W-L": "0-0",
@@ -2295,8 +2295,8 @@
     "27": {
       "number": "27",
       "player": "Landon Majerus",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "3.25",
       "W-L": "0-0",
@@ -2306,8 +2306,8 @@
     "37": {
       "number": "37",
       "player": "Warren Bowe",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "FR",
       "ERA": "20.25",
       "WHIP": "4.29",
       "W-L": "0-1",
@@ -2317,8 +2317,8 @@
     "38": {
       "number": "38",
       "player": "Max Nelson",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "R-FR",
       "ERA": "18.00",
       "WHIP": "4.00",
       "W-L": "0-1",
@@ -2328,8 +2328,8 @@
     "44": {
       "number": "44",
       "player": "Nolan Phillips",
-      "position": "P",
-      "year": "",
+      "position": "RHP",
+      "year": "JR",
       "ERA": "16.88",
       "WHIP": "3.94",
       "W-L": "0-0",
@@ -2339,8 +2339,8 @@
     "12": {
       "number": "12",
       "player": "Easton Bobb",
-      "position": "P",
-      "year": "",
+      "position": "LHP",
+      "year": "SO",
       "ERA": "12.00",
       "WHIP": "2.11",
       "W-L": "0-3",
