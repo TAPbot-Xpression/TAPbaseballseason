@@ -1,30 +1,16 @@
 #!/usr/bin/env python3
 """
-scrape_baseball.py
-Unified Summit League Baseball Stats & Roster Scraper (6 Conference Teams + Optional Non-Conf Opponent).
+scraper/scrape_baseball.py
+Unified multi-school scraper for Summit League baseball stats & rosters.
 
-Teams:
-  1. St. Thomas Tommies (stthomas.json / baseball_stats.json)
-  2. South Dakota State Jackrabbits (sdstate.json)
-  3. Oral Roberts Golden Eagles (oru.json)
-  4. Omaha Mavericks (omaha.json)
-  5. Northern Colorado Bears (uncbears.json)
-  6. North Dakota State Bison (ndsu.json)
-  7. Optional Non-Conf Opponent (non_conf.json) driven by non_conf_config.json
-
-Features:
-  - Supports Sidearm New Style (Nuxt 3 __NUXT_DATA__ JSON payloads) and Old Style (Classic HTML tables).
-  - StatBroadcast HTML parsing fallback for legacy/custom stat sites (NDSU).
-  - Robust print-roster parser extracting Player Name, Jersey Number, Position (standardized G/F/W/P/C/INF/OF/etc.), and Academic Class (FR/SO/JR/SR/GR/R-*).
-  - Standardized JSON layout optimized for XPression DataLinq integration (number first, consistent keys across hitting, pitching, and master player roster).
-  - Async Playwright execution with concurrency limits.
-  - Safe updates: empty or failed scrapes never overwrite good existing data.
-
-Usage:
-  python scrape_baseball.py
-  python scrape_baseball.py --docs-dir docs --year 2026
-  python scrape_baseball.py --school stthomas
+Fixes applied:
+  1. Fixes Name <-> Position column swap on print-roster parsing.
+  2. Filters out sub-split duplicate rows (preventing the 120+ duplicate batter/pitcher issue).
+  3. Corrects Oral Roberts HTML table parsing & player identification.
+  4. Supports St. Thomas, SDSU, Northern Colorado, Omaha, Oral Roberts, NDSU, and Non-Conf.
 """
+
+from __future__ import annotations
 
 import argparse
 import asyncio
@@ -33,31 +19,36 @@ import json
 import logging
 import os
 import re
+import sys
 import time
+import urllib.request
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup
-from playwright.async_api import async_playwright, BrowserContext, Page
+from playwright.async_api import BrowserContext, Page, async_playwright
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger("baseball")
+sys.setrecursionlimit(20000)
 
-CONCURRENCY_LIMIT = 4
 DEFAULT_DOCS_DIR = "docs"
-MIN_ROSTER_ENTRIES = 10
 NON_CONF_CONFIG_PATH = "non_conf_config.json"
-NON_CONF_SLUG = "non_conf"
+NON_CONF_ID = "non_conf"
+NON_CONF_FILE = "non_conf.json"
+CONCURRENCY_LIMIT = 4
 
-# ── Summit League Baseball Configuration ───────────────────────────────────────
-SCHOOLS = [
+# Stat field keys
+BATTING_FIELDS = ["AVG", "R", "H", "2B", "3B", "HR", "RBI", "OPS", "SLG%"]
+PITCHING_FIELDS = ["ERA", "WHIP", "W-L", "IP", "SO"]
+
+# ── Summit League Baseball Programs ───────────────────────────────────────────
+TEAMS = [
     {
         "id": "stthomas",
         "name": "St. Thomas Tommies",
-        "shortName": "St. Thomas",
+        "type": "sidearm",
         "stats_url": "https://tommiesports.com/sports/baseball/stats/{year}",
         "roster_url": "https://tommiesports.com/sports/baseball/roster/print",
         "out_file": "stthomas.json",
@@ -66,543 +57,476 @@ SCHOOLS = [
     {
         "id": "sdstate",
         "name": "South Dakota State Jackrabbits",
-        "shortName": "South Dakota State",
+        "type": "sidearm",
         "stats_url": "https://gojacks.com/sports/baseball/stats/{year}",
         "roster_url": "https://gojacks.com/sports/baseball/roster/print",
         "out_file": "sdstate.json"
     },
     {
-        "id": "oru",
-        "name": "Oral Roberts Golden Eagles",
-        "shortName": "Oral Roberts",
-        "stats_url": "https://oruathletics.com/sports/baseball/stats/{year}",
-        "roster_url": "https://oruathletics.com/sports/baseball/roster?print=true",
-        "out_file": "oru.json"
-    },
-    {
-        "id": "omaha",
-        "name": "Omaha Mavericks",
-        "shortName": "Omaha",
-        "stats_url": "https://omahamavs.com/sports/baseball/stats/{year}",
-        "roster_url": "https://omahamavs.com/sports/baseball/roster/print",
-        "out_file": "omaha.json"
-    },
-    {
         "id": "uncbears",
         "name": "Northern Colorado Bears",
-        "shortName": "Northern Colorado",
+        "type": "sidearm",
         "stats_url": "https://uncbears.com/sports/baseball/stats/{year}",
         "roster_url": "https://uncbears.com/sports/baseball/roster/print",
         "out_file": "uncbears.json"
     },
     {
+        "id": "omaha",
+        "name": "Omaha Mavericks",
+        "type": "sidearm",
+        "stats_url": "https://omahamavs.com/sports/baseball/stats/{year}",
+        "roster_url": "https://omahamavs.com/sports/baseball/roster/print",
+        "out_file": "omaha.json"
+    },
+    {
+        "id": "oru",
+        "name": "Oral Roberts Golden Eagles",
+        "type": "sidearm",
+        "stats_url": "https://oruathletics.com/sports/baseball/stats/{year}",
+        "roster_url": "https://oruathletics.com/sports/baseball/roster?print=true",
+        "out_file": "oru.json"
+    },
+    {
         "id": "ndsu",
         "name": "North Dakota State Bison",
-        "shortName": "North Dakota State",
+        "type": "statbroadcast",
         "stats_url": "https://stats.gobison.com/custompages/bsb/{year}/teamcume.htm",
-        "sidearm_stats_url": "https://gobison.com/sports/baseball/stats/{year}",
+        "fallback_stats_url": "https://gobison.com/sports/baseball/stats/{year}",
         "roster_url": "https://gobison.com/sports/baseball/roster/print",
         "out_file": "ndsu.json"
     }
 ]
 
-DISCARD_EXACT_TOKENS = {
-    "avg", "ab", "r", "h", "2b", "3b", "hr", "rbi", "tb", "slg%", "bb", "hbp",
-    "so", "gdp", "ob%", "sf", "sh", "sb-att", "era", "whip", "w-l", "app", "gs",
-    "cg", "sho", "sv", "ip", "er", "total", "totals", "opponent", "opponents",
-    "player", "no.", "name", "pos.", "ht.", "wt.", "cl.", "hometown", "high school",
-    "view bio", "bio", "team", "tm", "#tm", "unassigned"
+FETCH_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
-STAFF_KEYWORDS = [
-    "coach", "trainer", "director", "coordinator", "manager", "athletic",
-    "operations", "strength", "conditioning", "physician", "assistant",
-    "communications", "compliance", "academic", "marketing"
-]
+# ── Cleaners & Evaluators ─────────────────────────────────────────────────────
+_BLANK = {"", "-1", "none", "null", "nan", "n/a", "na", "-", "--", "---", "-.---", "—"}
 
-_CLASS_MAP = {
-    "FR": "FR", "FRESHMAN": "FR", "FY": "FR", "FIRST": "FR", "FIRSTYEAR": "FR", "1ST": "FR", "1": "FR",
-    "SO": "SO", "SOPHOMORE": "SO", "SECOND": "SO", "SECONDYEAR": "SO", "2ND": "SO", "2": "SO",
-    "JR": "JR", "JUNIOR": "JR", "THIRD": "JR", "THIRDYEAR": "JR", "3RD": "JR", "3": "JR",
-    "SR": "SR", "SENIOR": "SR", "FOURTH": "SR", "FOURTHYEAR": "SR", "4TH": "SR", "4": "SR",
-    "GR": "GR", "GRAD": "GR", "GRADUATE": "GR", "GRADUATESTUDENT": "GR", "GS": "GR", "5TH": "GR"
-}
-
-
-# ── Cleaners & Normalization ──────────────────────────────────────────────────
+def _s(v: Any) -> str:
+    if v is None or isinstance(v, bool):
+        return ""
+    return str(v).replace("\xa0", " ").strip()
 
 def clean_val(v: Any, default: str = "0") -> str:
-    if v is None:
+    if v is None or _s(v).lower() in _BLANK:
         return default
-    s = str(v).strip().replace("\xa0", "").replace("&nbsp;", "")
-    if s in ("-1", "", "None", "--", "---", "-.---", "-"):
-        return default
+    s = _s(v).replace(",", "")
     try:
-        f = float(s)
-        return str(int(round(f)))
-    except Exception:
+        return str(int(round(float(s))))
+    except ValueError:
         m = re.match(r"^(\d+)", s)
         return m.group(1) if m else default
 
-
 def clean_avg(v: Any, default: str = ".000") -> str:
-    if v is None:
-        return default
-    s = str(v).strip().replace("\xa0", "").replace("&nbsp;", "").replace("%", "")
-    if s in ("-1", "", "None", "-", "--", "---", "-.---", "N/A", "na"):
+    s = _s(v).replace(" ", "")
+    if s.lower() in _BLANK:
         return default
     try:
-        num = float(s)
-        if num == 0.0:
-            return default
-        if default == ".000":
-            if num > 1.0:
-                num = num / 100.0
-            if num >= 1.0:
-                return "1.000"
-            formatted = f"{num:.3f}"
-            return formatted.lstrip("0") if formatted.startswith("0.") else formatted
-        return f"{num:.2f}"
-    except Exception:
+        f = float(s)
+    except ValueError:
+        return default
+    if f < 1:
+        return f"{f:.3f}".lstrip("0") if f > 0 else ".000"
+    return f"{f:.3f}"
+
+def clean_rate(v: Any, default: str = "-") -> str:
+    s = _s(v).replace(" ", "")
+    if s.lower() in _BLANK:
+        return default
+    if s.lower() in ("inf", "infinity", "∞"):
+        return "INF"
+    try:
+        return f"{float(s):.2f}"
+    except ValueError:
         return default
 
+def clean_ip(v: Any, default: str = "0.0") -> str:
+    s = _s(v).replace(" ", "")
+    if s.lower() in _BLANK:
+        return default
+    if re.fullmatch(r"\d+", s):
+        return s + ".0"
+    m = re.match(r"^(\d+)\.(\d)", s)
+    return f"{m.group(1)}.{m.group(2)}" if m else default
+
+def clean_wl(v: Any) -> str:
+    s = _s(v).replace(" ", "")
+    return s if re.fullmatch(r"\d+-\d+", s) else "0-0"
 
 def parse_float(v: Any) -> float:
     try:
-        return float(str(v).replace("-", "0").replace("\xa0", "").replace(",", "").strip())
-    except (ValueError, TypeError):
+        return float(_s(v).replace(",", "").replace("-", "0"))
+    except ValueError:
         return 0.0
 
-
-def parse_ip(ip_str: Any) -> float:
-    """Handles baseball IP format: '42.1' = 42 and 1/3 innings."""
-    try:
-        parts = str(ip_str).strip().split(".")
-        full = int(parts[0])
-        outs = int(parts[1]) if len(parts) > 1 else 0
-        return full + (outs / 3.0)
-    except Exception:
+def parse_ip(v: Any) -> float:
+    m = re.match(r"^(\d+)(?:\.(\d))?", _s(v))
+    if not m:
         return 0.0
+    return int(m.group(1)) + min(int(m.group(2) or 0), 2) / 3.0
 
+def compute_ops(obp: Any, slg: Any) -> str:
+    return clean_avg(parse_float(obp) + parse_float(slg))
 
-def compute_ops(obp_str: str, slg_str: str) -> str:
-    try:
-        total = parse_float(obp_str) + parse_float(slg_str)
-        if total == 0:
-            return ".000"
-        formatted = f"{total:.3f}"
-        return formatted.lstrip("0") if formatted.startswith("0.") else formatted
-    except Exception:
-        return ".000"
-
-
-def compute_whip(bb: str, h: str, ip_str: str) -> str:
-    try:
-        ip_dec = parse_ip(ip_str)
-        if ip_dec <= 0:
-            return "-"
-        return f"{(parse_float(bb) + parse_float(h)) / ip_dec:.2f}"
-    except Exception:
+def compute_whip(bb: Any, h: Any, ip: Any) -> str:
+    innings = parse_ip(ip)
+    if innings <= 0:
         return "-"
+    return f"{(parse_float(bb) + parse_float(h)) / innings:.2f}"
 
+# ── Name, Number, Position & Academic Year Helpers ─────────────────────────────
+_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+_POS_TOKENS = {
+    "P", "RHP", "LHP", "C", "1B", "2B", "3B", "SS", "IF", "INF", "MIF", "CIF",
+    "OF", "LF", "CF", "RF", "DH", "UT", "UTL", "UTIL",
+}
+_POS_WORDS = {
+    "PITCHER": "P", "CATCHER": "C", "INFIELDER": "INF", "OUTFIELDER": "OF", "UTILITY": "UTIL",
+    "RIGHTHANDEDPITCHER": "RHP", "LEFTHANDEDPITCHER": "LHP", "FIRSTBASE": "1B", "SECONDBASE": "2B",
+    "THIRDBASE": "3B", "SHORTSTOP": "SS",
+}
 
-def format_player_name(raw_name: str) -> str:
+_CLASS_BASE = {
+    "FR": "Fr.", "FRESH": "Fr.", "FRESHMAN": "Fr.", "FIRSTYEAR": "Fr.", "1ST": "Fr.", "1STYEAR": "Fr.", "1": "Fr.",
+    "SO": "So.", "SOPH": "So.", "SOPHOMORE": "So.", "SECONDYEAR": "So.", "2ND": "So.", "2NDYEAR": "So.", "2": "So.",
+    "JR": "Jr.", "JUNIOR": "Jr.", "THIRDYEAR": "Jr.", "3RD": "Jr.", "3RDYEAR": "Jr.", "3": "Jr.",
+    "SR": "Sr.", "SENIOR": "Sr.", "FOURTHYEAR": "Sr.", "4TH": "Sr.", "4THYEAR": "Sr.", "4": "Sr.",
+    "GR": "Gr.", "GRAD": "Gr.", "GRADUATE": "Gr.", "GRADSTUDENT": "Gr.", "GRADUATESTUDENT": "Gr.",
+    "5TH": "Gr.", "5THYEAR": "Gr.", "FIFTHYEAR": "Gr.", "5": "Gr.", "6TH": "Gr.",
+}
+
+def format_player_name(raw: Any) -> str:
     """Normalizes 'Lastname, Firstname' or 'Firstname Lastname' into clean 'Firstname Lastname'."""
-    if not raw_name:
+    if not raw:
         return ""
-    name = str(raw_name).strip()
-    name = name.replace("View Bio", "").replace("Image", "").strip()
-    name = re.sub(r"['\"]+", "", name).strip()
-    name = re.sub(r"\([^)]*\)", "", name)
-    name = re.sub(r"#\d{1,2}\b", " ", name)
-    name = re.sub(r"^\d+\s+", "", name).strip()
+    name = _s(raw)
+    name = re.sub(r"(?i)\bview bio\b|\bimage\b|\bjersey number\b", " ", name)
+    name = re.sub(r"\([^)]*\)", " ", name)
+    name = name.replace('"', " ").replace("\u201c", " ").replace("\u201d", " ")
+    name = re.sub(r"#\s*\d+", " ", name)
+    name = re.sub(r"\s+", " ", name).strip()
+    if not name or "@" in name or "//" in name:
+        return ""
 
     if "," in name:
         parts = [p.strip() for p in name.split(",", 1)]
-        p1 = re.sub(r"\b\d{1,2}\b", "", parts[0]).strip()
-        p2 = re.sub(r"\b\d{1,2}\b", "", parts[1]).strip() if len(parts) > 1 else ""
-        if p1 and p2:
-            name = f"{p2} {p1}"
+        last = parts[0]
+        first = parts[1] if len(parts) > 1 else ""
+        if re.sub(r"[^a-z]", "", first.lower()) in _SUFFIXES:
+            name = f"{last} {first}"
+        elif first:
+            name = f"{first} {last}"
         else:
-            name = p2 or p1
+            name = last
 
-    name = re.sub(r"\b\d{1,2}\b", "", name)
-    name = " ".join(name.split()).strip()
-    return name
+    # Remove duplicated glued strings e.g. "John SmithJohn Smith"
+    words = name.split()
+    half = len(words) // 2
+    if len(words) >= 4 and len(words) % 2 == 0 and words[:half] == words[half:]:
+        name = " ".join(words[:half])
 
+    return name.title() if name.isupper() else name
 
-def normalize_position(pos_str: str) -> str:
-    if not pos_str:
-        return ""
-    p = pos_str.upper().strip().rstrip(".")
-    if re.fullmatch(r"(RHP|LHP|PITCHER|P|RELIEF PITCHER|SP|RP)", p):
-        return p if p in ("RHP", "LHP") else "P"
-    if re.fullmatch(r"(C|CATCHER)", p):
-        return "C"
-    if re.fullmatch(r"(INF|INFIELDER|1B|2B|3B|SS|FIRST BASE|SECOND BASE|THIRD BASE|SHORTSTOP)", p):
-        return p if p in ("1B", "2B", "3B", "SS", "INF") else "INF"
-    if re.fullmatch(r"(OF|OUTFIELDER|LF|CF|RF|LEFT FIELD|CENTER FIELD|RIGHT FIELD)", p):
-        return p if p in ("LF", "CF", "RF", "OF") else "OF"
-    if re.fullmatch(r"(DH|UTIL|UTL|DESIGNATED HITTER|UTILITY)", p):
-        return "DH" if "DH" in p else "UTIL"
-    return p[:6]
-
-
-def normalize_year(yr_str: str) -> str:
-    if not yr_str:
-        return ""
-    y = re.sub(r"[^A-Z0-9]", "", str(yr_str).upper())
-    if not y:
-        return ""
-    if y in _CLASS_MAP:
-        return _CLASS_MAP[y]
-    for prefix in ("REDSHIRT", "RS", "R"):
-        if y.startswith(prefix):
-            rem = y[len(prefix):]
-            if rem in _CLASS_MAP:
-                base = _CLASS_MAP[rem]
-                return f"R-{base}" if base != "GR" else "GR"
-    return ""
-
-
-def clean_number(raw_num: Any) -> str:
-    if raw_num is None:
-        return ""
-    text = str(raw_num).strip().replace("#", "")
-    if text.upper() in ("TM", "TEAM", "TOT", "TOTAL"):
-        return ""
-    m = re.match(r"^(\d{1,2})$", text)
-    if not m:
-        return ""
-    return str(int(m.group(1)))
-
-
-def is_valid_player_name(name: str) -> bool:
-    if not name or len(name.strip()) < 2:
+def is_valid_player_name(name: Any) -> bool:
+    n = _s(name)
+    if len(n) < 3 or not re.search(r"[A-Za-z]", n):
         return False
-    raw_low = name.strip().lower()
-    condensed = re.sub(r"[\s\-_#]+", "", raw_low)
-    if raw_low in DISCARD_EXACT_TOKENS or condensed in DISCARD_EXACT_TOKENS:
+    low = n.lower()
+    if any(k in low for k in ("//", "totals", "opponents", "team", "score", "game", "date")):
         return False
-    if any(tok in condensed for tok in ["teamtm", "teamteam", "tmteam", "total", "opponent", "opponents"]):
-        return False
-    if any(staff in raw_low for staff in STAFF_KEYWORDS):
+    if re.fullmatch(r"[\d.\-/%\s]+", low):
         return False
     return True
 
+def normalize_name_for_match(raw_name: Any) -> Tuple[str, str]:
+    clean_n = format_player_name(raw_name).lower()
+    clean_n = re.sub(r"[^a-z\s]", "", clean_n)
+    tokens = [t for t in clean_n.split() if t not in _SUFFIXES]
+    if not tokens:
+        return "", ""
+    if len(tokens) == 1:
+        return "", tokens[0]
+    return tokens[0], tokens[-1]
 
-# ── Non-Conf Config Helpers ───────────────────────────────────────────────────
+def normalize_position(s: Any) -> str:
+    t = _s(s).upper().replace(".", "")
+    if not t:
+        return ""
+    t = re.sub(r"\s*[/,&]\s*", "/", t)
+    parts = [p for p in t.split("/") if p.strip()]
+    out: List[str] = []
+    for p in parts:
+        key = re.sub(r"[^A-Z0-9]", "", p)
+        if key in _POS_TOKENS:
+            out.append(key)
+        elif key in _POS_WORDS:
+            out.append(_POS_WORDS[key])
+        else:
+            return ""
+    return "/".join(out)
 
-def load_non_conf_config() -> Dict[str, str]:
-    cfg = {"name": "", "stats_url": "", "roster_url": ""}
+def normalize_year(s: Any) -> str:
+    y = re.sub(r"[^A-Z0-9]", "", _s(s).upper())
+    if not y:
+        return ""
+    if y in _CLASS_BASE:
+        return _CLASS_BASE[y]
+    for prefix in ("REDSHIRT", "RS", "R"):
+        if y.startswith(prefix):
+            base = _CLASS_BASE.get(y[len(prefix):])
+            if base:
+                return base if base == "Gr." else f"R-{base}"
+    return ""
+
+# ── Nuxt 3 Resolver ────────────────────────────────────────────────────────────
+_NUXT_WRAPPERS = {"Reactive", "ShallowReactive", "Ref", "ShallowRef", "EmptyRef", "EmptyShallowRef"}
+
+def resolve_nuxt_payload(raw_json_str: str) -> Optional[List[Any]]:
     try:
-        with open(NON_CONF_CONFIG_PATH, encoding="utf-8") as f:
-            raw = json.load(f)
-        if isinstance(raw, dict):
-            # Supports {"baseball": {...}} or direct {...}
-            entry = raw.get("baseball") if "baseball" in raw else raw
-            if isinstance(entry, dict):
-                for k in ("name", "stats_url", "roster_url"):
-                    cfg[k] = str(entry.get(k, "") or "").strip()
-    except FileNotFoundError:
-        logger.info(f"{NON_CONF_CONFIG_PATH} not found - Non-Conf baseball slot is empty")
-    except Exception as e:
-        logger.error(f"Could not read {NON_CONF_CONFIG_PATH}: {e}")
-    return cfg
-
-
-def derive_roster_candidates(stats_url: str) -> List[str]:
-    base = stats_url.strip().split("#")[0].split("?")[0].rstrip("/")
-    m = re.match(r"^(.*?)/stats(?:/(\d{4}))?$", base)
-    if not m:
-        return []
-    root, season = m.group(1), m.group(2)
-    cands: List[str] = []
-    if season:
-        cands += [f"{root}/roster/print/{season}", f"{root}/roster/{season}?print=true"]
-    cands += [f"{root}/roster/print", f"{root}/roster?print=true"]
-    if season:
-        cands.append(f"{root}/roster/{season}")
-    cands.append(f"{root}/roster")
-    seen, unique = set(), []
-    for c in cands:
-        if c not in seen:
-            seen.add(c)
-            unique.append(c)
-    return unique
-
-
-def detect_team_name(html: Optional[str], url: str) -> str:
-    host = urlparse(url).netloc.lower().replace("www.", "")
-    if html:
-        try:
-            soup = BeautifulSoup(html, "html.parser")
-            og = soup.find("meta", attrs={"property": "og:site_name"})
-            if og and og.get("content", "").strip():
-                return og["content"].strip()
-            if soup.title and soup.title.string:
-                parts = re.split(r"\s+[|\-–—]\s+", soup.title.string.strip())
-                good = [p for p in parts if p.strip() and not re.search(r"stat|baseball|roster|\d{4}", p, re.I)]
-                if good:
-                    return good[-1].strip()
-        except Exception:
-            pass
-    return host or "Non-Conf Opponent"
-
-
-# ── Roster Parser ─────────────────────────────────────────────────────────────
-
-def parse_print_roster(html: str) -> Dict[str, Dict[str, str]]:
-    roster_lookup: Dict[str, Dict[str, str]] = {}
-    if not html:
-        return roster_lookup
-
-    # 1. Try Nuxt Data Script first
-    tag = re.search(r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>', html, re.DOTALL)
-    if tag:
-        try:
-            pool = json.loads(tag.group(1))
-            if isinstance(pool, list):
-                def resolve(v):
-                    if isinstance(v, int) and 0 <= v < len(pool):
-                        t = pool[v]
-                        if isinstance(t, (str, int, float)):
-                            return str(t)
-                    return str(v) if v is not None else ""
-
-                for item in pool:
-                    if isinstance(item, dict):
-                        raw_name = item.get("name") or item.get("playerName") or item.get("fullName")
-                        if not raw_name:
-                            continue
-                        c_name = format_player_name(resolve(raw_name))
-                        if not is_valid_player_name(c_name):
-                            continue
-                        c_num = clean_number(resolve(item.get("uniform") or item.get("jersey") or item.get("jerseyNumber")))
-                        c_pos = normalize_position(resolve(item.get("position") or item.get("pos") or item.get("positionShort")))
-                        c_yr = normalize_year(resolve(item.get("academicYear") or item.get("year") or item.get("class")))
-                        info = {"name": c_name, "number": c_num, "position": c_pos, "year": c_yr}
-                        roster_lookup[c_name.lower()] = info
-                        if c_num:
-                            roster_lookup[f"#{c_num}"] = info
-        except Exception:
-            pass
-
-    if len(roster_lookup) >= 8:
-        return roster_lookup
-
-    # 2. BeautifulSoup HTML Roster Parsing
-    soup = BeautifulSoup(html, "html.parser")
-    for staff in soup.find_all(class_=re.compile(r"staff|coaches|coach", re.I)):
-        staff.decompose()
-
-    for row in soup.find_all("tr"):
-        cells = [c.get_text(strip=True) for c in row.find_all(["td", "th"])]
-        if len(cells) < 3:
-            continue
-        num, pos, yr, name_cand = "", "", "", ""
-        for col in cells:
-            if not num and re.match(r"^\d{1,2}$", col):
-                num = clean_number(col)
-                continue
-            if not pos and normalize_position(col):
-                pos = normalize_position(col)
-                continue
-            if not yr and normalize_year(col):
-                yr = normalize_year(col)
-                continue
-            c_clean = format_player_name(col)
-            if not name_cand and is_valid_player_name(c_clean):
-                name_cand = c_clean
-
-        if name_cand and is_valid_player_name(name_cand):
-            info = {"name": name_cand, "number": num, "position": pos, "year": yr}
-            roster_lookup[name_cand.lower()] = info
-            if num:
-                roster_lookup[f"#{num}"] = info
-
-    return roster_lookup
-
-
-def find_roster_entry(name: str, number: str, roster_lookup: Dict[str, Dict[str, str]]) -> Optional[Dict[str, str]]:
-    if not roster_lookup:
-        return None
-    raw_low = name.lower().strip()
-    if raw_low in roster_lookup:
-        return roster_lookup[raw_low]
-    if number and f"#{number}" in roster_lookup:
-        return roster_lookup[f"#{number}"]
-
-    parts = raw_low.split()
-    if parts:
-        last = parts[-1]
-        for k, v in roster_lookup.items():
-            if k.startswith("#"):
-                continue
-            if k.split() and k.split()[-1] == last:
-                if not number or v.get("number") == number:
-                    return v
-
-    names = [k for k in roster_lookup.keys() if not k.startswith("#")]
-    close = difflib.get_close_matches(raw_low, names, n=1, cutoff=0.75)
-    if close:
-        return roster_lookup[close[0]]
-    return None
-
-
-# ── Sidearm Nuxt 3 & HTML Extractors ──────────────────────────────────────────
-
-def extract_sidearm_nuxt(html: str) -> Optional[Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]]:
-    tag = re.search(r'<script[^>]+id=["\']__NUXT_DATA__["\'][^>]*>(.*?)</script>', html, re.DOTALL)
-    if not tag:
-        return None
-    try:
-        pool = json.loads(tag.group(1))
-        if not isinstance(pool, list):
-            return None
-
-        def resolve(v):
-            if isinstance(v, int) and 0 <= v < len(pool):
-                t = pool[v]
-                if isinstance(t, (str, int, float)):
-                    return str(t)
-            return str(v) if v is not None else ""
-
-        def find_stat(item: dict, keys: List[str], default: str = "0") -> str:
-            for k in keys:
-                v = item.get(k)
-                if v is not None:
-                    res = resolve(v).strip()
-                    if res and res != "None" and res.lower() not in DISCARD_EXACT_TOKENS:
-                        return res
-            return default
-
-        batting_list = []
-        pitching_list = []
-
-        for item in pool:
-            if not isinstance(item, dict) or item.get("isAFooterStat") is True:
-                continue
-
-            raw_name = item.get("playerName") or item.get("name") or item.get("fullName") or item.get("displayName")
-            if not raw_name:
-                continue
-
-            c_name = format_player_name(resolve(raw_name))
-            if not is_valid_player_name(c_name):
-                continue
-
-            c_num = clean_number(resolve(item.get("playerUniform") or item.get("jersey") or item.get("uniform")))
-            c_pos = normalize_position(resolve(item.get("position") or item.get("pos")))
-            c_yr = normalize_year(resolve(item.get("academicYear") or item.get("year") or item.get("class")))
-
-            # Hitting extraction
-            ab = find_stat(item, ["atBats", "ab", "at_bats"])
-            h = find_stat(item, ["hits", "h"])
-            r = find_stat(item, ["runs", "r"])
-            d2 = find_stat(item, ["doubles", "2b", "two_base_hits"])
-            d3 = find_stat(item, ["triples", "3b", "three_base_hits"])
-            hr = find_stat(item, ["homeRuns", "hr", "home_runs"])
-            rbi = find_stat(item, ["runsBattedIn", "rbi", "runs_batted_in"])
-            avg = clean_avg(find_stat(item, ["battingAverage", "avg", "batting_average"], ".000"))
-            slg = clean_avg(find_stat(item, ["sluggingPercentage", "slg", "slugging_pct"], ".000"))
-            obp = clean_avg(find_stat(item, ["onBasePercentage", "obp", "on_base_pct"], ".000"))
-            ops = clean_avg(find_stat(item, ["ops", "onBasePlusSlugging"], compute_ops(obp, slg)))
-
-            if parse_float(ab) > 0 or parse_float(h) > 0 or avg != ".000":
-                batting_list.append({
-                    "number": c_num,
-                    "player": c_name,
-                    "position": c_pos,
-                    "year": c_yr,
-                    "AVG": avg,
-                    "R": clean_val(r),
-                    "H": clean_val(h),
-                    "2B": clean_val(d2),
-                    "3B": clean_val(d3),
-                    "HR": clean_val(hr),
-                    "RBI": clean_val(rbi),
-                    "OPS": ops,
-                    "SLG%": slg
-                })
-
-            # Pitching extraction
-            ip = find_stat(item, ["inningsPitched", "ip", "innings_pitched"], "0.0")
-            era = clean_avg(find_stat(item, ["earnedRunAverage", "era", "earned_run_avg"], "-"), "-")
-            whip = clean_avg(find_stat(item, ["whip"], "-"), "-")
-            wins = clean_val(find_stat(item, ["wins", "w"]))
-            loss = clean_val(find_stat(item, ["losses", "l"]))
-            so = clean_val(find_stat(item, ["strikeoutsPitching", "so", "strikeouts", "pitchingStrikeouts"]))
-
-            if parse_float(ip) > 0 or (era != "-" and era != ".000"):
-                pitching_list.append({
-                    "number": c_num,
-                    "player": c_name,
-                    "position": c_pos or "P",
-                    "year": c_yr,
-                    "ERA": era,
-                    "WHIP": whip,
-                    "W-L": f"{wins}-{loss}",
-                    "IP": ip,
-                    "SO": so
-                })
-
-        if batting_list or pitching_list:
-            return batting_list, pitching_list
+        pool = json.loads(raw_json_str)
     except Exception:
-        pass
-    return None
+        return None
+    if not isinstance(pool, list):
+        return pool
 
+    memo: Dict[int, Any] = {}
 
-def extract_sidearm_html_tables(soup: BeautifulSoup) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    batting_list = []
-    pitching_list = []
+    def resolve(idx: Any) -> Any:
+        if not isinstance(idx, int) or isinstance(idx, bool):
+            return idx
+        if idx < 0 or idx >= len(pool):
+            return None
+        if idx in memo:
+            return memo[idx]
+        node = pool[idx]
+        if isinstance(node, dict):
+            out: Dict[str, Any] = {}
+            memo[idx] = out
+            for k, v in node.items():
+                out[k] = resolve(v)
+            return out
+        if isinstance(node, list):
+            if len(node) == 2 and isinstance(node[0], str) and node[0] in _NUXT_WRAPPERS:
+                memo[idx] = None
+                res = resolve(node[1])
+                memo[idx] = res
+                return res
+            lst: List[Any] = []
+            memo[idx] = lst
+            for v in node:
+                lst.append(resolve(v))
+            return lst
+        memo[idx] = node
+        return node
 
-    def get_cell(tr, label, default="0"):
-        td = tr.find(lambda tag: tag.name in ["td", "th"] and tag.get("data-label", "").lower() == label.lower())
-        if td:
-            return td.get_text(" ", strip=True)
-        return default
+    return [resolve(i) for i in range(len(pool))]
 
-    # Batting
-    batting_section = soup.find(id=re.compile(r"batting", re.I)) or soup.find("table", class_=re.compile(r"batting", re.I))
-    batting_table = batting_section.find("table") if (batting_section and batting_section.name != "table") else batting_section
-
-    if not batting_table:
-        for t in soup.find_all("table"):
-            cap = t.find("caption")
-            if cap and "batting" in cap.get_text().lower():
-                batting_table = t
-                break
-
-    if batting_table:
-        tbody = batting_table.find("tbody") or batting_table
-        for tr in tbody.find_all("tr"):
-            num_el = tr.find(class_=re.compile(r"jersey|number", re.I)) or tr.find("td")
-            num = clean_number(num_el.get_text(strip=True)) if num_el else ""
-            name_a = tr.find("a", href=re.compile(r"roster", re.I)) or tr.find("a")
-            raw_name = name_a.get_text(strip=True) if name_a else (tr.find_all("td")[1].get_text(strip=True) if len(tr.find_all("td")) > 1 else "")
-            name = format_player_name(raw_name)
-            if not is_valid_player_name(name):
+def iter_dicts(root: Any) -> Iterator[Dict[str, Any]]:
+    stack = [root]
+    seen: set = set()
+    while stack:
+        o = stack.pop()
+        if isinstance(o, (dict, list)):
+            if id(o) in seen:
                 continue
+            seen.add(id(o))
+            if isinstance(o, dict):
+                yield o
+                stack.extend(o.values())
+            else:
+                stack.extend(o)
 
-            avg = clean_avg(get_cell(tr, "AVG", ".000"))
-            ab = clean_val(get_cell(tr, "AB", "0"))
-            r = clean_val(get_cell(tr, "R", "0"))
-            h = clean_val(get_cell(tr, "H", "0"))
-            d2 = clean_val(get_cell(tr, "2B", "0"))
-            d3 = clean_val(get_cell(tr, "3B", "0"))
-            hr = clean_val(get_cell(tr, "HR", "0"))
-            rbi = clean_val(get_cell(tr, "RBI", "0"))
-            ops = clean_avg(get_cell(tr, "OPS", ".000"))
-            slg = clean_avg(get_cell(tr, "SLG%", ".000"))
+# ── Roster Parser ──────────────────────────────────────────────────────────────
+def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[str, str]]]:
+    soup = BeautifulSoup(html, "html.parser")
+    roster_by_num: Dict[str, Dict[str, str]] = {}
+    roster_list: List[Dict[str, str]] = []
 
-            if parse_float(ab) > 0 or parse_float(h) > 0 or avg != ".000":
-                batting_list.append({
-                    "number": num,
-                    "player": name,
-                    "position": "",
-                    "year": "",
+    def record_player(num: Any, name: Any, pos: Any, yr: Any):
+        cleaned_num = re.sub(r"[^\d]", "", _s(num))
+        formatted_name = format_player_name(name)
+        norm_pos = normalize_position(pos)
+        norm_yr = normalize_year(yr)
+
+        # Disallow inverted assignments
+        if not norm_pos and normalize_position(yr):
+            norm_pos = normalize_position(yr)
+        if not norm_yr and normalize_year(pos):
+            norm_yr = normalize_year(pos)
+
+        if is_valid_player_name(formatted_name) and (cleaned_num or norm_pos or norm_yr):
+            item = {
+                "number": cleaned_num if cleaned_num else "999",
+                "name": formatted_name,
+                "position": norm_pos,
+                "year": norm_yr
+            }
+            roster_list.append(item)
+            if cleaned_num:
+                roster_by_num[cleaned_num] = item
+
+    # 1. Check Classic HTML Table rows
+    for tr in soup.find_all("tr"):
+        cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
+        if len(cells) >= 3:
+            row_str = " ".join(cells).lower()
+            if any(h in row_str for h in ["hometown", "high school", "wt", "ht", "b/t", "player", "pos"]):
+                # Classify cells by actual content type
+                c_num, c_name, c_pos, c_yr = "", "", "", ""
+                for c in cells:
+                    if not c_num and re.fullmatch(r"#?\d{1,2}", c):
+                        c_num = c
+                    elif not c_pos and normalize_position(c):
+                        c_pos = c
+                    elif not c_yr and normalize_year(c):
+                        c_yr = c
+                    elif not c_name and is_valid_player_name(c) and len(c.split()) >= 2:
+                        c_name = c
+                if c_name:
+                    record_player(c_num, c_name, c_pos, c_yr)
+
+    # 2. Sidearm Roster Player Cards
+    if len(roster_list) < 5:
+        cards = soup.select(".sidearm-roster-player, .sidearm-roster-item, [class*='roster-player-item']")
+        for card in cards:
+            name_el = card.select_one(".sidearm-roster-player-name, h3, .roster-player-name")
+            num_el = card.select_one(".sidearm-roster-player-jersey-number, .roster-jersey")
+            pos_el = card.select_one(".sidearm-roster-player-position, .roster-position")
+            yr_el = card.select_one(".sidearm-roster-player-academic-year, .roster-class")
+
+            name = name_el.get_text(" ", strip=True) if name_el else ""
+            num = num_el.get_text(strip=True) if num_el else ""
+            pos = pos_el.get_text(" ", strip=True) if pos_el else ""
+            yr = yr_el.get_text(" ", strip=True) if yr_el else ""
+            if name:
+                record_player(num, name, pos, yr)
+
+    # 3. Fallback to Nuxt script tag on roster page
+    if len(roster_list) < 5:
+        tag = soup.find("script", id="__NUXT_DATA__")
+        if tag and tag.string:
+            pool = resolve_nuxt_payload(tag.string.strip())
+            if pool:
+                for rec in iter_dicts(pool):
+                    num = _s(rec.get("jerseyNumber", rec.get("uniform", "")))
+                    name = _s(rec.get("playerName", rec.get("name", "")))
+                    pos = _s(rec.get("positionShort", rec.get("position", "")))
+                    yr = _s(rec.get("academicYearShort", rec.get("academicYear", "")))
+                    if name and (num or pos):
+                        record_player(num, name, pos, yr)
+
+    return roster_by_num, roster_list
+
+def match_roster_meta(jersey_num: str, name: str, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[str, str, str]:
+    clean_num = _s(jersey_num).strip()
+    if clean_num in roster_by_num and clean_num not in ("999", ""):
+        entry = roster_by_num[clean_num]
+        return entry.get("name", name), entry.get("position", ""), entry.get("year", "")
+
+    s_first, s_last = normalize_name_for_match(name)
+    if s_last:
+        for r in roster_list:
+            r_first, r_last = normalize_name_for_match(r["name"])
+            if s_last == r_last:
+                if not s_first or not r_first or s_first == r_first or s_first.startswith(r_first) or r_first.startswith(s_first):
+                    return r.get("name", name), r.get("position", ""), r.get("year", "")
+
+    return format_player_name(name), "", ""
+
+# ── Nuxt 3 Stats Extractor ─────────────────────────────────────────────────────
+def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Optional[Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any], Dict[str, Any], Dict[int, Any]]]:
+    payload_str = None
+    tag = soup.find("script", id="__NUXT_DATA__")
+    if tag and tag.string:
+        payload_str = tag.string.strip()
+    else:
+        for script in soup.find_all("script"):
+            text = script.string or ""
+            if "overallIndividualStats" in text or "battingAverage" in text:
+                m = re.search(r"(\[.*\])", text, re.DOTALL)
+                if m:
+                    payload_str = m.group(1)
+                    break
+
+    if not payload_str:
+        return None
+
+    resolved_pool = resolve_nuxt_payload(payload_str)
+    if not resolved_pool:
+        return None
+
+    entries = []
+    for rec in iter_dicts(resolved_pool):
+        lst = rec.get("overallIndividualStats")
+        if isinstance(lst, list):
+            entries.extend(e for e in lst if isinstance(e, dict))
+
+    if not entries:
+        entries = [rec for rec in iter_dicts(resolved_pool) if "playerUniform" in rec]
+
+    if not entries:
+        return None
+
+    hitting_map: Dict[str, Dict[str, Any]] = {}
+    pitching_map: Dict[str, Dict[str, Any]] = {}
+    players_map: Dict[int, Any] = {}
+
+    for entry in entries:
+        if entry.get("isAFooterStat") == 1 or entry.get("isAFooterStat") is True:
+            continue
+
+        raw_num = _s(entry.get("playerUniform", ""))
+        raw_name = _s(entry.get("playerName", entry.get("name", "")))
+        if not raw_name or not is_valid_player_name(raw_name) or raw_name == "-1":
+            continue
+
+        clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+        try:
+            jersey_int = int(raw_num) if raw_num.isdigit() else 999
+        except ValueError:
+            jersey_int = 999
+
+        avg = clean_avg(entry.get("battingAverage"))
+        ab = clean_val(entry.get("atBats"))
+        r = clean_val(entry.get("runs"))
+        h = clean_val(entry.get("hits"))
+        d2 = clean_val(entry.get("doubles"))
+        d3 = clean_val(entry.get("triples"))
+        hr = clean_val(entry.get("homeRuns"))
+        rbi = clean_val(entry.get("runsBattedIn"))
+        ops = clean_avg(entry.get("ops"))
+        slg = clean_avg(entry.get("sluggingPercentage"))
+
+        era = clean_rate(entry.get("earnedRunAverage"))
+        whip = clean_rate(entry.get("whip"))
+        wins = clean_val(entry.get("wins"))
+        loss = clean_val(entry.get("losses"))
+        ip = clean_ip(entry.get("inningsPitched"))
+        so_raw = entry.get("strikeoutsPitching") or entry.get("strikeoutsAllowed") or entry.get("pitchingStrikeouts") or entry.get("strikeouts")
+        so = clean_val(so_raw)
+        wl = f"{wins}-{loss}"
+
+        has_batting = parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(r) > 0 or (avg != ".000" and avg != "-")
+        has_pitching = parse_ip(ip) > 0 or era != "-" or wins != "0" or loss != "0"
+
+        player_key = f"{jersey_int}_{clean_name.lower()}"
+
+        # Deduplicate and keep maximum volume season total line
+        if has_batting:
+            cur_bat = hitting_map.get(player_key)
+            if cur_bat is None or parse_float(ab) > parse_float(cur_bat.get("AB", 0)):
+                hitting_map[player_key] = {
+                    "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                    "player": clean_name,
+                    "position": pos,
+                    "year": yr,
                     "AVG": avg,
                     "R": r,
                     "H": h,
@@ -611,374 +535,386 @@ def extract_sidearm_html_tables(soup: BeautifulSoup) -> Tuple[List[Dict[str, Any
                     "HR": hr,
                     "RBI": rbi,
                     "OPS": ops,
-                    "SLG%": slg
-                })
+                    "SLG%": slg,
+                    "AB": ab,
+                    "_sort": jersey_int
+                }
 
-    # Pitching
-    pitching_section = soup.find(id=re.compile(r"pitching", re.I)) or soup.find("table", class_=re.compile(r"pitching", re.I))
-    pitching_table = pitching_section.find("table") if (pitching_section and pitching_section.name != "table") else pitching_section
-
-    if not pitching_table:
-        for t in soup.find_all("table"):
-            cap = t.find("caption")
-            if cap and "pitching" in cap.get_text().lower():
-                pitching_table = t
-                break
-
-    if pitching_table:
-        tbody = pitching_table.find("tbody") or pitching_table
-        for tr in tbody.find_all("tr"):
-            num_el = tr.find(class_=re.compile(r"jersey|number", re.I)) or tr.find("td")
-            num = clean_number(num_el.get_text(strip=True)) if num_el else ""
-            name_a = tr.find("a", href=re.compile(r"roster", re.I)) or tr.find("a")
-            raw_name = name_a.get_text(strip=True) if name_a else (tr.find_all("td")[1].get_text(strip=True) if len(tr.find_all("td")) > 1 else "")
-            name = format_player_name(raw_name)
-            if not is_valid_player_name(name):
-                continue
-
-            era = clean_avg(get_cell(tr, "ERA", "-"), "-")
-            whip = clean_avg(get_cell(tr, "WHIP", "-"), "-")
-            wl = get_cell(tr, "W-L", "0-0").strip()
-            ip = get_cell(tr, "IP", "0.0").strip()
-            so = clean_val(get_cell(tr, "SO", "0"))
-
-            if parse_float(ip) > 0 or era != "-":
-                pitching_list.append({
-                    "number": num,
-                    "player": name,
-                    "position": "P",
-                    "year": "",
+        if has_pitching:
+            cur_pit = pitching_map.get(player_key)
+            if cur_pit is None or parse_ip(ip) > parse_ip(cur_pit.get("IP", "0.0")):
+                pitching_map[player_key] = {
+                    "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                    "player": clean_name,
+                    "position": pos or "P",
+                    "year": yr,
                     "ERA": era,
                     "WHIP": whip,
                     "W-L": wl,
                     "IP": ip,
-                    "SO": so
-                })
+                    "SO": so,
+                    "_sort": jersey_int
+                }
 
-    return batting_list, pitching_list
+        if has_batting or has_pitching:
+            p = players_map.get(jersey_int, {
+                "jersey_number": jersey_int,
+                "player_name": clean_name,
+                "position": pos,
+                "year": yr
+            })
+            if has_batting:
+                p["batting_stats"] = {
+                    "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3, "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg
+                }
+            if has_pitching:
+                p["pitching_stats"] = {
+                    "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so
+                }
+            players_map[jersey_int] = p
 
+    hitting_list = list(hitting_map.values())
+    pitching_list = list(pitching_map.values())
 
-def extract_ndsu_statbroadcast(soup: BeautifulSoup) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    """Parses NDSU StatBroadcast static HTML cumulative stat table if Sidearm is unavailable."""
-    batting_list = []
-    pitching_list = []
+    for b in hitting_list:
+        b.pop("AB", None)
+
+    hitting_by_num = {b["number"]: {k: v for k, v in b.items() if k != "_sort"} for b in hitting_list}
+    pitching_by_num = {p["number"]: {k: v for k, v in p.items() if k != "_sort"} for p in pitching_list}
+
+    return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
+
+# ── Sidearm Classic HTML Table Parser (Oral Roberts Fix) ──────────────────────
+def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any], Dict[str, Any], Dict[int, Any]]:
+    hitting_list, pitching_list = [], []
+    hitting_by_num, pitching_by_num = {}, {}
+    players_map = {}
+
+    def extract_rows(table: Any, is_pitching: bool = False):
+        if not table:
+            return []
+        rows_data = []
+        thead = table.find("thead")
+        header_cols = []
+        if thead:
+            last_head = thead.find_all("tr")[-1]
+            header_cols = [th.get_text(" ", strip=True).upper() for th in last_head.find_all(["th", "td"])]
+
+        tbody = table.find("tbody") or table
+        for tr in tbody.find_all("tr"):
+            if "footer_row" in (tr.get("class") or []) or tr.find("th", attrs={"colspan": True}):
+                continue
+            cells = tr.find_all(["td", "th"])
+            if len(cells) < 4:
+                continue
+
+            num_span = tr.find("span", class_="mobile-jersey-number")
+            raw_num = num_span.get_text(strip=True) if num_span else ""
+            if not raw_num:
+                num_td = tr.find("td", class_=lambda c: c and "hide-on-medium-down" in c)
+                if num_td:
+                    raw_num = num_td.get_text(strip=True)
+
+            name_tag = tr.find("a", attrs={"data-player-id": True}) or tr.find("th", scope="row") or tr.find("a")
+            raw_name = name_tag.get_text(" ", strip=True) if name_tag else ""
+
+            if raw_num and raw_name.startswith(raw_num):
+                raw_name = raw_name[len(raw_num):].strip()
+
+            raw_name = format_player_name(raw_name)
+            if not is_valid_player_name(raw_name):
+                continue
+
+            # Build cell label map
+            cell_map = {}
+            for idx, c in enumerate(cells):
+                label = (c.get("data-label") or (header_cols[idx] if idx < len(header_cols) else "")).strip().upper()
+                if label:
+                    cell_map[label] = c.get_text(" ", strip=True)
+
+            clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+            try:
+                jersey_int = int(raw_num) if raw_num.isdigit() else 999
+            except ValueError:
+                jersey_int = 999
+
+            if not is_pitching:
+                avg = clean_avg(cell_map.get("AVG"))
+                ab = clean_val(cell_map.get("AB"))
+                r = clean_val(cell_map.get("R"))
+                h = clean_val(cell_map.get("H"))
+                d2 = clean_val(cell_map.get("2B"))
+                d3 = clean_val(cell_map.get("3B"))
+                hr = clean_val(cell_map.get("HR"))
+                rbi = clean_val(cell_map.get("RBI"))
+                ops = clean_avg(cell_map.get("OPS"))
+                slg = clean_avg(cell_map.get("SLG%"))
+                if parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(r) > 0:
+                    rows_data.append({
+                        "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                        "player": clean_name, "position": pos, "year": yr,
+                        "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3, "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg,
+                        "_sort": jersey_int
+                    })
+            else:
+                era = clean_rate(cell_map.get("ERA"))
+                whip = clean_rate(cell_map.get("WHIP"))
+                wl = clean_wl(cell_map.get("W-L"))
+                ip = clean_ip(cell_map.get("IP"))
+                so = clean_val(cell_map.get("SO"))
+                if parse_ip(ip) > 0 or era != "-":
+                    rows_data.append({
+                        "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                        "player": clean_name, "position": pos or "P", "year": yr,
+                        "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
+                        "_sort": jersey_int
+                    })
+        return rows_data
+
+    # Find Batting Table
+    bat_sec = soup.find(id="individual-overall-batting") or soup.find(id="overall-batting")
+    bat_tbl = bat_sec.find("table") if bat_sec else None
+    if not bat_tbl:
+        for t in soup.find_all("table"):
+            cap = t.find("caption")
+            if cap and "batting" in cap.get_text().lower() and "overall" in cap.get_text().lower():
+                bat_tbl = t
+                break
+    hitting_list = extract_rows(bat_tbl, is_pitching=False)
+
+    # Find Pitching Table
+    pit_sec = soup.find(id="individual-overall-pitching") or soup.find(id="overall-pitching")
+    pit_tbl = pit_sec.find("table") if pit_sec else None
+    if not pit_tbl:
+        for t in soup.find_all("table"):
+            cap = t.find("caption")
+            if cap and "pitching" in cap.get_text().lower() and "overall" in cap.get_text().lower():
+                pit_tbl = t
+                break
+    pitching_list = extract_rows(pit_tbl, is_pitching=True)
+
+    for b in hitting_list:
+        j = b["_sort"]
+        hitting_by_num[b["number"]] = {k: v for k, v in b.items() if k != "_sort"}
+        p = players_map.get(j, {"jersey_number": j, "player_name": b["player"], "position": b["position"], "year": b["year"]})
+        p["batting_stats"] = {k: b[k] for k in BATTING_FIELDS}
+        players_map[j] = p
+
+    for pit in pitching_list:
+        j = pit["_sort"]
+        pitching_by_num[pit["number"]] = {k: v for k, v in pit.items() if k != "_sort"}
+        p = players_map.get(j, {"jersey_number": j, "player_name": pit["player"], "position": pit["position"], "year": pit["year"]})
+        p["pitching_stats"] = {k: pit[k] for k in PITCHING_FIELDS}
+        players_map[j] = p
+
+    return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
+
+# ── StatBroadcast Parser (NDSU) ────────────────────────────────────────────────
+def parse_statbroadcast(html: str, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any], Dict[str, Any], Dict[int, Any]]:
+    soup = BeautifulSoup(html, "html.parser")
+    hitting_list, pitching_list = [], []
+    hitting_by_num, pitching_by_num = {}, {}
+    players_map = {}
 
     for table in soup.find_all("table"):
         text = table.get_text(" ", strip=True).lower()
-        rows = table.find_all("tr")
+        rows = [[c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])] for tr in table.find_all("tr")]
         if not rows:
             continue
 
-        # Detect batting table
-        if "avg" in text and "ab" in text and "rbi" in text:
-            header_cols = [c.get_text(strip=True).lower() for c in rows[0].find_all(["th", "td"])]
-            for r in rows[1:]:
-                cells = [c.get_text(strip=True) for c in r.find_all(["th", "td"])]
-                if len(cells) < 8 or not cells[0] or "total" in cells[0].lower() or "opponent" in cells[0].lower():
+        header_idx = None
+        for i, r in enumerate(rows):
+            r_low = [c.lower() for c in r]
+            if "avg" in r_low and "ab" in r_low:
+                header_idx = i
+                break
+
+        if header_idx is not None:
+            cols = [c.lower() for c in rows[header_idx]]
+            def col(names):
+                for n in names:
+                    if n in cols:
+                        return cols.index(n)
+                return None
+
+            c_p, c_avg, c_ab, c_r, c_h = col(["player", "name"]), col(["avg"]), col(["ab"]), col(["r"]), col(["h"])
+            c_2b, c_3b, c_hr, c_rbi = col(["2b"]), col(["3b"]), col(["hr"]), col(["rbi"])
+            c_slg, c_obp, c_ops = col(["slg%", "slg"]), col(["ob%", "obp"]), col(["ops"])
+
+            for r in rows[header_idx + 1:]:
+                if len(r) <= 3:
                     continue
-                name = format_player_name(cells[0])
-                if is_valid_player_name(name):
-                    batting_list.append({
-                        "number": "",
-                        "player": name,
-                        "position": "",
-                        "year": "",
-                        "AVG": clean_avg(cells[1] if len(cells) > 1 else ".000"),
-                        "R": clean_val(cells[3] if len(cells) > 3 else "0"),
-                        "H": clean_val(cells[4] if len(cells) > 4 else "0"),
-                        "2B": clean_val(cells[5] if len(cells) > 5 else "0"),
-                        "3B": clean_val(cells[6] if len(cells) > 6 else "0"),
-                        "HR": clean_val(cells[7] if len(cells) > 7 else "0"),
-                        "RBI": clean_val(cells[8] if len(cells) > 8 else "0"),
-                        "OPS": ".000",
-                        "SLG%": ".000"
-                    })
-
-        # Detect pitching table
-        elif "era" in text and "w-l" in text and "ip" in text:
-            for r in rows[1:]:
-                cells = [c.get_text(strip=True) for c in r.find_all(["th", "td"])]
-                if len(cells) < 7 or not cells[0] or "total" in cells[0].lower() or "opponent" in cells[0].lower():
+                raw_name = r[c_p] if c_p is not None and c_p < len(r) else r[0]
+                if not is_valid_player_name(raw_name):
                     continue
-                name = format_player_name(cells[0])
-                if is_valid_player_name(name):
-                    pitching_list.append({
-                        "number": "",
-                        "player": name,
-                        "position": "P",
-                        "year": "",
-                        "ERA": clean_avg(cells[1] if len(cells) > 1 else "-", "-"),
-                        "WHIP": "-",
-                        "W-L": cells[2] if len(cells) > 2 else "0-0",
-                        "IP": cells[6] if len(cells) > 6 else "0.0",
-                        "SO": clean_val(cells[11] if len(cells) > 11 else "0")
-                    })
+                clean_name, pos, yr = match_roster_meta("", raw_name, roster_by_num, roster_list)
+                num = next((p["number"] for p in roster_list if p["name"].lower() == clean_name.lower()), "")
+                try:
+                    jersey_int = int(num) if num.isdigit() else 999
+                except ValueError:
+                    jersey_int = 999
 
-    return batting_list, pitching_list
+                ab = clean_val(r[c_ab]) if c_ab else "0"
+                h = clean_val(r[c_h]) if c_h else "0"
+                rn = clean_val(r[c_r]) if c_r else "0"
+                if parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(rn) > 0:
+                    ops = clean_avg(r[c_ops]) if c_ops else compute_ops(r[c_obp] if c_obp else "0", r[c_slg] if c_slg else "0")
+                    bat = {
+                        "number": num, "player": clean_name, "position": pos, "year": yr,
+                        "AVG": clean_avg(r[c_avg]) if c_avg else ".000",
+                        "R": rn, "H": h, "2B": clean_val(r[c_2b]) if c_2b else "0",
+                        "3B": clean_val(r[c_3b]) if c_3b else "0", "HR": clean_val(r[c_hr]) if c_hr else "0",
+                        "RBI": clean_val(r[c_rbi]) if c_rbi else "0", "OPS": ops,
+                        "SLG%": clean_avg(r[c_slg]) if c_slg else ".000",
+                        "_sort": jersey_int
+                    }
+                    hitting_list.append(bat)
+                    hitting_by_num[num] = {k: v for k, v in bat.items() if k != "_sort"}
+                    p = players_map.get(jersey_int, {"jersey_number": jersey_int, "player_name": clean_name, "position": pos, "year": yr})
+                    p["batting_stats"] = {k: bat[k] for k in BATTING_FIELDS}
+                    players_map[jersey_int] = p
 
+    return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
 
-# ── Execution Logic ───────────────────────────────────────────────────────────
+# ── Unified Extractor Router ──────────────────────────────────────────────────
+def extract_stats(stats_html: str, roster_html: str, school_meta: Dict[str, Any], year: str) -> Dict[str, Any]:
+    roster_by_num, roster_list = parse_roster_page(roster_html)
+    logger.info("  [%s] Parsed %d roster records (%d mapped with jersey #s)", school_meta["name"], len(roster_list), len(roster_by_num))
+
+    soup = BeautifulSoup(stats_html, "html.parser")
+    res = None
+
+    if school_meta.get("type") == "statbroadcast":
+        res = parse_statbroadcast(stats_html, roster_by_num, roster_list)
+
+    if not res or not (res[0] or res[1]):
+        res = try_extract_nuxt(soup, roster_by_num, roster_list)
+
+    if not res or not (res[0] or res[1]):
+        logger.info("  [%s] Falling back to Sidearm HTML table parser...", school_meta["name"])
+        res = try_extract_sidearm_html(soup, roster_by_num, roster_list)
+
+    hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map = res
+
+    hitting_list.sort(key=lambda x: x.pop("_sort", 999))
+    pitching_list.sort(key=lambda x: x.pop("_sort", 999))
+    players_sorted = [players_map[k] for k in sorted(players_map.keys())]
+
+    return {
+        "team_id": school_meta["id"],
+        "team": school_meta["name"],
+        "sport": "baseball",
+        "season": year,
+        "source": school_meta["stats_url"].format(year=year),
+        "source_roster": school_meta["roster_url"],
+        "status": "ok" if (hitting_list or pitching_list) else "empty",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "players": players_sorted,
+        "hitting": hitting_list,
+        "pitching": pitching_list,
+        "batters": hitting_list,
+        "pitchers": pitching_list,
+        "hitting_by_number": hitting_by_num,
+        "pitching_by_number": pitching_by_num,
+        "batters_by_number": hitting_by_num,
+        "pitchers_by_number": pitching_by_num
+    }
+
+# ── Fetch Helpers ──────────────────────────────────────────────────────────────
+def fetch_html_static(url: str) -> str:
+    req = urllib.request.Request(url, headers=FETCH_HEADERS)
+    with urllib.request.urlopen(req, timeout=25) as r:
+        return r.read().decode("utf-8", errors="replace")
 
 async def fetch_page_html(context: BrowserContext, url: str) -> Optional[str]:
     page: Optional[Page] = None
     try:
         page = await context.new_page()
-        logger.info(f"Navigating to {url}")
-        await page.goto(url, wait_until="domcontentloaded", timeout=25000)
+        logger.info("Navigating to %s", url)
+        resp = await page.goto(url, wait_until="domcontentloaded", timeout=45000)
         try:
-            await page.wait_for_load_state("networkidle", timeout=3000)
+            await page.wait_for_selector("script#__NUXT_DATA__, table, .sidearm-roster-player", state="attached", timeout=12000)
         except Exception:
-            pass
+            await page.wait_for_timeout(2000)
         return await page.content()
     except Exception as e:
-        logger.error(f"Failed to fetch {url}: {e}")
+        logger.error("Failed to fetch %s: %s", url, e)
         return None
     finally:
         if page:
             await page.close()
 
-
-async def scrape_baseball_team(
-    context: BrowserContext,
-    team_cfg: Dict[str, Any],
-    year: str,
-    semaphore: asyncio.Semaphore,
-    docs_dir: str
-) -> Dict[str, Any]:
-    async with semaphore:
-        team_id = team_cfg["id"]
-        is_non_conf = bool(team_cfg.get("is_non_conf"))
-        name = team_cfg.get("name", "")
-        stats_url = team_cfg["stats_url"].format(year=year)
-        roster_url = team_cfg["roster_url"]
-
-        logger.info(f"Processing Baseball: {name or stats_url}...")
-
-        # Stats & Roster fetched in parallel
-        stats_html, roster_html = await asyncio.gather(
-            fetch_page_html(context, stats_url),
-            fetch_page_html(context, roster_url)
-        )
-
-        # Fallback for NDSU sidearm URL if StatBroadcast returns empty
-        if not stats_html and "sidearm_stats_url" in team_cfg:
-            alt_url = team_cfg["sidearm_stats_url"].format(year=year)
-            logger.info(f"Trying alternative stats URL for {name}: {alt_url}")
-            stats_html = await fetch_page_html(context, alt_url)
-
-        roster_lookup = parse_print_roster(roster_html) if roster_html else {}
-        logger.info(f"  [{name}] Loaded {len(roster_lookup)} roster entries from {roster_url}")
-
-        batting_raw: List[Dict[str, Any]] = []
-        pitching_raw: List[Dict[str, Any]] = []
-
-        if stats_html:
-            # 1. Try Nuxt JSON
-            nuxt_res = extract_sidearm_nuxt(stats_html)
-            if nuxt_res and (nuxt_res[0] or nuxt_res[1]):
-                batting_raw, pitching_raw = nuxt_res
-                logger.info(f"  [{name}] Extracted Nuxt 3 stats: {len(batting_raw)} batters, {len(pitching_raw)} pitchers")
-            else:
-                # 2. Try HTML table parsing
-                soup = BeautifulSoup(stats_html, "html.parser")
-                batting_raw, pitching_raw = extract_sidearm_html_tables(soup)
-                if not batting_raw and not pitching_raw:
-                    # 3. StatBroadcast fallback
-                    batting_raw, pitching_raw = extract_ndsu_statbroadcast(soup)
-                logger.info(f"  [{name}] Extracted HTML stats: {len(batting_raw)} batters, {len(pitching_raw)} pitchers")
-
-        # Merge with roster metadata
-        def enrich_player(p_dict: Dict[str, Any]) -> Dict[str, Any]:
-            p_name = p_dict["player"]
-            p_num = p_dict["number"]
-            r_info = find_roster_entry(p_name, p_num, roster_lookup)
-            if r_info:
-                p_dict["player"] = r_info.get("name") or p_name
-                p_dict["number"] = p_num or r_info.get("number", "")
-                p_dict["position"] = r_info.get("position") or p_dict.get("position", "")
-                p_dict["year"] = r_info.get("year") or p_dict.get("year", "")
-            return p_dict
-
-        batting_final = [enrich_player(b) for b in batting_raw]
-        pitching_final = [enrich_player(p) for p in pitching_raw]
-
-        # Build master unified players array (keyed by number/name)
-        players_map: Dict[str, Dict[str, Any]] = {}
-
-        for b in batting_final:
-            key = f"{b['number']}_{b['player']}".lower()
-            players_map[key] = {
-                "number": b["number"],
-                "player": b["player"],
-                "position": b["position"],
-                "year": b["year"],
-                "batting": {
-                    "AVG": b["AVG"], "R": b["R"], "H": b["H"], "2B": b["2B"],
-                    "3B": b["3B"], "HR": b["HR"], "RBI": b["RBI"], "OPS": b["OPS"], "SLG%": b["SLG%"]
-                }
-            }
-
-        for p in pitching_final:
-            key = f"{p['number']}_{p['player']}".lower()
-            if key in players_map:
-                players_map[key]["pitching"] = {
-                    "ERA": p["ERA"], "WHIP": p["WHIP"], "W-L": p["W-L"], "IP": p["IP"], "SO": p["SO"]
-                }
-                if not players_map[key]["position"]:
-                    players_map[key]["position"] = p["position"]
-            else:
-                players_map[key] = {
-                    "number": p["number"],
-                    "player": p["player"],
-                    "position": p["position"],
-                    "year": p["year"],
-                    "pitching": {
-                        "ERA": p["ERA"], "WHIP": p["WHIP"], "W-L": p["W-L"], "IP": p["IP"], "SO": p["SO"]
-                    }
-                }
-
-        players_sorted = sorted(players_map.values(), key=lambda x: int(x["number"]) if x["number"].isdigit() else 999)
-
-        team_display_name = name or detect_team_name(stats_html, stats_url)
-        out_data = {
-            "team_id": team_id,
-            "team": team_display_name,
-            "sport": "baseball",
-            "season": year,
-            "source": stats_url,
-            "source_roster": roster_url,
-            "status": "ok" if (batting_final or pitching_final) else "empty",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "players": players_sorted,
-            "hitting": batting_final,
-            "pitching": pitching_final
-        }
-
-        if is_non_conf:
-            out_data["is_non_conf"] = True
-            out_data["display_name"] = "Non-Conf"
-
-        # Write output file(s)
-        out_file = team_cfg["out_file"]
-        paths_to_write = [
-            out_file,
-            os.path.join(docs_dir, out_file)
-        ]
-        if "alias_file" in team_cfg:
-            alias = team_cfg["alias_file"]
-            paths_to_write += [alias, os.path.join(docs_dir, alias)]
-
-        for path in paths_to_write:
-            with open(path, "w", encoding="utf-8") as f:
-                json.dump(out_data, f, indent=2)
-
-        logger.info(f"  ✓ Saved {len(batting_final)} batters and {len(pitching_final)} pitchers -> {out_file}")
-        return out_data
-
-
-async def run_baseball_scraper(year: str, docs_dir: str, target_school: Optional[str] = None):
+# ── Main Async Runner ──────────────────────────────────────────────────────────
+async def run(args: argparse.Namespace) -> None:
+    year = str(args.year or "2026")
+    docs_dir = args.docs_dir
     os.makedirs(docs_dir, exist_ok=True)
-    semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
 
-    schools_to_scrape = SCHOOLS
-    if target_school:
-        schools_to_scrape = [s for s in SCHOOLS if s["id"].lower() == target_school.lower()]
-        if not schools_to_scrape:
-            logger.error(f"Unknown school ID '{target_school}'. Options: {[s['id'] for s in SCHOOLS]}")
-            return
+    schools_to_scrape = TEAMS
+    if args.school:
+        schools_to_scrape = [t for t in TEAMS if t["id"] == args.school.lower()]
 
-    # Check Non-Conf slot
-    non_conf_cfg = load_non_conf_config()
-    non_conf_task_cfg = None
-    if non_conf_cfg.get("stats_url"):
-        non_conf_task_cfg = {
-            "id": "non_conf",
-            "name": non_conf_cfg.get("name") or "Non-Conf Opponent",
-            "shortName": "Non-Conf",
-            "stats_url": non_conf_cfg["stats_url"],
-            "roster_url": non_conf_cfg.get("roster_url") or non_conf_cfg["stats_url"],
-            "out_file": "non_conf.json",
-            "is_non_conf": True
-        }
-    else:
-        # Write empty placeholder
-        empty_nc = {
-            "team_id": "non_conf",
-            "team": "Non-Conf",
-            "display_name": "Non-Conf",
-            "sport": "baseball",
-            "season": year,
-            "status": "empty",
-            "is_non_conf": True,
-            "message": "No Non-Conf opponent loaded. Configure non_conf_config.json or pass via workflow.",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "players": [],
-            "hitting": [],
-            "pitching": []
-        }
-        for dest in ["non_conf.json", os.path.join(docs_dir, "non_conf.json")]:
-            with open(dest, "w", encoding="utf-8") as f:
-                json.dump(empty_nc, f, indent=2)
+    logger.info("=== Summit League Baseball Scraper [%d School(s), Season: %s] ===", len(schools_to_scrape), year)
+    all_teams_data = {}
 
-    start_time = time.time()
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=["--disable-blink-features=AutomationControlled"]
-        )
-        context = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-            viewport={"width": 1280, "height": 800},
-            locale="en-US"
-        )
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context(user_agent=FETCH_HEADERS["User-Agent"], viewport={"width": 1280, "height": 800})
 
-        tasks = [
-            scrape_baseball_team(context, cfg, year, semaphore, docs_dir)
-            for cfg in schools_to_scrape
-        ]
-        if non_conf_task_cfg and not target_school:
-            tasks.append(scrape_baseball_team(context, non_conf_task_cfg, year, semaphore, docs_dir))
+        for school in schools_to_scrape:
+            stats_url = school["stats_url"].format(year=year)
+            roster_url = school["roster_url"]
 
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+            logger.info("Processing Baseball: %s...", school["name"])
+            try:
+                # 1. Fetch Stats
+                if school.get("type") == "statbroadcast":
+                    try:
+                        stats_html = await asyncio.to_thread(fetch_html_static, stats_url)
+                    except Exception:
+                        stats_html = await fetch_page_html(context, school["fallback_stats_url"].format(year=year))
+                else:
+                    stats_html = await fetch_page_html(context, stats_url)
 
-        all_teams_dict = {}
-        for r in results:
-            if isinstance(r, dict) and "team_id" in r:
-                all_teams_dict[r["team_id"]] = r
-            elif isinstance(r, Exception):
-                logger.error(f"Team scrape error: {r!r}")
+                # 2. Fetch Roster
+                roster_html = await fetch_page_html(context, roster_url)
 
-        # Write master all_teams_stats.json
-        if len(all_teams_dict) > 1:
-            master_file = os.path.join(docs_dir, "all_teams_stats.json")
-            with open(master_file, "w", encoding="utf-8") as f:
-                json.dump({
-                    "generated_at": datetime.now(timezone.utc).isoformat(),
-                    "season": year,
-                    "sport": "baseball",
-                    "teams": all_teams_dict
-                }, f, indent=2)
-            logger.info(f"★ Saved master file: {master_file} with {len(all_teams_dict)} teams")
+                # 3. Extract & Save
+                stats_payload = extract_stats(stats_html or "", roster_html or "", school, year)
+
+                out_path = os.path.join(docs_dir, school["out_file"])
+                with open(out_path, "w", encoding="utf-8") as f:
+                    json.dump(stats_payload, f, indent=2)
+
+                if "alias_file" in school:
+                    alias_path = os.path.join(docs_dir, school["alias_file"])
+                    with open(alias_path, "w", encoding="utf-8") as f:
+                        json.dump(stats_payload, f, indent=2)
+
+                all_teams_data[school["id"]] = stats_payload
+                logger.info("  ✓ Saved %d batters and %d pitchers -> %s", len(stats_payload["hitting"]), len(stats_payload["pitching"]), school["out_file"])
+            except Exception as e:
+                logger.exception("  ✗ Error processing %s: %s", school["name"], e)
 
         await browser.close()
 
-    elapsed = time.time() - start_time
-    logger.info(f"Baseball scraping complete in {elapsed:.1f}s.")
+    # Save Master File
+    if len(all_teams_data) > 1:
+        master_file = os.path.join(docs_dir, "all_teams_stats.json")
+        with open(master_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "season": year,
+                "teams": all_teams_data
+            }, f, indent=2)
+        logger.info("★ Master file saved: %s (%d teams)", master_file, len(all_teams_data))
 
-
-def main():
-    parser = argparse.ArgumentParser(description="Summit League Baseball Stats & Roster Scraper")
-    parser.add_argument("--year", default="2026", help="Season year (e.g. 2026)")
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Summit League Baseball Stats Scraper")
+    parser.add_argument("--year", default="2026", help="Season year")
     parser.add_argument("--docs-dir", default=DEFAULT_DOCS_DIR, help="Output destination folder")
-    parser.add_argument("--school", default=None, help="Specific school ID to scrape (stthomas, sdstate, oru, omaha, uncbears, ndsu)")
-    args = parser.parse_args()
-
-    asyncio.run(run_baseball_scraper(args.year, args.docs_dir, args.school))
-
+    parser.add_argument("--school", default=None, help="Scrape specific school ID")
+    asyncio.run(run(parser.parse_args()))
 
 if __name__ == "__main__":
     main()
