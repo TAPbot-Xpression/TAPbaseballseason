@@ -3,16 +3,10 @@
 scraper/scrape_baseball.py
 Unified multi-school scraper for Summit League baseball stats & rosters.
 
-Nomenclature & Standardization Update:
-  - Standardized all baseball JSON output filenames and slugs to match the basketball
-    nomenclature with full snake_case school names and the `_men.json` suffix:
-      • st_thomas_men.json
-      • south_dakota_state_men.json
-      • north_dakota_state_men.json
-      • northern_colorado_men.json
-      • omaha_men.json
-      • oral_roberts_men.json
-      • non_conf_men.json
+Updates:
+  - Added StatBroadcast pitching table parser for NDSU (parses ERA, W-L, IP, BB, H, SO and calculates WHIP).
+  - Fixed NDSU roster matching so jersey numbers, positions, and academic years attach to all StatBroadcast batters and pitchers.
+  - Standardized all baseball JSON output filenames and slugs to match the basketball nomenclature (_men.json).
 """
 
 from __future__ import annotations
@@ -509,11 +503,12 @@ def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[s
 
     return roster_by_num, roster_list
 
-def match_roster_meta(jersey_num: str, name: str, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[str, str, str]:
+def match_roster_meta(jersey_num: str, name: str, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[str, str, str, str]:
+    """Matches player name/jersey against roster records. Returns (matched_num, clean_name, pos, yr)."""
     clean_num = _s(jersey_num).strip()
     if clean_num in roster_by_num and clean_num not in ("999", ""):
         entry = roster_by_num[clean_num]
-        return entry.get("name", name), entry.get("position", ""), entry.get("year", "")
+        return clean_num, entry.get("name", name), entry.get("position", ""), entry.get("year", "")
 
     s_first, s_last = normalize_name_for_match(name)
     if s_last:
@@ -521,9 +516,12 @@ def match_roster_meta(jersey_num: str, name: str, roster_by_num: Dict[str, Any],
             r_first, r_last = normalize_name_for_match(r["name"])
             if s_last == r_last:
                 if not s_first or not r_first or s_first == r_first or s_first.startswith(r_first) or r_first.startswith(s_first):
-                    return r.get("name", name), r.get("position", ""), r.get("year", "")
+                    r_num = r.get("number", "")
+                    if r_num == "999":
+                        r_num = ""
+                    return r_num or clean_num, r.get("name", name), r.get("position", ""), r.get("year", "")
 
-    return format_player_name(name), "", ""
+    return clean_num, format_player_name(name), "", ""
 
 # ── Nuxt 3 Stats Extractor ─────────────────────────────────────────────────────
 def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Optional[Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any], Dict[str, Any], Dict[int, Any]]]:
@@ -572,9 +570,10 @@ def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_
         if not raw_name or not is_valid_player_name(raw_name) or raw_name == "-1":
             continue
 
-        clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+        clean_num, clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+        effective_num = clean_num or raw_num
         try:
-            jersey_int = int(raw_num) if raw_num.isdigit() else 999
+            jersey_int = int(effective_num) if effective_num.isdigit() else 999
         except ValueError:
             jersey_int = 999
 
@@ -607,7 +606,7 @@ def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_
             cur_bat = hitting_map.get(player_key)
             if cur_bat is None or parse_float(ab) > parse_float(cur_bat.get("AB", 0)):
                 hitting_map[player_key] = {
-                    "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                    "number": str(jersey_int) if jersey_int != 999 else effective_num,
                     "player": clean_name,
                     "position": pos,
                     "year": yr,
@@ -628,7 +627,7 @@ def try_extract_nuxt(soup: BeautifulSoup, roster_by_num: Dict[str, Any], roster_
             cur_pit = pitching_map.get(player_key)
             if cur_pit is None or parse_ip(ip) > parse_ip(cur_pit.get("IP", "0.0")):
                 pitching_map[player_key] = {
-                    "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                    "number": str(jersey_int) if jersey_int != 999 else effective_num,
                     "player": clean_name,
                     "position": pos or "RHP",
                     "year": yr,
@@ -715,9 +714,10 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
                 if label:
                     cell_map[label] = c.get_text(" ", strip=True)
 
-            clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+            clean_num, clean_name, pos, yr = match_roster_meta(raw_num, raw_name, roster_by_num, roster_list)
+            effective_num = clean_num or raw_num
             try:
-                jersey_int = int(raw_num) if raw_num.isdigit() else 999
+                jersey_int = int(effective_num) if effective_num.isdigit() else 999
             except ValueError:
                 jersey_int = 999
 
@@ -734,7 +734,7 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
                 slg = clean_avg(cell_map.get("SLG%"))
                 if parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(r) > 0:
                     rows_data.append({
-                        "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                        "number": str(jersey_int) if jersey_int != 999 else effective_num,
                         "player": clean_name, "position": pos, "year": yr,
                         "AVG": avg, "R": r, "H": h, "2B": d2, "3B": d3, "HR": hr, "RBI": rbi, "OPS": ops, "SLG%": slg,
                         "_sort": jersey_int
@@ -747,7 +747,7 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
                 so = clean_val(cell_map.get("SO"))
                 if parse_ip(ip) > 0 or era != "-":
                     rows_data.append({
-                        "number": str(jersey_int) if jersey_int != 999 else raw_num,
+                        "number": str(jersey_int) if jersey_int != 999 else effective_num,
                         "player": clean_name, "position": pos or "RHP", "year": yr,
                         "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
                         "_sort": jersey_int
@@ -790,7 +790,7 @@ def try_extract_sidearm_html(soup: BeautifulSoup, roster_by_num: Dict[str, Any],
 
     return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
 
-# ── StatBroadcast Parser (NDSU) ────────────────────────────────────────────────
+# ── StatBroadcast Parser (NDSU Batting & Pitching) ────────────────────────────
 def parse_statbroadcast(html: str, roster_by_num: Dict[str, Any], roster_list: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, Any], Dict[str, Any], Dict[int, Any]]:
     soup = BeautifulSoup(html, "html.parser")
     hitting_list, pitching_list = [], []
@@ -802,56 +802,112 @@ def parse_statbroadcast(html: str, roster_by_num: Dict[str, Any], roster_list: L
         if not rows:
             continue
 
-        header_idx = None
+        header_idx_bat = None
+        header_idx_pit = None
+
         for i, r in enumerate(rows):
             r_low = [c.lower() for c in r]
-            if "avg" in r_low and "ab" in r_low:
-                header_idx = i
-                break
+            if "avg" in r_low and "ab" in r_low and header_idx_bat is None:
+                header_idx_bat = i
+            elif "era" in r_low and "w-l" in r_low and header_idx_pit is None:
+                header_idx_pit = i
 
-        if header_idx is not None:
-            cols = [c.lower() for c in rows[header_idx]]
-            def col(names):
+        # ── Parse Batting Table ──
+        if header_idx_bat is not None:
+            cols = [c.lower() for c in rows[header_idx_bat]]
+            def col_b(names):
                 for n in names:
                     if n in cols:
                         return cols.index(n)
                 return None
 
-            c_p, c_avg, c_ab, c_r, c_h = col(["player", "name"]), col(["avg"]), col(["ab"]), col(["r"]), col(["h"])
-            c_2b, c_3b, c_hr, c_rbi = col(["2b"]), col(["3b"]), col(["hr"]), col(["rbi"])
-            c_slg, c_obp, c_ops = col(["slg%", "slg"]), col(["ob%", "obp"]), col(["ops"])
+            c_p, c_avg, c_ab, c_r, c_h = col_b(["player", "name"]), col_b(["avg"]), col_b(["ab"]), col_b(["r"]), col_b(["h"])
+            c_2b, c_3b, c_hr, c_rbi = col_b(["2b"]), col_b(["3b"]), col_b(["hr"]), col_b(["rbi"])
+            c_slg, c_obp, c_ops = col_b(["slg%", "slg"]), col_b(["ob%", "obp"]), col_b(["ops"])
 
-            for r in rows[header_idx + 1:]:
+            for r in rows[header_idx_bat + 1:]:
                 if len(r) <= 3:
                     continue
                 raw_name = r[c_p] if c_p is not None and c_p < len(r) else r[0]
-                if not is_valid_player_name(raw_name):
+                if not is_valid_player_name(raw_name) or raw_name.lower().startswith("total") or raw_name.lower().startswith("opponent"):
                     continue
-                clean_name, pos, yr = match_roster_meta("", raw_name, roster_by_num, roster_list)
-                num = next((p["number"] for p in roster_list if p["name"].lower() == clean_name.lower()), "")
+
+                clean_num, clean_name, pos, yr = match_roster_meta("", raw_name, roster_by_num, roster_list)
+                num = clean_num
                 try:
                     jersey_int = int(num) if num.isdigit() else 999
                 except ValueError:
                     jersey_int = 999
 
-                ab = clean_val(r[c_ab]) if c_ab else "0"
-                h = clean_val(r[c_h]) if c_h else "0"
-                rn = clean_val(r[c_r]) if c_r else "0"
+                ab = clean_val(r[c_ab]) if c_ab is not None and c_ab < len(r) else "0"
+                h = clean_val(r[c_h]) if c_h is not None and c_h < len(r) else "0"
+                rn = clean_val(r[c_r]) if c_r is not None and c_r < len(r) else "0"
                 if parse_float(ab) > 0 or parse_float(h) > 0 or parse_float(rn) > 0:
-                    ops = clean_avg(r[c_ops]) if c_ops else compute_ops(r[c_obp] if c_obp else "0", r[c_slg] if c_slg else "0")
+                    ops = clean_avg(r[c_ops]) if c_ops is not None and c_ops < len(r) else compute_ops(r[c_obp] if c_obp is not None and c_obp < len(r) else "0", r[c_slg] if c_slg is not None and c_slg < len(r) else "0")
                     bat = {
                         "number": num, "player": clean_name, "position": pos, "year": yr,
-                        "AVG": clean_avg(r[c_avg]) if c_avg else ".000",
-                        "R": rn, "H": h, "2B": clean_val(r[c_2b]) if c_2b else "0",
-                        "3B": clean_val(r[c_3b]) if c_3b else "0", "HR": clean_val(r[c_hr]) if c_hr else "0",
-                        "RBI": clean_val(r[c_rbi]) if c_rbi else "0", "OPS": ops,
-                        "SLG%": clean_avg(r[c_slg]) if c_slg else ".000",
+                        "AVG": clean_avg(r[c_avg]) if c_avg is not None and c_avg < len(r) else ".000",
+                        "R": rn, "H": h, "2B": clean_val(r[c_2b]) if c_2b is not None and c_2b < len(r) else "0",
+                        "3B": clean_val(r[c_3b]) if c_3b is not None and c_3b < len(r) else "0", "HR": clean_val(r[c_hr]) if c_hr is not None and c_hr < len(r) else "0",
+                        "RBI": clean_val(r[c_rbi]) if c_rbi is not None and c_rbi < len(r) else "0", "OPS": ops,
+                        "SLG%": clean_avg(r[c_slg]) if c_slg is not None and c_slg < len(r) else ".000",
                         "_sort": jersey_int
                     }
                     hitting_list.append(bat)
                     hitting_by_num[num] = {k: v for k, v in bat.items() if k != "_sort"}
                     p = players_map.get(jersey_int, {"jersey_number": jersey_int, "player_name": clean_name, "position": pos, "year": yr})
                     p["batting_stats"] = {k: bat[k] for k in BATTING_FIELDS}
+                    players_map[jersey_int] = p
+
+        # ── Parse Pitching Table ──
+        if header_idx_pit is not None:
+            cols = [c.lower() for c in rows[header_idx_pit]]
+            def col_p(names):
+                for n in names:
+                    if n in cols:
+                        return cols.index(n)
+                return None
+
+            c_p = col_p(["player", "name"])
+            c_era = col_p(["era"])
+            c_wl = col_p(["w-l", "wl"])
+            c_ip = col_p(["ip"])
+            c_h = col_p(["h"])
+            c_bb = col_p(["bb"])
+            c_so = col_p(["so"])
+
+            for r in rows[header_idx_pit + 1:]:
+                if len(r) <= 3:
+                    continue
+                raw_name = r[c_p] if c_p is not None and c_p < len(r) else r[0]
+                if not is_valid_player_name(raw_name) or raw_name.lower().startswith("total") or raw_name.lower().startswith("opponent"):
+                    continue
+
+                clean_num, clean_name, pos, yr = match_roster_meta("", raw_name, roster_by_num, roster_list)
+                num = clean_num
+                try:
+                    jersey_int = int(num) if num.isdigit() else 999
+                except ValueError:
+                    jersey_int = 999
+
+                era = clean_rate(r[c_era]) if c_era is not None and c_era < len(r) else "-"
+                wl = clean_wl(r[c_wl]) if c_wl is not None and c_wl < len(r) else "0-0"
+                ip = clean_ip(r[c_ip]) if c_ip is not None and c_ip < len(r) else "0.0"
+                h = clean_val(r[c_h]) if c_h is not None and c_h < len(r) else "0"
+                bb = clean_val(r[c_bb]) if c_bb is not None and c_bb < len(r) else "0"
+                so = clean_val(r[c_so]) if c_so is not None and c_so < len(r) else "0"
+                whip = compute_whip(bb, h, ip)
+
+                if parse_ip(ip) > 0 or era != "-":
+                    pit = {
+                        "number": num, "player": clean_name, "position": pos or "RHP", "year": yr,
+                        "ERA": era, "WHIP": whip, "W-L": wl, "IP": ip, "SO": so,
+                        "_sort": jersey_int
+                    }
+                    pitching_list.append(pit)
+                    pitching_by_num[num] = {k: v for k, v in pit.items() if k != "_sort"}
+                    p = players_map.get(jersey_int, {"jersey_number": jersey_int, "player_name": clean_name, "position": pos or "RHP", "year": yr})
+                    p["pitching_stats"] = {k: pit[k] for k in PITCHING_FIELDS}
                     players_map[jersey_int] = p
 
     return hitting_list, pitching_list, hitting_by_num, pitching_by_num, players_map
