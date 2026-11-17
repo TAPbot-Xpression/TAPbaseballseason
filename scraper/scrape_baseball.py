@@ -3,13 +3,16 @@
 scraper/scrape_baseball.py
 Unified multi-school scraper for Summit League baseball stats & rosters.
 
-Fixes applied:
-  1. Fixes missing Position and Year on St. Thomas and Nuxt-style schools (removes broken table filter and adds full text-line fallback).
-  2. Strips leading jersey numbers from player names (e.g. '8 Brennan McLaughlin' -> 'Brennan McLaughlin').
-  3. Formats player academic years without periods: 'FR', 'SO', 'JR', 'SR', 'GR', 'R-FR', 'R-SO', 'R-JR', 'R-SR'.
-  4. Preserves detailed pitching positions from roster ('RHP', 'LHP', 'LHP/OF', etc.) instead of generic 'P'.
-  5. Multi-URL roster candidate search (tries both current and season-specific roster URLs for optimal 2026/2027 matching).
-  6. Filters sub-split duplicates (prevents 120+ duplicate rows) and cleans Oral Roberts HTML tables.
+Nomenclature & Standardization Update:
+  - Standardized all baseball JSON output filenames and slugs to match the basketball
+    nomenclature with full snake_case school names and the `_men.json` suffix:
+      • st_thomas_men.json
+      • south_dakota_state_men.json
+      • north_dakota_state_men.json
+      • northern_colorado_men.json
+      • omaha_men.json
+      • oral_roberts_men.json
+      • non_conf_men.json
 """
 
 from __future__ import annotations
@@ -37,17 +40,17 @@ sys.setrecursionlimit(20000)
 
 DEFAULT_DOCS_DIR = "docs"
 NON_CONF_CONFIG_PATH = "non_conf_config.json"
-NON_CONF_ID = "non_conf"
-NON_CONF_FILE = "non_conf.json"
+NON_CONF_ID = "non_conf_men"
+NON_CONF_FILE = "non_conf_men.json"
 CONCURRENCY_LIMIT = 4
 
 BATTING_FIELDS = ["AVG", "R", "H", "2B", "3B", "HR", "RBI", "OPS", "SLG%"]
 PITCHING_FIELDS = ["ERA", "WHIP", "W-L", "IP", "SO"]
 
-# ── Summit League Baseball Programs ───────────────────────────────────────────
+# ── Summit League Baseball Programs (_men Nomenclature) ────────────────────────
 TEAMS = [
     {
-        "id": "stthomas",
+        "id": "st_thomas_men",
         "name": "St. Thomas Tommies",
         "type": "sidearm",
         "stats_url": "https://tommiesports.com/sports/baseball/stats/{year}",
@@ -57,11 +60,11 @@ TEAMS = [
             "https://tommiesports.com/sports/baseball/roster/{year}?print=true",
             "https://tommiesports.com/sports/baseball/roster"
         ],
-        "out_file": "stthomas.json",
+        "out_file": "st_thomas_men.json",
         "alias_file": "baseball_stats.json"
     },
     {
-        "id": "sdstate",
+        "id": "south_dakota_state_men",
         "name": "South Dakota State Jackrabbits",
         "type": "sidearm",
         "stats_url": "https://gojacks.com/sports/baseball/stats/{year}",
@@ -71,10 +74,10 @@ TEAMS = [
             "https://gojacks.com/sports/baseball/roster/{year}?print=true",
             "https://gojacks.com/sports/baseball/roster"
         ],
-        "out_file": "sdstate.json"
+        "out_file": "south_dakota_state_men.json"
     },
     {
-        "id": "uncbears",
+        "id": "northern_colorado_men",
         "name": "Northern Colorado Bears",
         "type": "sidearm",
         "stats_url": "https://uncbears.com/sports/baseball/stats/{year}",
@@ -84,10 +87,10 @@ TEAMS = [
             "https://uncbears.com/sports/baseball/roster/{year}?print=true",
             "https://uncbears.com/sports/baseball/roster"
         ],
-        "out_file": "uncbears.json"
+        "out_file": "northern_colorado_men.json"
     },
     {
-        "id": "omaha",
+        "id": "omaha_men",
         "name": "Omaha Mavericks",
         "type": "sidearm",
         "stats_url": "https://omahamavs.com/sports/baseball/stats/{year}",
@@ -97,10 +100,10 @@ TEAMS = [
             "https://omahamavs.com/sports/baseball/roster/{year}?print=true",
             "https://omahamavs.com/sports/baseball/roster"
         ],
-        "out_file": "omaha.json"
+        "out_file": "omaha_men.json"
     },
     {
-        "id": "oru",
+        "id": "oral_roberts_men",
         "name": "Oral Roberts Golden Eagles",
         "type": "sidearm",
         "stats_url": "https://oruathletics.com/sports/baseball/stats/{year}",
@@ -110,10 +113,10 @@ TEAMS = [
             "https://oruathletics.com/sports/baseball/roster/print/{year}",
             "https://oruathletics.com/sports/baseball/roster"
         ],
-        "out_file": "oru.json"
+        "out_file": "oral_roberts_men.json"
     },
     {
-        "id": "ndsu",
+        "id": "north_dakota_state_men",
         "name": "North Dakota State Bison",
         "type": "statbroadcast",
         "stats_url": "https://stats.gobison.com/custompages/bsb/{year}/teamcume.htm",
@@ -124,7 +127,7 @@ TEAMS = [
             "https://gobison.com/sports/baseball/roster/{year}?print=true",
             "https://gobison.com/sports/baseball/roster"
         ],
-        "out_file": "ndsu.json"
+        "out_file": "north_dakota_state_men.json"
     }
 ]
 
@@ -213,7 +216,7 @@ def compute_whip(bb: Any, h: Any, ip: Any) -> str:
     return f"{(parse_float(bb) + parse_float(h)) / innings:.2f}"
 
 # ── Name, Number, Position & Academic Year Helpers ─────────────────────────────
-_SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
+_SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v"}
 _POS_TOKENS = {
     "P", "RHP", "LHP", "C", "1B", "2B", "3B", "SS", "IF", "INF", "MIF", "CIF",
     "OF", "LF", "CF", "RF", "DH", "UT", "UTL", "UTIL",
@@ -224,7 +227,6 @@ _POS_WORDS = {
     "THIRDBASE": "3B", "SHORTSTOP": "SS",
 }
 
-# Standardized without periods: FR, SO, JR, SR, GR
 _CLASS_BASE = {
     "FR": "FR", "FRESH": "FR", "FRESHMAN": "FR", "FIRSTYEAR": "FR", "1ST": "FR", "1STYEAR": "FR", "1": "FR", "FY": "FR",
     "SO": "SO", "SOPH": "SO", "SOPHOMORE": "SO", "SECONDYEAR": "SO", "2ND": "SO", "2NDYEAR": "SO", "2": "SO",
@@ -235,7 +237,7 @@ _CLASS_BASE = {
 }
 
 def format_player_name(raw: Any) -> str:
-    """Normalizes 'Lastname, Firstname' or 'Firstname Lastname' into clean 'Firstname Lastname' without numbers."""
+    """Normalizes 'Lastname, Firstname' or 'Firstname Lastname' into clean 'Firstname Lastname, Suffix'."""
     if not raw:
         return ""
     name = _s(raw)
@@ -244,22 +246,36 @@ def format_player_name(raw: Any) -> str:
     name = name.replace('"', " ").replace("\u201c", " ").replace("\u201d", " ")
     name = re.sub(r"#\s*\d+", " ", name)
     
-    # Strip any leading uniform numbers that leaked in (e.g. '8 Brennan McLaughlin' -> 'Brennan McLaughlin')
+    # Strip any leading uniform numbers that leaked in
     name = re.sub(r"^\s*\d{1,2}\s+", "", name)
     name = re.sub(r"\s+", " ", name).strip()
     if not name or "@" in name or "//" in name:
         return ""
 
     if "," in name:
-        parts = [p.strip() for p in name.split(",", 1)]
-        last = parts[0]
-        first = parts[1] if len(parts) > 1 else ""
-        if re.sub(r"[^a-z]", "", first.lower()) in _SUFFIXES:
-            name = f"{last} {first}"
-        elif first:
-            name = f"{first} {last}"
+        raw_parts = [re.sub(r"\b\d{1,2}\b", "", p).strip() for p in name.split(",") if p.strip()]
+        last_name = raw_parts[0]
+        first_name = ""
+        suffix = ""
+
+        remaining = raw_parts[1:]
+        non_suffix = []
+        for p in remaining:
+            if p.lower() in _SUFFIXES or re.sub(r"[^a-z]", "", p.lower()) in {"jr", "sr", "ii", "iii", "iv", "v"}:
+                suffix = p
+            else:
+                non_suffix.append(p)
+
+        first_name = " ".join(non_suffix).strip()
+
+        if first_name and last_name:
+            if suffix:
+                clean_suf = suffix if suffix.endswith(".") or suffix.upper() in {"II", "III", "IV", "V"} else f"{suffix}."
+                name = f"{first_name} {last_name}, {clean_suf.title() if clean_suf.lower().startswith('j') or clean_suf.lower().startswith('s') else clean_suf.upper()}"
+            else:
+                name = f"{first_name} {last_name}"
         else:
-            name = last
+            name = first_name or last_name
 
     # Remove duplicated glued strings e.g. "John SmithJohn Smith"
     words = name.split()
@@ -416,7 +432,7 @@ def parse_roster_page(html: str) -> Tuple[Dict[str, Dict[str, str]], List[Dict[s
                 roster_by_num[cleaned_num] = item
             roster_by_num[formatted_name.lower()] = item
 
-    # 1. Check Table rows (Matches all Sidearm / standard HTML print rosters)
+    # 1. Check Table rows
     for tr in soup.find_all("tr"):
         cells = [td.get_text(" ", strip=True) for td in tr.find_all(["td", "th"])]
         if len(cells) >= 3:
