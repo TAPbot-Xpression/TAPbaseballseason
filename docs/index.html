@@ -45,6 +45,7 @@
       --radius-sm:      8px;
     }
 
+    [data-theme="north_dakota_state_men"],
     [data-theme="ndsu"] {
       --team-primary:   #005643;
       --team-accent:    #007a5e;
@@ -53,6 +54,7 @@
       --team-btn-text:  #ffffff;
     }
 
+    [data-theme="northern_colorado_men"],
     [data-theme="uncbears"] {
       --team-primary:   #002b49;
       --team-accent:    #004b87;
@@ -61,6 +63,7 @@
       --team-btn-text:  #ffffff;
     }
 
+    [data-theme="omaha_men"],
     [data-theme="omaha"] {
       --team-primary:   #1a1a1a;
       --team-accent:    #d12631;
@@ -69,6 +72,7 @@
       --team-btn-text:  #ffffff;
     }
 
+    [data-theme="oral_roberts_men"],
     [data-theme="oru"] {
       --team-primary:   #002d62;
       --team-accent:    #c5b358;
@@ -77,6 +81,7 @@
       --team-btn-text:  #000000;
     }
 
+    [data-theme="south_dakota_state_men"],
     [data-theme="sdstate"] {
       --team-primary:   #0033a0;
       --team-accent:    #0056b3;
@@ -85,6 +90,7 @@
       --team-btn-text:  #ffffff;
     }
 
+    [data-theme="st_thomas_men"],
     [data-theme="stthomas"] {
       --team-primary:   #5b2d86;
       --team-accent:    #8b5cf6;
@@ -93,6 +99,7 @@
       --team-btn-text:  #ffffff;
     }
 
+    [data-theme="non_conf_men"],
     [data-theme="non_conf"] {
       --team-primary:   #334155;
       --team-accent:    #94a3b8;
@@ -738,7 +745,7 @@
     }
   </style>
 </head>
-<body data-theme="stthomas">
+<body data-theme="st_thomas_men">
 
 <div class="container">
 
@@ -755,25 +762,25 @@
   <section class="selector-block">
     <span class="section-caption">Select Team</span>
     <div class="team-pills" id="teamPills">
-      <button class="team-pill" data-team="ndsu" onclick="selectTeam('ndsu', this)">
+      <button class="team-pill" data-team="north_dakota_state_men" onclick="selectTeam('north_dakota_state_men', this)">
         <span class="team-pill-dot" style="color:#007a5e"></span> North Dakota State
       </button>
-      <button class="team-pill" data-team="uncbears" onclick="selectTeam('uncbears', this)">
+      <button class="team-pill" data-team="northern_colorado_men" onclick="selectTeam('northern_colorado_men', this)">
         <span class="team-pill-dot" style="color:#004b87"></span> Northern Colorado
       </button>
-      <button class="team-pill" data-team="omaha" onclick="selectTeam('omaha', this)">
+      <button class="team-pill" data-team="omaha_men" onclick="selectTeam('omaha_men', this)">
         <span class="team-pill-dot" style="color:#d12631"></span> Omaha
       </button>
-      <button class="team-pill" data-team="oru" onclick="selectTeam('oru', this)">
+      <button class="team-pill" data-team="oral_roberts_men" onclick="selectTeam('oral_roberts_men', this)">
         <span class="team-pill-dot" style="color:#c5b358"></span> Oral Roberts
       </button>
-      <button class="team-pill" data-team="sdstate" onclick="selectTeam('sdstate', this)">
+      <button class="team-pill" data-team="south_dakota_state_men" onclick="selectTeam('south_dakota_state_men', this)">
         <span class="team-pill-dot" style="color:#0056b3"></span> South Dakota State
       </button>
-      <button class="team-pill active" data-team="stthomas" onclick="selectTeam('stthomas', this)">
+      <button class="team-pill active" data-team="st_thomas_men" onclick="selectTeam('st_thomas_men', this)">
         <span class="team-pill-dot" style="color:#8b5cf6"></span> St. Thomas
       </button>
-      <button class="team-pill non-conf" id="nonConfPill" data-team="non_conf" onclick="selectTeam('non_conf', this)">
+      <button class="team-pill non-conf" id="nonConfPill" data-team="non_conf_men" onclick="selectTeam('non_conf_men', this)">
         <span class="team-pill-dot ring" style="color:#94a3b8"></span> <span id="nonConfPillLabel">Non-Conf</span>
       </button>
     </div>
@@ -845,8 +852,8 @@
             <a id="teamRosterLink" href="https://tommiesports.com/sports/baseball/roster/print" target="_blank" rel="noopener noreferrer" class="site-link-btn">
               Roster Site ↗
             </a>
-            <a id="teamJsonLink" href="stthomas.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
-              stthomas.json ↗
+            <a id="teamJsonLink" href="st_thomas_men.json" target="_blank" rel="noopener noreferrer" class="site-link-btn">
+              st_thomas_men.json ↗
             </a>
           </div>
         </div>
@@ -888,60 +895,66 @@
 <script>
   // ── Team Registry & Config ─────────────────────────────────────────────────
   const TEAMS = {
-    ndsu: {
-      id: 'ndsu',
+    north_dakota_state_men: {
+      id: 'north_dakota_state_men',
       name: 'North Dakota State Bison',
       shortName: 'North Dakota State',
-      file: 'ndsu.json',
+      file: 'north_dakota_state_men.json',
+      altFile: 'ndsu.json',
       statsSiteUrl: 'https://stats.gobison.com/custompages/bsb/2026/teamcume.htm',
       rosterSiteUrl: 'https://gobison.com/sports/baseball/roster/print'
     },
-    uncbears: {
-      id: 'uncbears',
+    northern_colorado_men: {
+      id: 'northern_colorado_men',
       name: 'Northern Colorado Bears',
       shortName: 'Northern Colorado',
-      file: 'uncbears.json',
+      file: 'northern_colorado_men.json',
+      altFile: 'uncbears.json',
       statsSiteUrl: 'https://uncbears.com/sports/baseball/stats/2026',
       rosterSiteUrl: 'https://uncbears.com/sports/baseball/roster/print'
     },
-    omaha: {
-      id: 'omaha',
+    omaha_men: {
+      id: 'omaha_men',
       name: 'Omaha Mavericks',
       shortName: 'Omaha',
-      file: 'omaha.json',
+      file: 'omaha_men.json',
+      altFile: 'omaha.json',
       statsSiteUrl: 'https://omahamavs.com/sports/baseball/stats/2026',
       rosterSiteUrl: 'https://omahamavs.com/sports/baseball/roster/print'
     },
-    oru: {
-      id: 'oru',
+    oral_roberts_men: {
+      id: 'oral_roberts_men',
       name: 'Oral Roberts Golden Eagles',
       shortName: 'Oral Roberts',
-      file: 'oru.json',
+      file: 'oral_roberts_men.json',
+      altFile: 'oru.json',
       statsSiteUrl: 'https://oruathletics.com/sports/baseball/stats/2026',
       rosterSiteUrl: 'https://oruathletics.com/sports/baseball/roster?print=true'
     },
-    sdstate: {
-      id: 'sdstate',
+    south_dakota_state_men: {
+      id: 'south_dakota_state_men',
       name: 'South Dakota State Jackrabbits',
       shortName: 'South Dakota State',
-      file: 'sdstate.json',
+      file: 'south_dakota_state_men.json',
+      altFile: 'sdstate.json',
       statsSiteUrl: 'https://gojacks.com/sports/baseball/stats/2026',
       rosterSiteUrl: 'https://gojacks.com/sports/baseball/roster/print'
     },
-    stthomas: {
-      id: 'stthomas',
+    st_thomas_men: {
+      id: 'st_thomas_men',
       name: 'St. Thomas Tommies',
       shortName: 'St. Thomas',
-      file: 'stthomas.json',
+      file: 'st_thomas_men.json',
       altFile: 'baseball_stats.json',
       statsSiteUrl: 'https://tommiesports.com/sports/baseball/stats/2026',
       rosterSiteUrl: 'https://tommiesports.com/sports/baseball/roster/print'
     },
-    non_conf: {
-      id: 'non_conf',
+    non_conf_men: {
+      id: 'non_conf_men',
       name: 'Non-Conf Opponent',
       shortName: 'Non-Conf',
-      file: 'non_conf.json',
+      file: 'non_conf_men.json',
+      altFile: 'non_conf.json',
       isNonConf: true,
       statsSiteUrl: '',
       rosterSiteUrl: ''
@@ -968,7 +981,7 @@
     { key: 'SO',   label: 'SO' }
   ];
 
-  let CURRENT_TEAM = 'stthomas';
+  let CURRENT_TEAM = 'st_thomas_men';
   let RAW_DATA = null;
   let BATTING_PLAYERS = [];
   let PITCHING_PLAYERS = [];
@@ -1126,8 +1139,23 @@
       if (token !== LOAD_TOKEN) return;
       RAW_DATA = data;
 
-      // Extract Batting and Pitching arrays
-      if (RAW_DATA.hitting || RAW_DATA.pitching) {
+      // Extract Batting and Pitching arrays with legacy key compatibility
+      if (RAW_DATA.batters || RAW_DATA.pitchers) {
+        BATTING_PLAYERS = (RAW_DATA.batters || []).map(p => ({
+          ...p,
+          number: p.number !== undefined && p.number !== null ? String(p.number) : '',
+          player: p.player || p.name || '—',
+          position: p.position || '—',
+          year: p.year || '—'
+        }));
+        PITCHING_PLAYERS = (RAW_DATA.pitchers || []).map(p => ({
+          ...p,
+          number: p.number !== undefined && p.number !== null ? String(p.number) : '',
+          player: p.player || p.name || '—',
+          position: p.position || 'RHP',
+          year: p.year || '—'
+        }));
+      } else if (RAW_DATA.hitting || RAW_DATA.pitching) {
         BATTING_PLAYERS = (RAW_DATA.hitting || []).map(p => ({
           ...p,
           number: p.number !== undefined && p.number !== null ? String(p.number) : '',
@@ -1139,7 +1167,7 @@
           ...p,
           number: p.number !== undefined && p.number !== null ? String(p.number) : '',
           player: p.player || p.name || '—',
-          position: p.position || 'P',
+          position: p.position || 'RHP',
           year: p.year || '—'
         }));
       } else if (Array.isArray(RAW_DATA)) {
@@ -1157,7 +1185,7 @@
           .map(p => ({
             number: String(p.jersey_number || ''),
             player: p.player_name || '—',
-            position: p.position || 'P',
+            position: p.position || 'RHP',
             year: p.year || '—',
             ...p.pitching_stats
           }));
@@ -1195,7 +1223,7 @@
             ${esc(RAW_DATA.message || 'Configure non_conf_config.json or pass via GitHub Actions workflow.')}
             <br>
             <span class="empty-steps">
-              GitHub → Actions → "Scrape Baseball Stats" → Run workflow<br>
+              GitHub → Actions → "Update Baseball Stats" → Run workflow<br>
               Paste the opponent's stats link in the input fields
             </span>`);
           return;
@@ -1409,7 +1437,7 @@
   }
 
   // Initial load
-  loadTeamData('stthomas');
+  loadTeamData('st_thomas_men');
 </script>
 
 </body>
