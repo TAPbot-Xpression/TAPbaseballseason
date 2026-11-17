@@ -6,7 +6,7 @@
   "source": "https://stats.gobison.com/custompages/bsb/2026/teamcume.htm",
   "source_roster": "https://gobison.com/sports/baseball/roster/print",
   "status": "ok",
-  "generated_at": "2026-11-17T22:35:40.058021+00:00",
+  "generated_at": "2026-11-17T22:42:46.759621+00:00",
   "players": [
     {
       "jersey_number": 1,
@@ -77,6 +77,45 @@
       }
     },
     {
+      "jersey_number": 11,
+      "player_name": "Sheamus Ryan",
+      "position": "P",
+      "year": "SO",
+      "pitching_stats": {
+        "ERA": "2.44",
+        "WHIP": "1.35",
+        "W-L": "1-2",
+        "IP": "48.0",
+        "SO": "28"
+      }
+    },
+    {
+      "jersey_number": 12,
+      "player_name": "Matt Sargeant",
+      "position": "P",
+      "year": "SR",
+      "pitching_stats": {
+        "ERA": "15.68",
+        "WHIP": "2.90",
+        "W-L": "0-1",
+        "IP": "10.1",
+        "SO": "8"
+      }
+    },
+    {
+      "jersey_number": 13,
+      "player_name": "Easton Reimers",
+      "position": "P",
+      "year": "SO",
+      "pitching_stats": {
+        "ERA": "14.37",
+        "WHIP": "2.08",
+        "W-L": "0-2",
+        "IP": "20.2",
+        "SO": "11"
+      }
+    },
+    {
       "jersey_number": 18,
       "player_name": "Aiden Schenk",
       "position": "INF",
@@ -111,6 +150,45 @@
       }
     },
     {
+      "jersey_number": 26,
+      "player_name": "Ethan Swaby",
+      "position": "P",
+      "year": "JR",
+      "pitching_stats": {
+        "ERA": "9.31",
+        "WHIP": "2.59",
+        "W-L": "0-1",
+        "IP": "9.2",
+        "SO": "10"
+      }
+    },
+    {
+      "jersey_number": 28,
+      "player_name": "AJ Doll",
+      "position": "P",
+      "year": "JR",
+      "pitching_stats": {
+        "ERA": "20.25",
+        "WHIP": "4.12",
+        "W-L": "0-1",
+        "IP": "2.2",
+        "SO": "5"
+      }
+    },
+    {
+      "jersey_number": 31,
+      "player_name": "Connor McCaleb",
+      "position": "P",
+      "year": "SR",
+      "pitching_stats": {
+        "ERA": "0.00",
+        "WHIP": "1.50",
+        "W-L": "0-0",
+        "IP": "4.0",
+        "SO": "1"
+      }
+    },
+    {
       "jersey_number": 32,
       "player_name": "Dante Smith",
       "position": "OF",
@@ -128,6 +206,32 @@
       }
     },
     {
+      "jersey_number": 33,
+      "player_name": "Matthew Totten",
+      "position": "P",
+      "year": "JR",
+      "pitching_stats": {
+        "ERA": "18.00",
+        "WHIP": "1.75",
+        "W-L": "0-2",
+        "IP": "4.0",
+        "SO": "2"
+      }
+    },
+    {
+      "jersey_number": 36,
+      "player_name": "Garrett Shupe",
+      "position": "P",
+      "year": "JR",
+      "pitching_stats": {
+        "ERA": "6.25",
+        "WHIP": "1.80",
+        "W-L": "2-2",
+        "IP": "31.2",
+        "SO": "21"
+      }
+    },
+    {
       "jersey_number": 999,
       "player_name": "Kyle Law",
       "position": "",
@@ -142,6 +246,13 @@
         "RBI": "17",
         "OPS": ".615",
         "SLG%": ".346"
+      },
+      "pitching_stats": {
+        "ERA": "54.00",
+        "WHIP": "9.00",
+        "W-L": "0-0",
+        "IP": "1.0",
+        "SO": "1"
       }
     }
   ],
@@ -372,7 +483,228 @@
       "SLG%": ".346"
     }
   ],
-  "pitching": [],
+  "pitching": [
+    {
+      "number": "11",
+      "player": "Sheamus Ryan",
+      "position": "P",
+      "year": "SO",
+      "ERA": "2.44",
+      "WHIP": "1.35",
+      "W-L": "1-2",
+      "IP": "48.0",
+      "SO": "28"
+    },
+    {
+      "number": "12",
+      "player": "Matt Sargeant",
+      "position": "P",
+      "year": "SR",
+      "ERA": "15.68",
+      "WHIP": "2.90",
+      "W-L": "0-1",
+      "IP": "10.1",
+      "SO": "8"
+    },
+    {
+      "number": "13",
+      "player": "Easton Reimers",
+      "position": "P",
+      "year": "SO",
+      "ERA": "14.37",
+      "WHIP": "2.08",
+      "W-L": "0-2",
+      "IP": "20.2",
+      "SO": "11"
+    },
+    {
+      "number": "26",
+      "player": "Ethan Swaby",
+      "position": "P",
+      "year": "JR",
+      "ERA": "9.31",
+      "WHIP": "2.59",
+      "W-L": "0-1",
+      "IP": "9.2",
+      "SO": "10"
+    },
+    {
+      "number": "28",
+      "player": "AJ Doll",
+      "position": "P",
+      "year": "JR",
+      "ERA": "20.25",
+      "WHIP": "4.12",
+      "W-L": "0-1",
+      "IP": "2.2",
+      "SO": "5"
+    },
+    {
+      "number": "31",
+      "player": "Connor McCaleb",
+      "position": "P",
+      "year": "SR",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "4.0",
+      "SO": "1"
+    },
+    {
+      "number": "33",
+      "player": "Matthew Totten",
+      "position": "P",
+      "year": "JR",
+      "ERA": "18.00",
+      "WHIP": "1.75",
+      "W-L": "0-2",
+      "IP": "4.0",
+      "SO": "2"
+    },
+    {
+      "number": "36",
+      "player": "Garrett Shupe",
+      "position": "P",
+      "year": "JR",
+      "ERA": "6.25",
+      "WHIP": "1.80",
+      "W-L": "2-2",
+      "IP": "31.2",
+      "SO": "21"
+    },
+    {
+      "number": "",
+      "player": "Jonah Walker",
+      "position": "RHP",
+      "year": "",
+      "ERA": "5.47",
+      "WHIP": "1.61",
+      "W-L": "3-5",
+      "IP": "52.2",
+      "SO": "40"
+    },
+    {
+      "number": "",
+      "player": "Jack Surdey",
+      "position": "RHP",
+      "year": "",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "2.2",
+      "SO": "0"
+    },
+    {
+      "number": "",
+      "player": "Braden Gluth",
+      "position": "RHP",
+      "year": "",
+      "ERA": "3.99",
+      "WHIP": "1.60",
+      "W-L": "0-1",
+      "IP": "29.1",
+      "SO": "21"
+    },
+    {
+      "number": "",
+      "player": "Parker Puetz",
+      "position": "RHP",
+      "year": "",
+      "ERA": "5.73",
+      "WHIP": "1.59",
+      "W-L": "1-4",
+      "IP": "44.0",
+      "SO": "45"
+    },
+    {
+      "number": "",
+      "player": "Zak Szabo",
+      "position": "RHP",
+      "year": "",
+      "ERA": "6.10",
+      "WHIP": "1.68",
+      "W-L": "3-3",
+      "IP": "31.0",
+      "SO": "32"
+    },
+    {
+      "number": "",
+      "player": "Hudson Hart",
+      "position": "RHP",
+      "year": "",
+      "ERA": "6.41",
+      "WHIP": "1.78",
+      "W-L": "0-2",
+      "IP": "19.2",
+      "SO": "13"
+    },
+    {
+      "number": "",
+      "player": "Brayden Marks",
+      "position": "RHP",
+      "year": "",
+      "ERA": "7.75",
+      "WHIP": "1.97",
+      "W-L": "3-4",
+      "IP": "40.2",
+      "SO": "18"
+    },
+    {
+      "number": "",
+      "player": "Luke Agnew",
+      "position": "RHP",
+      "year": "",
+      "ERA": "9.00",
+      "WHIP": "5.50",
+      "W-L": "0-0",
+      "IP": "2.0",
+      "SO": "0"
+    },
+    {
+      "number": "",
+      "player": "Cade Wiegert",
+      "position": "RHP",
+      "year": "",
+      "ERA": "10.34",
+      "WHIP": "1.98",
+      "W-L": "0-1",
+      "IP": "15.2",
+      "SO": "15"
+    },
+    {
+      "number": "",
+      "player": "AJ Lausten",
+      "position": "RHP",
+      "year": "",
+      "ERA": "11.57",
+      "WHIP": "2.14",
+      "W-L": "0-0",
+      "IP": "2.1",
+      "SO": "4"
+    },
+    {
+      "number": "",
+      "player": "Anthony Pardo",
+      "position": "RHP",
+      "year": "",
+      "ERA": "24.55",
+      "WHIP": "3.55",
+      "W-L": "0-1",
+      "IP": "3.2",
+      "SO": "2"
+    },
+    {
+      "number": "",
+      "player": "Chris Billings",
+      "position": "RHP",
+      "year": "",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    }
+  ],
   "batters": [
     {
       "number": "1",
@@ -600,7 +932,228 @@
       "SLG%": ".346"
     }
   ],
-  "pitchers": [],
+  "pitchers": [
+    {
+      "number": "11",
+      "player": "Sheamus Ryan",
+      "position": "P",
+      "year": "SO",
+      "ERA": "2.44",
+      "WHIP": "1.35",
+      "W-L": "1-2",
+      "IP": "48.0",
+      "SO": "28"
+    },
+    {
+      "number": "12",
+      "player": "Matt Sargeant",
+      "position": "P",
+      "year": "SR",
+      "ERA": "15.68",
+      "WHIP": "2.90",
+      "W-L": "0-1",
+      "IP": "10.1",
+      "SO": "8"
+    },
+    {
+      "number": "13",
+      "player": "Easton Reimers",
+      "position": "P",
+      "year": "SO",
+      "ERA": "14.37",
+      "WHIP": "2.08",
+      "W-L": "0-2",
+      "IP": "20.2",
+      "SO": "11"
+    },
+    {
+      "number": "26",
+      "player": "Ethan Swaby",
+      "position": "P",
+      "year": "JR",
+      "ERA": "9.31",
+      "WHIP": "2.59",
+      "W-L": "0-1",
+      "IP": "9.2",
+      "SO": "10"
+    },
+    {
+      "number": "28",
+      "player": "AJ Doll",
+      "position": "P",
+      "year": "JR",
+      "ERA": "20.25",
+      "WHIP": "4.12",
+      "W-L": "0-1",
+      "IP": "2.2",
+      "SO": "5"
+    },
+    {
+      "number": "31",
+      "player": "Connor McCaleb",
+      "position": "P",
+      "year": "SR",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "4.0",
+      "SO": "1"
+    },
+    {
+      "number": "33",
+      "player": "Matthew Totten",
+      "position": "P",
+      "year": "JR",
+      "ERA": "18.00",
+      "WHIP": "1.75",
+      "W-L": "0-2",
+      "IP": "4.0",
+      "SO": "2"
+    },
+    {
+      "number": "36",
+      "player": "Garrett Shupe",
+      "position": "P",
+      "year": "JR",
+      "ERA": "6.25",
+      "WHIP": "1.80",
+      "W-L": "2-2",
+      "IP": "31.2",
+      "SO": "21"
+    },
+    {
+      "number": "",
+      "player": "Jonah Walker",
+      "position": "RHP",
+      "year": "",
+      "ERA": "5.47",
+      "WHIP": "1.61",
+      "W-L": "3-5",
+      "IP": "52.2",
+      "SO": "40"
+    },
+    {
+      "number": "",
+      "player": "Jack Surdey",
+      "position": "RHP",
+      "year": "",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "2.2",
+      "SO": "0"
+    },
+    {
+      "number": "",
+      "player": "Braden Gluth",
+      "position": "RHP",
+      "year": "",
+      "ERA": "3.99",
+      "WHIP": "1.60",
+      "W-L": "0-1",
+      "IP": "29.1",
+      "SO": "21"
+    },
+    {
+      "number": "",
+      "player": "Parker Puetz",
+      "position": "RHP",
+      "year": "",
+      "ERA": "5.73",
+      "WHIP": "1.59",
+      "W-L": "1-4",
+      "IP": "44.0",
+      "SO": "45"
+    },
+    {
+      "number": "",
+      "player": "Zak Szabo",
+      "position": "RHP",
+      "year": "",
+      "ERA": "6.10",
+      "WHIP": "1.68",
+      "W-L": "3-3",
+      "IP": "31.0",
+      "SO": "32"
+    },
+    {
+      "number": "",
+      "player": "Hudson Hart",
+      "position": "RHP",
+      "year": "",
+      "ERA": "6.41",
+      "WHIP": "1.78",
+      "W-L": "0-2",
+      "IP": "19.2",
+      "SO": "13"
+    },
+    {
+      "number": "",
+      "player": "Brayden Marks",
+      "position": "RHP",
+      "year": "",
+      "ERA": "7.75",
+      "WHIP": "1.97",
+      "W-L": "3-4",
+      "IP": "40.2",
+      "SO": "18"
+    },
+    {
+      "number": "",
+      "player": "Luke Agnew",
+      "position": "RHP",
+      "year": "",
+      "ERA": "9.00",
+      "WHIP": "5.50",
+      "W-L": "0-0",
+      "IP": "2.0",
+      "SO": "0"
+    },
+    {
+      "number": "",
+      "player": "Cade Wiegert",
+      "position": "RHP",
+      "year": "",
+      "ERA": "10.34",
+      "WHIP": "1.98",
+      "W-L": "0-1",
+      "IP": "15.2",
+      "SO": "15"
+    },
+    {
+      "number": "",
+      "player": "AJ Lausten",
+      "position": "RHP",
+      "year": "",
+      "ERA": "11.57",
+      "WHIP": "2.14",
+      "W-L": "0-0",
+      "IP": "2.1",
+      "SO": "4"
+    },
+    {
+      "number": "",
+      "player": "Anthony Pardo",
+      "position": "RHP",
+      "year": "",
+      "ERA": "24.55",
+      "WHIP": "3.55",
+      "W-L": "0-1",
+      "IP": "3.2",
+      "SO": "2"
+    },
+    {
+      "number": "",
+      "player": "Chris Billings",
+      "position": "RHP",
+      "year": "",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    }
+  ],
   "hitting_by_number": {
     "": {
       "number": "",
@@ -723,7 +1276,107 @@
       "SLG%": ".179"
     }
   },
-  "pitching_by_number": {},
+  "pitching_by_number": {
+    "11": {
+      "number": "11",
+      "player": "Sheamus Ryan",
+      "position": "P",
+      "year": "SO",
+      "ERA": "2.44",
+      "WHIP": "1.35",
+      "W-L": "1-2",
+      "IP": "48.0",
+      "SO": "28"
+    },
+    "": {
+      "number": "",
+      "player": "Chris Billings",
+      "position": "RHP",
+      "year": "",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    },
+    "31": {
+      "number": "31",
+      "player": "Connor McCaleb",
+      "position": "P",
+      "year": "SR",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "4.0",
+      "SO": "1"
+    },
+    "36": {
+      "number": "36",
+      "player": "Garrett Shupe",
+      "position": "P",
+      "year": "JR",
+      "ERA": "6.25",
+      "WHIP": "1.80",
+      "W-L": "2-2",
+      "IP": "31.2",
+      "SO": "21"
+    },
+    "26": {
+      "number": "26",
+      "player": "Ethan Swaby",
+      "position": "P",
+      "year": "JR",
+      "ERA": "9.31",
+      "WHIP": "2.59",
+      "W-L": "0-1",
+      "IP": "9.2",
+      "SO": "10"
+    },
+    "13": {
+      "number": "13",
+      "player": "Easton Reimers",
+      "position": "P",
+      "year": "SO",
+      "ERA": "14.37",
+      "WHIP": "2.08",
+      "W-L": "0-2",
+      "IP": "20.2",
+      "SO": "11"
+    },
+    "12": {
+      "number": "12",
+      "player": "Matt Sargeant",
+      "position": "P",
+      "year": "SR",
+      "ERA": "15.68",
+      "WHIP": "2.90",
+      "W-L": "0-1",
+      "IP": "10.1",
+      "SO": "8"
+    },
+    "33": {
+      "number": "33",
+      "player": "Matthew Totten",
+      "position": "P",
+      "year": "JR",
+      "ERA": "18.00",
+      "WHIP": "1.75",
+      "W-L": "0-2",
+      "IP": "4.0",
+      "SO": "2"
+    },
+    "28": {
+      "number": "28",
+      "player": "AJ Doll",
+      "position": "P",
+      "year": "JR",
+      "ERA": "20.25",
+      "WHIP": "4.12",
+      "W-L": "0-1",
+      "IP": "2.2",
+      "SO": "5"
+    }
+  },
   "batters_by_number": {
     "": {
       "number": "",
@@ -846,5 +1499,105 @@
       "SLG%": ".179"
     }
   },
-  "pitchers_by_number": {}
+  "pitchers_by_number": {
+    "11": {
+      "number": "11",
+      "player": "Sheamus Ryan",
+      "position": "P",
+      "year": "SO",
+      "ERA": "2.44",
+      "WHIP": "1.35",
+      "W-L": "1-2",
+      "IP": "48.0",
+      "SO": "28"
+    },
+    "": {
+      "number": "",
+      "player": "Chris Billings",
+      "position": "RHP",
+      "year": "",
+      "ERA": "54.00",
+      "WHIP": "9.00",
+      "W-L": "0-0",
+      "IP": "1.0",
+      "SO": "1"
+    },
+    "31": {
+      "number": "31",
+      "player": "Connor McCaleb",
+      "position": "P",
+      "year": "SR",
+      "ERA": "0.00",
+      "WHIP": "1.50",
+      "W-L": "0-0",
+      "IP": "4.0",
+      "SO": "1"
+    },
+    "36": {
+      "number": "36",
+      "player": "Garrett Shupe",
+      "position": "P",
+      "year": "JR",
+      "ERA": "6.25",
+      "WHIP": "1.80",
+      "W-L": "2-2",
+      "IP": "31.2",
+      "SO": "21"
+    },
+    "26": {
+      "number": "26",
+      "player": "Ethan Swaby",
+      "position": "P",
+      "year": "JR",
+      "ERA": "9.31",
+      "WHIP": "2.59",
+      "W-L": "0-1",
+      "IP": "9.2",
+      "SO": "10"
+    },
+    "13": {
+      "number": "13",
+      "player": "Easton Reimers",
+      "position": "P",
+      "year": "SO",
+      "ERA": "14.37",
+      "WHIP": "2.08",
+      "W-L": "0-2",
+      "IP": "20.2",
+      "SO": "11"
+    },
+    "12": {
+      "number": "12",
+      "player": "Matt Sargeant",
+      "position": "P",
+      "year": "SR",
+      "ERA": "15.68",
+      "WHIP": "2.90",
+      "W-L": "0-1",
+      "IP": "10.1",
+      "SO": "8"
+    },
+    "33": {
+      "number": "33",
+      "player": "Matthew Totten",
+      "position": "P",
+      "year": "JR",
+      "ERA": "18.00",
+      "WHIP": "1.75",
+      "W-L": "0-2",
+      "IP": "4.0",
+      "SO": "2"
+    },
+    "28": {
+      "number": "28",
+      "player": "AJ Doll",
+      "position": "P",
+      "year": "JR",
+      "ERA": "20.25",
+      "WHIP": "4.12",
+      "W-L": "0-1",
+      "IP": "2.2",
+      "SO": "5"
+    }
+  }
 }
