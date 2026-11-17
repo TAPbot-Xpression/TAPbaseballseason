@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-11-17T14:45:50.782173+00:00",
+  "generated_at": "2026-11-17T22:32:01.055721+00:00",
   "season": "2026",
   "teams": {
-    "stthomas": {
-      "team_id": "stthomas",
+    "st_thomas_men": {
+      "team_id": "st_thomas_men",
       "team": "St. Thomas Tommies",
       "sport": "baseball",
       "season": "2026",
       "source": "https://tommiesports.com/sports/baseball/stats/2026",
       "source_roster": "https://tommiesports.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:36.382179+00:00",
+      "generated_at": "2026-11-17T22:31:48.217353+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -2353,15 +2353,15 @@
         }
       }
     },
-    "sdstate": {
-      "team_id": "sdstate",
+    "south_dakota_state_men": {
+      "team_id": "south_dakota_state_men",
       "team": "South Dakota State Jackrabbits",
       "sport": "baseball",
       "season": "2026",
       "source": "https://gojacks.com/sports/baseball/stats/2026",
       "source_roster": "https://gojacks.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:39.328973+00:00",
+      "generated_at": "2026-11-17T22:31:51.606332+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -4533,15 +4533,15 @@
         }
       }
     },
-    "uncbears": {
-      "team_id": "uncbears",
+    "northern_colorado_men": {
+      "team_id": "northern_colorado_men",
       "team": "Northern Colorado Bears",
       "sport": "baseball",
       "season": "2026",
       "source": "https://uncbears.com/sports/baseball/stats/2026",
       "source_roster": "https://uncbears.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:42.901970+00:00",
+      "generated_at": "2026-11-17T22:31:53.990594+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -6876,15 +6876,15 @@
         }
       }
     },
-    "omaha": {
-      "team_id": "omaha",
+    "omaha_men": {
+      "team_id": "omaha_men",
       "team": "Omaha Mavericks",
       "sport": "baseball",
       "season": "2026",
       "source": "https://omahamavs.com/sports/baseball/stats/2026",
       "source_roster": "https://omahamavs.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:45.824199+00:00",
+      "generated_at": "2026-11-17T22:31:56.242210+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -9164,15 +9164,15 @@
         }
       }
     },
-    "oru": {
-      "team_id": "oru",
+    "oral_roberts_men": {
+      "team_id": "oral_roberts_men",
       "team": "Oral Roberts Golden Eagles",
       "sport": "baseball",
       "season": "2026",
       "source": "https://oruathletics.com/sports/baseball/stats/2026",
       "source_roster": "https://oruathletics.com/sports/baseball/roster?print=true",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:48.760452+00:00",
+      "generated_at": "2026-11-17T22:31:59.205511+00:00",
       "players": [
         {
           "jersey_number": 2,
@@ -11547,15 +11547,15 @@
         }
       }
     },
-    "ndsu": {
-      "team_id": "ndsu",
+    "north_dakota_state_men": {
+      "team_id": "north_dakota_state_men",
       "team": "North Dakota State Bison",
       "sport": "baseball",
       "season": "2026",
       "source": "https://stats.gobison.com/custompages/bsb/2026/teamcume.htm",
       "source_roster": "https://gobison.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-17T14:45:50.741100+00:00",
+      "generated_at": "2026-11-17T22:32:01.026616+00:00",
       "players": [
         {
           "jersey_number": 1,
