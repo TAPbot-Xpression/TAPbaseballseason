@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T14:42:38.153698+00:00",
+  "generated_at": "2026-11-19T14:42:03.109998+00:00",
   "season": "2026",
   "teams": {
     "st_thomas_men": {
@@ -10,7 +10,7 @@
       "source": "https://tommiesports.com/sports/baseball/stats/2026",
       "source_roster": "https://tommiesports.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:24.686124+00:00",
+      "generated_at": "2026-11-19T14:41:46.996781+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -2361,7 +2361,7 @@
       "source": "https://gojacks.com/sports/baseball/stats/2026",
       "source_roster": "https://gojacks.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:27.447511+00:00",
+      "generated_at": "2026-11-19T14:41:50.255554+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -4541,7 +4541,7 @@
       "source": "https://uncbears.com/sports/baseball/stats/2026",
       "source_roster": "https://uncbears.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:30.530949+00:00",
+      "generated_at": "2026-11-19T14:41:54.029118+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -6884,7 +6884,7 @@
       "source": "https://omahamavs.com/sports/baseball/stats/2026",
       "source_roster": "https://omahamavs.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:32.927365+00:00",
+      "generated_at": "2026-11-19T14:41:57.224252+00:00",
       "players": [
         {
           "jersey_number": 1,
@@ -9172,7 +9172,7 @@
       "source": "https://oruathletics.com/sports/baseball/stats/2026",
       "source_roster": "https://oruathletics.com/sports/baseball/roster?print=true",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:36.270779+00:00",
+      "generated_at": "2026-11-19T14:42:00.766980+00:00",
       "players": [
         {
           "jersey_number": 2,
@@ -11555,7 +11555,7 @@
       "source": "https://stats.gobison.com/custompages/bsb/2026/teamcume.htm",
       "source_roster": "https://gobison.com/sports/baseball/roster/print",
       "status": "ok",
-      "generated_at": "2026-11-18T14:42:38.124251+00:00",
+      "generated_at": "2026-11-19T14:42:03.070334+00:00",
       "players": [
         {
           "jersey_number": 1,
